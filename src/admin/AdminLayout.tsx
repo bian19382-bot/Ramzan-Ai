@@ -23,6 +23,7 @@ import {
   BookOpen,
   Globe,
   FolderTree,
+  LogOut,
 } from 'lucide-react';
 import { useTheme } from '../features/theme/ThemeContext';
 import { dataProvider } from '../data/dataProvider';
@@ -47,12 +48,14 @@ export type AdminTab =
 interface AdminLayoutProps {
   currentTab: AdminTab;
   onSelectTab: (tab: AdminTab) => void;
+  onLogout?: () => void;
   children: React.ReactNode;
 }
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({
   currentTab,
   onSelectTab,
+  onLogout,
   children,
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -95,15 +98,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
-            Admin Active
-          </span>
           <a
             href="/"
             className="p-1.5 rounded-lg bg-[var(--surface-2)] text-[var(--text)] text-xs flex items-center gap-1"
+            title="View Site"
           >
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="p-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition cursor-pointer"
+              title="Sign Out / Lock Panel"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -173,6 +183,20 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-[var(--border)] space-y-3">
+          {/* Authenticated Admin Account Info */}
+          <div className="p-2.5 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-xs">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono uppercase text-cyan-400 font-semibold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Authorized Admin</span>
+              </span>
+              <span className="text-[9px] font-mono text-emerald-400 px-1.5 py-0.2 rounded bg-emerald-500/15">Active</span>
+            </div>
+            <p className="text-[11px] font-mono text-[var(--text)] truncate font-medium">
+              babajani543210@gmail.com
+            </p>
+          </div>
+
           <div className="flex items-center justify-between text-xs">
             <button
               onClick={toggleTheme}
@@ -191,13 +215,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </a>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-[11px] text-[var(--text-muted)] leading-tight">
-            <div className="flex items-center gap-1.5 text-amber-400 font-semibold mb-1">
-              <AlertTriangle className="w-3 h-3" />
-              <span>Demo Environment</span>
-            </div>
-            Changes persist in browser storage. Ready for production Supabase connection.
-          </div>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="w-full py-2 px-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out / Lock Panel</span>
+            </button>
+          )}
         </div>
       </aside>
 

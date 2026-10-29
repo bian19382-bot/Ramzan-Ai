@@ -134,19 +134,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                   <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition text-[var(--accent)]" />
                 </a>
 
-                {/* Quick Edit / Admin Portal */}
-                <a
-                  href="/admin"
-                  onClick={onClose}
-                  className="px-4 py-3 rounded-xl text-base font-medium text-[var(--text)] hover:bg-[var(--surface-2)] hover:text-[var(--accent-text)] transition flex items-center justify-between group"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Shield className="w-4 h-4 text-emerald-400" />
-                    <span>Quick Edit / Admin</span>
-                  </div>
-                  <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition text-[var(--accent)]" />
-                </a>
-
                 {onOpenAiConsultant && (
                   <button
                     onClick={() => {
@@ -259,14 +246,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 className="w-full text-center py-3.5 rounded-full bg-[var(--accent)] hover:brightness-110 text-white font-medium text-sm shadow-lg transition active:scale-98"
               >
                 {t('navCta')}
-              </a>
-
-              <a
-                href="/admin"
-                className="text-center text-xs text-[var(--text-muted)] hover:text-[var(--text)] flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition pt-1"
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span>Admin Portal</span>
               </a>
             </div>
           </motion.aside>

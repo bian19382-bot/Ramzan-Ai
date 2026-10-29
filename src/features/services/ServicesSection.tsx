@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Layout, Sparkles, Zap, CheckCircle2, ArrowRight, ChevronDown, HelpCircle, Check, Compass } from 'lucide-react';
+import { Layout, Sparkles, Zap, CheckCircle2, ArrowRight, ChevronDown, HelpCircle, Check, Compass, Cpu } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Service, FAQ } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
+import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
 
 interface ServicesSectionProps {
   services: Service[];
@@ -99,7 +101,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
     <section id="services" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/20">
       <div className="max-w-[1200px] w-full mx-auto">
         {/* Eyebrow & Title */}
-        <div className="mb-14 text-left">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-14 text-left"
+        >
           <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2 block font-mono">
             {t('servicesEyebrow')}
           </span>
@@ -109,79 +117,118 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
           <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-2xl mt-2 leading-relaxed">
             {t('servicesSub')}
           </p>
-        </div>
+        </motion.div>
 
-        {/* 5-Step Process: My Approach / Mera Tareeqa */}
-        <div id="approach" className="mb-16 p-6 sm:p-8 rounded-3xl bg-[var(--surface-2)]/50 border border-[var(--border)]">
-          <p className="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-6 font-semibold flex items-center gap-2">
-            <Compass className="w-4 h-4" />
-            <span>{isRoman ? 'Mera Tareeqa (My Approach)' : 'My Approach — 5-Step Workflow'}</span>
-          </p>
+        {/* 5-Step Process: Futuristic Pipeline Workflow */}
+        <motion.div
+          id="approach"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-16 p-6 sm:p-8 rounded-3xl bg-[#0b0e14]/90 border border-cyan-500/25 relative overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.1)]"
+        >
+          {/* Subtle Cyber Grid Glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 blur-3xl pointer-events-none" />
+
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--border)]">
+            <p className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-cyan-400" />
+              <span>{isRoman ? 'Mera Tareeqa // 5-Step Workflow Pipeline' : 'System Approach // 5-Step Workflow Pipeline'}</span>
+            </p>
+            <span className="hidden sm:inline-flex text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              ● REAL-TIME EXECUTION
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
             {processSteps.map((p, idx) => (
-              <div key={idx} className="relative flex flex-col">
-                <span className="text-2xl font-display font-extrabold text-cyan-500/40 mb-1">
-                  {p.step}
-                </span>
-                <h3 className="text-sm font-bold font-display text-[var(--text)] mb-1">
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.1 }}
+                className="relative flex flex-col p-4 rounded-2xl bg-[var(--surface)]/60 border border-[var(--border)] group hover:border-cyan-400/50 hover:bg-cyan-950/15 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xl font-mono font-extrabold text-cyan-400/80 group-hover:text-cyan-300 transition-colors">
+                    {p.step}
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-400/30 group-hover:bg-cyan-400 group-hover:shadow-[0_0_8px_#22d3ee] transition-all" />
+                </div>
+                <h3 className="text-sm font-bold font-display text-[var(--text)] mb-1.5 group-hover:text-cyan-300 transition-colors">
                   {p.title}
                 </h3>
                 <p className="text-xs text-[var(--text-muted)] leading-relaxed">
                   {p.desc}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Services Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-          {visibleServices.map((service) => (
-            <div
+          {visibleServices.map((service, idx) => (
+            <motion.div
               key={service.id}
-              className="p-6 sm:p-7 rounded-[22px] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:border-cyan-500/50 transition-all duration-300 flex flex-col justify-between"
+              initial={{ opacity: 0, y: 32, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div>
-                <div className="w-11 h-11 rounded-xl bg-[var(--surface-2)] flex items-center justify-center border border-[var(--border)] mb-4">
-                  {getServiceIcon(service.name)}
+              <FuturisticSpotlightCard
+                glowColor={idx === 1 ? 'purple' : idx === 2 ? 'emerald' : 'cyan'}
+                className="p-6 sm:p-7 flex flex-col justify-between h-full"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-11 h-11 rounded-xl bg-[var(--surface-2)] flex items-center justify-center border border-[var(--border)] group-hover:border-cyan-400/50 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all">
+                      {getServiceIcon(service.name)}
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
+                      MODULE // 0{idx + 1}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg font-bold font-display text-[var(--text)] mb-2 group-hover:text-cyan-300 transition-colors">
+                    {service.name}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-6">
+                    {service.description}
+                  </p>
+
+                  {service.deliverables && service.deliverables.length > 0 && (
+                    <div className="space-y-2 mb-6 p-3 rounded-xl bg-[var(--surface-2)]/50 border border-[var(--border)]/70">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-semibold block">
+                        {isRoman ? 'Kaam Mein Shamil // Deliverables:' : 'Key Deliverables // Scope:'}
+                      </span>
+                      <ul className="space-y-1.5 text-xs text-[var(--text-muted)]">
+                        {service.deliverables.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
-                <h3 className="text-lg font-bold font-display text-[var(--text)] mb-2">
-                  {service.name}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-5">
-                  {service.description}
-                </p>
-
-                {service.deliverables && service.deliverables.length > 0 && (
-                  <div className="space-y-2 mb-6">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold">
-                      {isRoman ? 'Kaam Mein Shamil:' : 'Key Deliverables:'}
-                    </span>
-                    <ul className="space-y-1.5 text-xs text-[var(--text-muted)]">
-                      {service.deliverables.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="pt-4 border-t border-[var(--border)]/60">
-                <button
-                  type="button"
-                  onClick={() => onSelectServiceForContact(service.name)}
-                  className="w-full py-2.5 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--accent)] hover:text-white text-[var(--text)] text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <span>{getServiceCta(service.name)}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
+                <div className="pt-4 border-t border-[var(--border)]/60">
+                  <button
+                    type="button"
+                    onClick={() => onSelectServiceForContact(service.name)}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500/20 hover:from-cyan-500 to-blue-600/20 hover:to-blue-600 border border-cyan-400/40 hover:border-cyan-300 hover:text-white text-cyan-300 text-xs font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] active:scale-98"
+                  >
+                    <span>{getServiceCta(service.name)}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </FuturisticSpotlightCard>
+            </motion.div>
           ))}
         </div>
 

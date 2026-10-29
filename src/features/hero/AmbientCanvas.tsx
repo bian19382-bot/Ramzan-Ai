@@ -4,14 +4,13 @@ interface AmbientCanvasProps {
   accentColor?: string;
 }
 
-export const AmbientCanvas: React.FC<AmbientCanvasProps> = ({ accentColor = '#7C5CFF' }) => {
+export const AmbientCanvas: React.FC<AmbientCanvasProps> = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Respect reduced motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
@@ -30,40 +29,53 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = ({ accentColor = '#7C
     };
     window.addEventListener('resize', handleResize);
 
-    const mouse = { x: -1000, y: -1000, radius: 120 };
+    const mouse = { x: -2000, y: -2000, targetX: -2000, targetY: -2000, radius: 180 };
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
     };
 
     const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
+      mouse.targetX = -2000;
+      mouse.targetY = -2000;
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseleave', handleMouseLeave);
 
-    const particleCount = Math.min(50, Math.floor((width * height) / 22000));
+    // Particle nodes: Cyber Cyan, Deep Neon Purple, Electric Blue
+    const particleCount = Math.min(65, Math.floor((width * height) / 18000));
+    const colors = [
+      'rgba(6, 182, 212, ',   // cyan-500
+      'rgba(59, 130, 246, ',  // blue-500
+      'rgba(147, 51, 234, ',  // purple-600
+    ];
+
     const particles: {
       x: number;
       y: number;
       vx: number;
       vy: number;
       radius: number;
+      color: string;
       baseAlpha: number;
+      pulsePhase: number;
+      pulseSpeed: number;
     }[] = [];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 2 + 1,
-        baseAlpha: Math.random() * 0.3 + 0.15,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 0.8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        baseAlpha: Math.random() * 0.35 + 0.2,
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.02 + Math.random() * 0.03,
       });
     }
 
@@ -73,15 +85,62 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = ({ accentColor = '#7C
     });
     observer.observe(canvas);
 
+    let time = 0;
+
     const render = () => {
       if (!isVisible) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
+      time += 0.015;
+
+      // Smooth mouse interpolation
+      mouse.x += (mouse.targetX - mouse.x) * 0.12;
+      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+
       ctx.clearRect(0, 0, width, height);
 
-      // Draw and update particles
+      // 1. Subtle Futuristic Cyber Grid Floor lines
+      const gridSize = 72;
+      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.035)';
+
+      const offsetX = (time * 8) % gridSize;
+      const offsetY = (time * 6) % gridSize;
+
+      ctx.beginPath();
+      for (let x = -gridSize + offsetX; x < width + gridSize; x += gridSize) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+      }
+      for (let y = -gridSize + offsetY; y < height + gridSize; y += gridSize) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+      }
+      ctx.stroke();
+
+      // 2. Interactive Spotlight Follower (Futuristic Cyan Glow)
+      if (mouse.x > -500) {
+        const glowGrad = ctx.createRadialGradient(
+          mouse.x,
+          mouse.y,
+          0,
+          mouse.x,
+          mouse.y,
+          mouse.radius
+        );
+        glowGrad.addColorStop(0, 'rgba(6, 182, 212, 0.12)');
+        glowGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.04)');
+        glowGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
+
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, mouse.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 3. Cyber Particles & Dynamic Constellation Grid
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
@@ -93,34 +152,49 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = ({ accentColor = '#7C
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Mouse interaction
+        p.pulsePhase += p.pulseSpeed;
+        const pulse = (Math.sin(p.pulsePhase) + 1) * 0.5;
+
+        // Mouse magnetic disturbance
         const dx = mouse.x - p.x;
         const dy = mouse.y - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        let alpha = p.baseAlpha;
+        let alpha = p.baseAlpha + pulse * 0.15;
+        let pRadius = p.radius;
+
         if (dist < mouse.radius) {
-          alpha = Math.min(0.8, p.baseAlpha + (1 - dist / mouse.radius) * 0.5);
-          // subtle push
-          p.x -= (dx / dist) * 0.4;
-          p.y -= (dy / dist) * 0.4;
+          const factor = 1 - dist / mouse.radius;
+          alpha = Math.min(0.9, alpha + factor * 0.6);
+          pRadius += factor * 1.5;
+
+          // Gentle magnetic repulse/deflection
+          p.x -= (dx / dist) * 0.7 * factor;
+          p.y -= (dy / dist) * 0.7 * factor;
         }
 
+        // Render Particle Node with halo
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(124, 92, 255, ${alpha})`;
+        ctx.arc(p.x, p.y, pRadius, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color}${alpha})`;
+        ctx.shadowColor = 'rgba(6, 182, 212, 0.6)';
+        ctx.shadowBlur = 8;
         ctx.fill();
+        ctx.shadowBlur = 0;
 
-        // Connect nearby particles
+        // Render Neural Connections between near nodes
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dist2 = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2);
-          if (dist2 < 110) {
+          const maxDist = 120;
+
+          if (dist2 < maxDist) {
+            const lineAlpha = (1 - dist2 / maxDist) * 0.22;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(124, 92, 255, ${0.12 * (1 - dist2 / 110)})`;
-            ctx.lineWidth = 0.75;
+            ctx.strokeStyle = `rgba(6, 182, 212, ${lineAlpha})`;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         }
@@ -138,12 +212,12 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = ({ accentColor = '#7C
       document.removeEventListener('mouseleave', handleMouseLeave);
       observer.disconnect();
     };
-  }, [accentColor]);
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 pointer-events-none z-0 opacity-60"
+      className="absolute inset-0 pointer-events-none z-0 opacity-80"
       aria-hidden="true"
     />
   );

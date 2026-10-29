@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUpRight, Sparkles, ShieldCheck, Mail, MessageCircle } f
 import { Profile, SocialLink, SiteSettings } from '../../types/portfolio';
 import { AmbientCanvas } from './AmbientCanvas';
 import { useLanguage } from '../i18n/LanguageContext';
+import { MagneticWrapper } from '../../components/ui/MagneticWrapper';
 
 interface HeroSectionProps {
   profile: Profile;
@@ -79,20 +80,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {t('heroEyebrow')}
         </motion.p>
 
-        {/* Centerpiece: Official Neon Welcome Banner */}
+        {/* Centerpiece: Official Neon Welcome Banner with Cyber Scanline & HUD */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden p-1 sm:p-1.5 bg-gradient-to-r from-cyan-500/40 via-purple-500/30 to-blue-600/40 border border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] group cursor-pointer"
+          className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden p-1 sm:p-1.5 bg-gradient-to-r from-cyan-500/50 via-purple-500/40 to-blue-600/50 border border-cyan-400/50 shadow-[0_0_70px_rgba(6,182,212,0.3)] group cursor-pointer"
           onClick={handleScrollToProjects}
         >
           {/* Subtle outer animated glow aura */}
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-blue-500/20 blur-xl opacity-75 group-hover:opacity-100 transition duration-500 pointer-events-none" />
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-blue-500/30 blur-2xl opacity-75 group-hover:opacity-100 transition duration-500 pointer-events-none" />
 
-          <div className="relative rounded-[18px] sm:rounded-[22px] overflow-hidden bg-black aspect-[16/9] w-full flex items-center justify-center">
+          <div className="relative rounded-[18px] sm:rounded-[22px] overflow-hidden bg-black aspect-[16/9] w-full flex items-center justify-center cyber-scanline">
+            {/* Cyber HUD Corner Brackets */}
+            <span className="absolute top-2.5 left-2.5 w-3.5 h-3.5 border-t-2 border-l-2 border-cyan-400 z-30 pointer-events-none" />
+            <span className="absolute top-2.5 right-2.5 w-3.5 h-3.5 border-t-2 border-r-2 border-cyan-400 z-30 pointer-events-none" />
+            <span className="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 border-cyan-400 z-30 pointer-events-none" />
+            <span className="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 border-cyan-400 z-30 pointer-events-none" />
+
             {/* Top Verified Badge */}
-            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-cyan-500/30 text-[10px] sm:text-xs font-mono text-cyan-300">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-cyan-400/40 text-[10px] sm:text-xs font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
               <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
               <span>{isRoman ? 'Asal Portfolio Showcase' : 'Official Portfolio Showcase'}</span>
             </div>
@@ -116,6 +123,31 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               title={t('heroExploreCta')}
               aria-label={t('heroExploreCta')}
             />
+          </div>
+        </motion.div>
+
+        {/* Futuristic Telemetry HUD Strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4"
+        >
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span>CORE // WEB DEV</span>
+          </div>
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
+            <Sparkles className="w-3 h-3 text-cyan-400" />
+            <span>AI ASSISTED</span>
+          </div>
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <span>DIRECT CHANNELS</span>
+          </div>
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+            <span>PORTFOLIO ACTIVE</span>
           </div>
         </motion.div>
 
@@ -145,33 +177,39 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-7"
         >
-          <button
-            type="button"
-            onClick={handleScrollToProjects}
-            className="px-7 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white font-semibold text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] transition flex items-center gap-2 cursor-pointer"
-          >
-            <span>{t('heroExploreCta')}</span>
-            <ArrowDown className="w-4 h-4 animate-bounce" />
-          </button>
-
-          <button
-            type="button"
-            onClick={handleScrollToContact}
-            className="px-7 py-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text)] font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
-          >
-            <span>{t('heroContactCta')}</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-
-          {onOpenAiConsultant && (
+          <MagneticWrapper strength={0.3} cursorType="button">
             <button
               type="button"
-              onClick={onOpenAiConsultant}
-              className="px-5 py-3 rounded-full bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent-text)] border border-[var(--accent)]/30 text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+              onClick={handleScrollToProjects}
+              className="px-7 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white font-semibold text-xs sm:text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] transition flex items-center gap-2 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[var(--accent)]" />
-              <span>{t('heroAiScopingCta')}</span>
+              <span>{t('heroExploreCta')}</span>
+              <ArrowDown className="w-4 h-4 animate-bounce" />
             </button>
+          </MagneticWrapper>
+
+          <MagneticWrapper strength={0.3} cursorType="button">
+            <button
+              type="button"
+              onClick={handleScrollToContact}
+              className="px-7 py-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text)] font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+            >
+              <span>{t('heroContactCta')}</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+          </MagneticWrapper>
+
+          {onOpenAiConsultant && (
+            <MagneticWrapper strength={0.25} cursorType="button">
+              <button
+                type="button"
+                onClick={onOpenAiConsultant}
+                className="px-5 py-3 rounded-full bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent-text)] border border-[var(--accent)]/30 text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-[var(--accent)]" />
+                <span>{t('heroAiScopingCta')}</span>
+              </button>
+            </MagneticWrapper>
           )}
         </motion.div>
 

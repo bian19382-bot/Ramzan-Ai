@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { motion } from 'motion/react';
 import { Search, X, FolderKanban, Plus, Sparkles } from 'lucide-react';
 import { Project, Category } from '../../types/portfolio';
 import { ProjectCard } from './ProjectCard';
@@ -64,7 +65,13 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
     <section id="projects" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative">
       <div className="max-w-[1200px] w-full mx-auto">
         {/* Eyebrow & Title */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+        >
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2 block font-mono">
               {t('projectsEyebrow')}
@@ -83,19 +90,18 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                 Showing {displayedProjects.length} of {filteredProjects.length} projects
               </div>
             )}
-            <a
-              href="/admin"
-              className="px-4 py-1.5 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-xs font-semibold text-[var(--text)] transition inline-flex items-center gap-1.5"
-            >
-              <Plus className="w-3.5 h-3.5 text-[var(--accent)]" />
-              <span>Add / Manage Works</span>
-            </a>
           </div>
-        </div>
+        </motion.div>
 
         {/* Filter Bar & Controls only shown if there are projects */}
         {projects.length > 0 && (
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.45, delay: 0.1 }}
+            className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8"
+          >
             {/* Category Filter */}
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0">
               <button
@@ -156,19 +162,27 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                 <option value="title">Alphabetical</option>
               </select>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Projects Grid or Zero/Empty State */}
         {displayedProjects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayedProjects.map((project, idx) => (
-              <ProjectCard
+              <motion.div
                 key={project.id}
-                project={project}
-                onOpenCaseStudy={(proj) => setActiveCaseStudy(proj)}
-                isLargeFeatured={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery}
-              />
+                initial={{ opacity: 0, y: 32, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery ? 'lg:col-span-2' : ''}
+              >
+                <ProjectCard
+                  project={project}
+                  onOpenCaseStudy={(proj) => setActiveCaseStudy(proj)}
+                  isLargeFeatured={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery}
+                />
+              </motion.div>
             ))}
           </div>
         ) : projects.length === 0 ? (
@@ -185,17 +199,10 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <a
-                href="/admin"
+                href="#contact"
                 className="px-6 py-2.5 rounded-full bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-semibold transition inline-flex items-center gap-2 shadow-md"
               >
-                <Plus className="w-4 h-4" />
-                <span>Add Your First Project</span>
-              </a>
-              <a
-                href="#contact"
-                className="px-6 py-2.5 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] text-[var(--text)] text-xs sm:text-sm font-semibold transition border border-[var(--border)]"
-              >
-                Contact Ramzan
+                <span>Get in Touch for Projects</span>
               </a>
             </div>
           </div>

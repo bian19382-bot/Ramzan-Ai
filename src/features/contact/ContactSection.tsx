@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { Mail, MessageCircle, Send, CheckCircle2, Copy, Check, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SiteSettings, Service } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
 import { useLanguage } from '../i18n/LanguageContext';
+import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
 
 interface ContactSectionProps {
   settings: SiteSettings;
@@ -109,7 +111,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       <div className="max-w-[1200px] w-full mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column (5 cols): Direct channels & Approach */}
-          <div className="lg:col-span-5 space-y-8">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 space-y-8"
+          >
             <div>
               <p className="text-xs uppercase tracking-widest text-cyan-400 font-semibold mb-2 font-mono">
                 {t('contactEyebrow')}
@@ -189,11 +197,33 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   : 'Open to suitable opportunities with individuals and businesses where requirements fit my current abilities.'}
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column (7 cols): Contact Form */}
-          <div className="lg:col-span-7">
-            <div className="p-6 sm:p-8 rounded-[24px] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+          <motion.div
+            initial={{ opacity: 0, x: 30, scale: 0.98 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7"
+          >
+            <FuturisticSpotlightCard glowColor="cyan" className="p-6 sm:p-8">
+              {/* Terminal Title Bar */}
+              <div className="flex items-center justify-between pb-4 mb-6 border-b border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                  <span className="ml-2 text-[11px] font-mono text-cyan-400 font-semibold tracking-wider">
+                    TRANSMISSION // TERMINAL
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>ONLINE</span>
+                </span>
+              </div>
+
               {submitted ? (
                 <div className="py-12 text-center space-y-4">
                   <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
@@ -347,8 +377,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   </div>
                 </form>
               )}
-            </div>
-          </div>
+            </FuturisticSpotlightCard>
+          </motion.div>
         </div>
       </div>
     </section>

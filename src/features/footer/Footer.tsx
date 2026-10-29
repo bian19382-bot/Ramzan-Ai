@@ -105,14 +105,6 @@ export const Footer: React.FC<FooterProps> = ({
                 {theme === 'dark' ? <Moon className="w-3.5 h-3.5 text-[var(--accent)]" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
                 <span className="capitalize">Theme: {theme}</span>
               </button>
-
-              <a
-                href="/admin"
-                className="flex items-center gap-2 hover:text-[var(--text)] transition"
-              >
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Admin Management Panel</span>
-              </a>
             </div>
           </div>
         </div>

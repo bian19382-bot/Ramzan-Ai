@@ -18,6 +18,9 @@ import { CommandPalette } from '../features/palette/CommandPalette';
 import { AiProjectConsultant } from '../features/ai/AiProjectConsultant';
 import { PrivacyModal } from '../features/privacy/PrivacyModal';
 import { Project } from '../types/portfolio';
+import { FuturisticCursor } from '../components/ui/FuturisticCursor';
+import { FuturisticMarquee } from '../components/ui/FuturisticMarquee';
+import { FuturisticHudDock } from '../components/ui/FuturisticHudDock';
 
 const STORAGE_WELCOME_DISMISSED = 'portfolio_welcome_banner_dismissed';
 
@@ -45,6 +48,16 @@ export const PublicPortfolio: React.FC = () => {
       session_id: 'session-' + Date.now().toString(36),
       device: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop',
     });
+
+    const handleAdminShortcut = (e: KeyboardEvent) => {
+      // Secret key combination: Ctrl + Shift + A / Cmd + Shift + A
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        window.location.href = '/admin';
+      }
+    };
+    window.addEventListener('keydown', handleAdminShortcut);
+    return () => window.removeEventListener('keydown', handleAdminShortcut);
   }, []);
 
   const handleOpenWelcome = () => {
@@ -71,6 +84,9 @@ export const PublicPortfolio: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors duration-200">
+      {/* Cyber Reticle & Spring Inertia Custom Cursor */}
+      <FuturisticCursor />
+
       {/* Interactive Welcome Photo Banner with Quick Dismiss */}
       <WelcomePhotoBanner
         profile={db.profile}
@@ -105,6 +121,9 @@ export const PublicPortfolio: React.FC = () => {
             setAiConsultantOpen(true);
           }}
         />
+
+        {/* Futuristic Tech Marquee Stream */}
+        <FuturisticMarquee />
 
         <AboutSection profile={db.profile} />
 
@@ -188,6 +207,9 @@ export const PublicPortfolio: React.FC = () => {
         isOpen={privacyModalOpen}
         onClose={() => setPrivacyModalOpen(false)}
       />
+
+      {/* Floating Futuristic HUD Dock (WhatsApp Radar & Thruster) */}
+      <FuturisticHudDock whatsappNumber={db.settings.whatsapp_number} />
     </div>
   );
 };

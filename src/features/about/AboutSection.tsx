@@ -33,18 +33,30 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
     <section id="about" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative">
       <div className="max-w-[1200px] w-full mx-auto">
         {/* Eyebrow & Title */}
-        <div className="mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-12"
+        >
           <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2 block font-mono">
             {t('aboutEyebrow')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
             {t('aboutTitle')}
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column (7 cols): Bio Narrative */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
+          <motion.div
+            initial={{ opacity: 0, x: -25 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 flex flex-col gap-6"
+          >
             <p className="text-base sm:text-lg text-[var(--text)] leading-relaxed font-normal">
               {isRoman
                 ? 'Mera naam Ramzan hai. Main AI Creator & Digital Professional hoon aur filhal mera main focus web development seekhna aur practical website projects banana hai. Main AI-assisted tools ki madad se ideas explore karta hoon, apna workflow behtar banata hoon aur seekhta hoon ke websites ko plan, build, test aur publish kaise kiya jata hai.'
@@ -105,32 +117,42 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                 <span>{t('heroExploreCta')}</span>
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column (5 cols): Verified Highlights Cards */}
-          <div className="lg:col-span-5 flex flex-col gap-3.5">
+          <motion.div
+            initial={{ opacity: 0, x: 25 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 flex flex-col gap-3.5"
+          >
             <h3 className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-1">
               {isRoman ? 'Mere Focus Points' : 'About Highlights'}
             </h3>
             {highlights.map((h, idx) => (
-              <div
+              <motion.div
                 key={idx}
-                className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:border-cyan-500/40 transition duration-200 flex items-start gap-3"
+                initial={{ opacity: 0, x: 15 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.08 }}
+                className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-400/50 hover:bg-cyan-950/20 transition-all duration-300 flex items-start gap-3.5 group cursor-default"
               >
-                <div className="w-6 h-6 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 mt-0.5">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/20 group-hover:border-cyan-400 group-hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all">
+                  <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold block">
-                    {h.label}
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400/80 font-semibold block">
+                    // {h.label}
                   </span>
-                  <p className="text-xs sm:text-sm text-[var(--text)] mt-0.5 font-medium leading-snug">
+                  <p className="text-xs sm:text-sm text-[var(--text)] mt-0.5 font-medium leading-snug group-hover:text-cyan-200 transition-colors">
                     {h.text}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminLayout, AdminTab } from './AdminLayout';
+import { AdminLogin } from './AdminLogin';
+import { adminAuth } from './auth/adminAuth';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { AdminProjects } from './pages/AdminProjects';
 import { AdminSkills } from './pages/AdminSkills';
@@ -17,7 +19,24 @@ import { AdminSeo } from './pages/AdminSeo';
 import { AdminCategories } from './pages/AdminCategories';
 
 export const AdminPortal: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return adminAuth.checkAuth();
+  });
   const [tab, setTab] = useState<AdminTab>('dashboard');
+
+  useEffect(() => {
+    // Re-verify auth on mount and tab change
+    setIsAuthenticated(adminAuth.checkAuth());
+  }, []);
+
+  const handleLogout = () => {
+    adminAuth.logout();
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return <AdminLogin onSuccess={() => setIsAuthenticated(true)} />;
+  }
 
   const renderContent = () => {
     switch (tab) {
@@ -57,7 +76,11 @@ export const AdminPortal: React.FC = () => {
   };
 
   return (
-    <AdminLayout currentTab={tab} onSelectTab={(newTab) => setTab(newTab)}>
+    <AdminLayout
+      currentTab={tab}
+      onSelectTab={(newTab) => setTab(newTab)}
+      onLogout={handleLogout}
+    >
       {renderContent()}
     </AdminLayout>
   );

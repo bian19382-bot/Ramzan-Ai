@@ -4,6 +4,7 @@ import { NavItem, SocialLink } from '../../types/portfolio';
 import { useTheme } from '../theme/ThemeContext';
 import { useLanguage, LanguageCode } from '../i18n/LanguageContext';
 import { MobileMenu } from './MobileMenu';
+import { MagneticWrapper } from '../../components/ui/MagneticWrapper';
 
 interface NavbarProps {
   siteName: string;
@@ -76,18 +77,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           {/* Brand Monogram & Name */}
-          <a
-            href="#home"
-            className="flex items-center gap-3 group focus:outline-none"
-            aria-label={`${siteName} home`}
-          >
-            <div className="w-8 h-8 rounded-full bg-[var(--accent)]/15 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent-text)] font-display font-bold text-xs tracking-wider group-hover:scale-105 transition">
-              {monogram}
-            </div>
-            <span className="font-display font-semibold text-sm tracking-tight text-[var(--text)] hidden sm:inline">
-              {siteName}
-            </span>
-          </a>
+          <MagneticWrapper strength={0.2} cursorType="nav">
+            <a
+              href="#home"
+              className="flex items-center gap-3 group focus:outline-none"
+              aria-label={`${siteName} home`}
+            >
+              <div className="w-8 h-8 rounded-full bg-[var(--accent)]/15 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent-text)] font-display font-bold text-xs tracking-wider group-hover:scale-105 transition">
+                {monogram}
+              </div>
+              <span className="font-display font-semibold text-sm tracking-tight text-[var(--text)] hidden sm:inline">
+                {siteName}
+              </span>
+            </a>
+          </MagneticWrapper>
 
           {/* Center Navigation Links (Desktop) */}
           <nav className="hidden md:flex items-center gap-1 text-xs lg:text-sm font-medium">
@@ -114,20 +117,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                     : item.label;
 
                 return (
-                  <a
-                    key={item.id}
-                    href={item.target}
-                    className={`px-3 py-1.5 rounded-full transition-all duration-200 relative ${
-                      isActive
-                        ? 'text-[var(--accent-text)] font-semibold'
-                        : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)]/60'
-                    }`}
-                  >
-                    {label}
-                    {isActive && (
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3.5 h-[2px] bg-[var(--accent)] rounded-full" />
-                    )}
-                  </a>
+                  <MagneticWrapper key={item.id} strength={0.28} cursorType="nav">
+                    <a
+                      href={item.target}
+                      className={`px-3 py-1.5 rounded-full transition-all duration-200 relative block ${
+                        isActive
+                          ? 'text-[var(--accent-text)] font-semibold'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)]/60'
+                      }`}
+                    >
+                      {label}
+                      {isActive && (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3.5 h-[2px] bg-[var(--accent)] rounded-full" />
+                      )}
+                    </a>
+                  </MagneticWrapper>
                 );
               })}
           </nav>
@@ -226,32 +230,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Resume Link */}
-            <a
-              href="/resume"
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition"
-              title="View & Print Resume"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Resume</span>
-            </a>
-
-            {/* Quick Edit Action Button */}
-            <a
-              href="/admin"
-              className="px-3 py-1.5 rounded-full bg-[var(--surface-2)] hover:bg-[var(--accent)] hover:text-white text-[var(--text)] border border-[var(--border)] text-xs font-semibold transition hidden sm:inline-flex items-center gap-1.5"
-              title="Admin & Quick Edit Mode"
-            >
-              <Shield className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Quick Edit</span>
-            </a>
+            <MagneticWrapper strength={0.25} cursorType="nav" className="hidden lg:inline-block">
+              <a
+                href="/resume"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition"
+                title="View & Print Resume"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Resume</span>
+              </a>
+            </MagneticWrapper>
 
             {/* Primary Action Button */}
-            <a
-              href="#contact"
-              className="hidden sm:inline-flex items-center px-4 py-2 rounded-full bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white font-medium text-xs lg:text-sm shadow-md transition"
-            >
-              {t('navCta')}
-            </a>
+            <MagneticWrapper strength={0.32} cursorType="button" className="hidden sm:inline-block">
+              <a
+                href="#contact"
+                className="inline-flex items-center px-4 py-2 rounded-full bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white font-medium text-xs lg:text-sm shadow-md transition"
+              >
+                {t('navCta')}
+              </a>
+            </MagneticWrapper>
 
             {/* Mobile Menu Hamburger */}
             <button

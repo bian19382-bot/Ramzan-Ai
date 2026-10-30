@@ -73,7 +73,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
           className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
         >
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2 block font-mono">
+            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
               {t('projectsEyebrow')}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">

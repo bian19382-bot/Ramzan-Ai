@@ -33,8 +33,8 @@ export const FuturisticCursor: React.FC = () => {
       }
 
       // Check hovered element for cursor mode & magnetic target
-      const target = e.target as HTMLElement | null;
-      if (!target) {
+      const target = e.target;
+      if (!(target instanceof Element)) {
         setMode('default');
         targetPos.current = null;
         return;
@@ -50,9 +50,9 @@ export const FuturisticCursor: React.FC = () => {
 
       // 2. Check Nav Element
       const navTarget = target.closest('[data-cursor="nav"]') || target.closest('nav a');
-      if (navTarget) {
+      if (navTarget instanceof Element && typeof navTarget.getBoundingClientRect === 'function') {
         setMode('nav');
-        const rect = (navTarget as HTMLElement).getBoundingClientRect();
+        const rect = navTarget.getBoundingClientRect();
         targetPos.current = {
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2,
@@ -66,12 +66,12 @@ export const FuturisticCursor: React.FC = () => {
         target.closest('button') ||
         target.closest('a') ||
         target.closest('[role="button"]') ||
-        target.classList.contains('cursor-pointer');
+        target.closest('.cursor-pointer');
 
-      if (buttonTarget) {
+      if (buttonTarget instanceof Element && typeof buttonTarget.getBoundingClientRect === 'function') {
         setMode('button');
-        const rect = (buttonTarget as HTMLElement).getBoundingClientRect();
-        // Gentle magnetic pull toward element center if within 40px
+        const rect = buttonTarget.getBoundingClientRect();
+        // Gentle magnetic pull toward element center if within 50px
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);

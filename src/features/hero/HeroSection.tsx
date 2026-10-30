@@ -133,20 +133,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           transition={{ duration: 0.5, delay: 0.2 }}
           className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4"
         >
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-ping" />
             <span>CORE // WEB DEV</span>
           </div>
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
-            <Sparkles className="w-3 h-3 text-cyan-400" />
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+            <Sparkles className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             <span>AI ASSISTED</span>
           </div>
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
             <span>DIRECT CHANNELS</span>
           </div>
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/70 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-600 dark:bg-purple-400" />
             <span>PORTFOLIO ACTIVE</span>
           </div>
         </motion.div>

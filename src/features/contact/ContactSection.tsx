@@ -119,7 +119,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             className="lg:col-span-5 space-y-8"
           >
             <div>
-              <p className="text-xs uppercase tracking-widest text-cyan-400 font-semibold mb-2 font-mono">
+              <p className="text-xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2 font-mono">
                 {t('contactEyebrow')}
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight mb-4">
@@ -214,7 +214,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                  <span className="ml-2 text-[11px] font-mono text-cyan-400 font-semibold tracking-wider">
+                  <span className="ml-2 text-[11px] font-mono text-cyan-600 dark:text-cyan-400 font-semibold tracking-wider">
                     TRANSMISSION // TERMINAL
                   </span>
                 </div>

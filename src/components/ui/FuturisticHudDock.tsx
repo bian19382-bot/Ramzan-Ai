@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, MessageCircle, Shield } from 'lucide-react';
+import { ArrowUp, MessageCircle } from 'lucide-react';
 
 interface FuturisticHudDockProps {
   whatsappNumber: string;
@@ -35,7 +35,7 @@ export const FuturisticHudDock: React.FC<FuturisticHudDockProps> = ({ whatsappNu
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
             onClick={scrollToTop}
             aria-label="Scroll to top"
-            className="w-10 h-10 rounded-xl bg-[#0e121a]/90 backdrop-blur-md border border-cyan-500/40 text-cyan-300 hover:text-white hover:bg-cyan-500/20 hover:border-cyan-300 transition-all flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.25)] group cursor-pointer"
+            className="w-10 h-10 rounded-xl bg-white/95 dark:bg-[#0e121a]/90 backdrop-blur-md border border-cyan-600/30 dark:border-cyan-500/40 text-cyan-700 dark:text-cyan-300 hover:text-cyan-900 dark:hover:text-white hover:bg-cyan-50 dark:hover:bg-cyan-500/20 hover:border-cyan-500 dark:hover:border-cyan-300 transition-all flex items-center justify-center shadow-md dark:shadow-[0_0_20px_rgba(6,182,212,0.25)] group cursor-pointer"
           >
             <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
           </motion.button>
@@ -48,10 +48,10 @@ export const FuturisticHudDock: React.FC<FuturisticHudDockProps> = ({ whatsappNu
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
-        className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0a0d14]/95 backdrop-blur-md border border-emerald-500/40 text-emerald-300 hover:text-white hover:border-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.35)] transition-all group radar-wave"
+        className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/95 dark:bg-[#0a0d14]/95 backdrop-blur-md border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 hover:text-emerald-950 dark:hover:text-white hover:border-emerald-500 hover:shadow-lg dark:hover:shadow-[0_0_25px_rgba(16,185,129,0.35)] transition-all group radar-wave shadow-sm"
       >
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <MessageCircle className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+        <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
+        <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
         <span className="text-xs font-mono font-semibold hidden sm:inline-block">
           WhatsApp Direct
         </span>

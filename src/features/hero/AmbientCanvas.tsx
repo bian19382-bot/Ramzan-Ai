@@ -102,9 +102,10 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = () => {
       ctx.clearRect(0, 0, width, height);
 
       // 1. Subtle Futuristic Cyber Grid Floor lines
+      const isDark = document.documentElement.classList.contains('dark') || document.documentElement.getAttribute('data-theme') !== 'light';
       const gridSize = 72;
       ctx.lineWidth = 0.5;
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.035)';
+      ctx.strokeStyle = isDark ? 'rgba(6, 182, 212, 0.035)' : 'rgba(14, 116, 144, 0.055)';
 
       const offsetX = (time * 8) % gridSize;
       const offsetY = (time * 6) % gridSize;
@@ -130,8 +131,8 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = () => {
           mouse.y,
           mouse.radius
         );
-        glowGrad.addColorStop(0, 'rgba(6, 182, 212, 0.12)');
-        glowGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.04)');
+        glowGrad.addColorStop(0, isDark ? 'rgba(6, 182, 212, 0.12)' : 'rgba(37, 99, 235, 0.08)');
+        glowGrad.addColorStop(0.5, isDark ? 'rgba(59, 130, 246, 0.04)' : 'rgba(14, 165, 233, 0.03)');
         glowGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
 
         ctx.fillStyle = glowGrad;
@@ -177,8 +178,8 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = () => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, pRadius, 0, Math.PI * 2);
         ctx.fillStyle = `${p.color}${alpha})`;
-        ctx.shadowColor = 'rgba(6, 182, 212, 0.6)';
-        ctx.shadowBlur = 8;
+        ctx.shadowColor = isDark ? 'rgba(6, 182, 212, 0.6)' : 'rgba(37, 99, 235, 0.4)';
+        ctx.shadowBlur = isDark ? 8 : 4;
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -189,11 +190,11 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = () => {
           const maxDist = 120;
 
           if (dist2 < maxDist) {
-            const lineAlpha = (1 - dist2 / maxDist) * 0.22;
+            const lineAlpha = (1 - dist2 / maxDist) * (isDark ? 0.22 : 0.16);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(6, 182, 212, ${lineAlpha})`;
+            ctx.strokeStyle = isDark ? `rgba(6, 182, 212, ${lineAlpha})` : `rgba(37, 99, 235, ${lineAlpha})`;
             ctx.lineWidth = 0.8;
             ctx.stroke();
           }

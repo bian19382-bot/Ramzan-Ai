@@ -40,7 +40,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="mb-12"
         >
-          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2 block font-mono">
+          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
             {t('aboutEyebrow')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
@@ -137,16 +137,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.08 }}
-                className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-400/50 hover:bg-cyan-950/20 transition-all duration-300 flex items-start gap-3.5 group cursor-default"
+                className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-500/50 hover:bg-cyan-50/60 dark:hover:bg-cyan-950/20 transition-all duration-300 flex items-start gap-3.5 group cursor-default"
               >
-                <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/20 group-hover:border-cyan-400 group-hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all">
+                <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/20 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 group-hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400/80 font-semibold block">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-400/90 font-bold block">
                     // {h.label}
                   </span>
-                  <p className="text-xs sm:text-sm text-[var(--text)] mt-0.5 font-medium leading-snug group-hover:text-cyan-200 transition-colors">
+                  <p className="text-xs sm:text-sm text-[var(--text)] mt-0.5 font-medium leading-snug group-hover:text-cyan-800 dark:group-hover:text-cyan-200 transition-colors">
                     {h.text}
                   </p>
                 </div>

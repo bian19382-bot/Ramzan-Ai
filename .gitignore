@@ -1,8 +1,21 @@
+# Dependencies
 node_modules/
+
+# Production Build Outputs
 build/
 dist/
+
+# Lockfiles to ignore (prevents Cloudflare build conflicts)
+bun.lock
+bun.lockb
+
+# Testing & Coverage
 coverage/
+
+# OS and Log Files
 .DS_Store
 *.log
+
+# Environment variables
 .env*
 !.env.example

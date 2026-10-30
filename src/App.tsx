@@ -17,13 +17,16 @@ export default function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
+              {/* Public Website - Bilkul khula aur open for all visitors (no login required) */}
+              <Route path="/" element={<PublicPortfolio />} />
+              <Route path="/resume" element={<ResumePage />} />
+              <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+
+              {/* Admin Login Route */}
               <Route path="/login" element={<LoginPage />} />
 
-              {/* Every application page requires an authenticated Supabase user. */}
+              {/* Login sirf Admin Panel ke liye */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<PublicPortfolio />} />
-                <Route path="/resume" element={<ResumePage />} />
-                <Route path="/projects/:slug" element={<ProjectDetailPage />} />
                 <Route path="/admin" element={<AdminPortal />} />
                 <Route path="/admin/*" element={<AdminPortal />} />
               </Route>

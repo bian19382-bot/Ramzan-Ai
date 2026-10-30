@@ -72,7 +72,7 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
         transformPerspective: 1000,
       }}
       data-cursor={cursorType}
-      className={`relative rounded-2xl overflow-hidden bg-[#0d1017]/90 backdrop-blur-xl border border-[var(--border)] transition-colors duration-300 hover:border-cyan-500/40 hover:shadow-[0_0_35px_rgba(6,182,212,0.18)] group ${className}`}
+      className={`relative rounded-2xl overflow-hidden bg-[var(--surface)]/95 dark:bg-[#0d1017]/90 backdrop-blur-xl border border-[var(--border)] transition-all duration-300 hover:border-cyan-500/60 dark:hover:border-cyan-500/40 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(6,182,212,0.18)] group ${className}`}
     >
       {/* Interactive Radial Spotlight Follower */}
       <div
@@ -85,10 +85,10 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       {/* Cyber Corner HUD Brackets */}
       {cornerAccents && (
         <>
-          <span className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-cyan-500/30 group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-cyan-500/30 group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
-          <span className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-cyan-500/30 group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
-          <span className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b-2 border-r-2 border-cyan-500/30 group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
+          <span className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-cyan-600/35 dark:border-cyan-500/30 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-cyan-600/35 dark:border-cyan-500/30 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
+          <span className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-cyan-600/35 dark:border-cyan-500/30 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
+          <span className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b-2 border-r-2 border-cyan-600/35 dark:border-cyan-500/30 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 transition-colors pointer-events-none z-20" />
         </>
       )}
 

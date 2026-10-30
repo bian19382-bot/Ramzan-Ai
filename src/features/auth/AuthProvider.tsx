@@ -7,12 +7,13 @@ import React, {
   useState,
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 type AuthContextValue = {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isConfigured: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -26,6 +27,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let active = true;
+
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
 
     const initialize = async () => {
       try {
@@ -44,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(null);
         }
       } catch (error) {
-        console.error('Unable to restore Supabase session:', error);
+        console.warn('Unable to restore Supabase session:', error);
         if (active) {
           setSession(null);
           setUser(null);
@@ -74,6 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
+    if (!isSupabaseConfigured) {
+      throw new Error(
+        'Supabase is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.'
+      );
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
@@ -91,14 +102,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    }
     setSession(null);
     setUser(null);
   }, []);
 
   const value = useMemo(
-    () => ({ user, session, loading, signIn, signOut }),
+    () => ({ user, session, loading, isConfigured: isSupabaseConfigured, signIn, signOut }),
     [user, session, loading, signIn, signOut]
   );
 

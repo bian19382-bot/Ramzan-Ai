@@ -108,7 +108,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="mb-14 text-left"
         >
-          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2 block font-mono">
+          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
             {t('servicesEyebrow')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
@@ -126,17 +126,17 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-16 p-6 sm:p-8 rounded-3xl bg-[#0b0e14]/90 border border-cyan-500/25 relative overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.1)]"
+          className="mb-16 p-6 sm:p-8 rounded-3xl bg-[var(--surface)]/90 dark:bg-[#0b0e14]/90 border border-[var(--border)] dark:border-cyan-500/25 relative overflow-hidden shadow-sm dark:shadow-[0_0_40px_rgba(6,182,212,0.1)] transition-colors duration-200"
         >
           {/* Subtle Cyber Grid Glow */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 blur-3xl pointer-events-none" />
 
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--border)]">
-            <p className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-cyan-400" />
+            <p className="text-xs font-mono uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
               <span>{isRoman ? 'Mera Tareeqa // 5-Step Workflow Pipeline' : 'System Approach // 5-Step Workflow Pipeline'}</span>
             </p>
-            <span className="hidden sm:inline-flex text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <span className="hidden sm:inline-flex text-[10px] font-mono text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-semibold">
               ● REAL-TIME EXECUTION
             </span>
           </div>
@@ -149,18 +149,18 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.1 }}
-                className="relative flex flex-col p-4 rounded-2xl bg-[var(--surface)]/60 border border-[var(--border)] group hover:border-cyan-400/50 hover:bg-cyan-950/15 transition-all duration-300"
+                className="relative flex flex-col p-4 rounded-2xl bg-[var(--surface-2)]/70 dark:bg-[var(--surface)]/60 border border-[var(--border)] group hover:border-cyan-500/60 dark:hover:border-cyan-400/50 hover:bg-cyan-50/50 dark:hover:bg-cyan-950/15 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xl font-mono font-extrabold text-cyan-400/80 group-hover:text-cyan-300 transition-colors">
+                  <span className="text-xl font-mono font-extrabold text-cyan-600 dark:text-cyan-400/80 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors">
                     {p.step}
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-cyan-400/30 group-hover:bg-cyan-400 group-hover:shadow-[0_0_8px_#22d3ee] transition-all" />
+                  <span className="w-2 h-2 rounded-full bg-cyan-500/40 dark:bg-cyan-400/30 group-hover:bg-cyan-500 dark:group-hover:bg-cyan-400 group-hover:shadow-[0_0_8px_#22d3ee] transition-all" />
                 </div>
-                <h3 className="text-sm font-bold font-display text-[var(--text)] mb-1.5 group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-sm font-bold font-display text-[var(--text)] mb-1.5 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors">
                   {p.title}
                 </h3>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
                   {p.desc}
                 </p>
               </motion.div>

@@ -3,7 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 
 export function ProtectedRoute() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, isConfigured } = useAuth();
   const location = useLocation();
   const [signOutError, setSignOutError] = React.useState('');
 
@@ -14,6 +14,12 @@ export function ProtectedRoute() {
         <p>Verifying your session…</p>
       </main>
     );
+  }
+
+  // When Supabase is not yet configured in environment variables,
+  // render the app in preview mode so the site remains usable.
+  if (!isConfigured) {
+    return <Outlet />;
   }
 
   if (!user) {

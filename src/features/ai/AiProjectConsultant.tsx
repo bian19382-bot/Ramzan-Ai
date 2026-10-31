@@ -35,14 +35,23 @@ export const AiProjectConsultant: React.FC<AiProjectConsultantProps> = ({
 
     setLoading(true);
     setResponse(null);
-    setThinkingOutput('Analyzing technical constraints, latency budgets, and full-stack architecture with Gemini High Thinking...');
+    setThinkingOutput('Analyzing technical constraints, latency budgets, and full-stack architecture with Gemini AI...');
 
     try {
-      const res = await fetch('/api/ai/consult', {
+      let res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: textToSend }),
       });
+
+      if (!res.ok && res.status === 404) {
+        // Fallback to legacy route if /api/generate is not mounted
+        res = await fetch('/api/ai/consult', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: textToSend }),
+        });
+      }
 
       if (!res.ok) {
         throw new Error('Server returned ' + res.status);

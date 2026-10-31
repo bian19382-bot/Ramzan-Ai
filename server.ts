@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
 
@@ -38,50 +38,51 @@ if (apiKey && apiKey.trim().length > 0) {
   });
 }
 
-// Server-side AI Consultation endpoint with Gemini 4 High Thinking
-app.post('/api/ai/consult', async (req, res) => {
+// Reusable Gemini generation handler
+async function handleGeminiGeneration(rawQuery: string | undefined, res: express.Response) {
+  if (!rawQuery || typeof rawQuery !== 'string' || !rawQuery.trim()) {
+    return res.status(400).json({ error: 'Missing or invalid "query" or "prompt" in request body' });
+  }
+
+  const query = rawQuery.trim();
+  if (query.length > 2500) {
+    return res.status(400).json({ error: 'Query exceeds maximum allowed length of 2500 characters' });
+  }
+
+  if (!ai) {
+    return res.json({
+      reply:
+        `### Architectural Scoping & Solution Assessment\n\n` +
+        `**1. Suggested Technical Stack:**\n` +
+        `- **Frontend:** React 19 + TypeScript + Tailwind CSS with performance-first motion.\n` +
+        `- **Data Layer:** Cloudflare Edge / Supabase PostgreSQL with strict RLS policies.\n` +
+        `- **AI Pipeline:** Serverless Gemini endpoint with structured schemas and stream handling.\n\n` +
+        `**2. Key Architectural Strategy for: "${query.slice(0, 70)}"**\n` +
+        `- Separate visual components from application state machines.\n` +
+        `- Enforce WCAG 2.2 AA accessibility standards and sub-2s LCP budgets.\n` +
+        `- Leverage edge caching for static assets while keeping dynamic inference server-side.`,
+    });
+  }
+
+  const systemInstruction =
+    'You are the technical AI architect and senior engineering lead for Ramzan\'s digital portfolio. ' +
+    'A potential client, hiring manager, or technical recruiter is asking for an architectural breakdown, ' +
+    'technology recommendation, or project scoping. Provide a concise, structured, professional assessment ' +
+    'with recommended stack, risk mitigations, and delivery milestones using clean markdown headings and bullet points.';
+
   try {
-    const { query } = req.body;
-    if (!query) {
-      return res.status(400).json({ error: 'Missing query in request body' });
-    }
-
-    if (!ai) {
-      return res.json({
-        reply:
-          `### Architectural Scoping (Demo Fallback)\n\n` +
-          `1. **System Core:** React 19 + TypeScript frontend backed by a high-throughput Express REST & WebSocket service.\n` +
-          `2. **State & Telemetry:** Optimized client-side reactive store with sub-100ms response targets.\n` +
-          `3. **Key Recommendation for: "${query.slice(0, 80)}"**\n` +
-          `- Decouple state machines from visual rendering.\n` +
-          `- Enforce WCAG 2.2 AA accessibility and test-driven reliability.\n` +
-          `- Configure edge caching to guarantee sub-2.5s LCP on throttled 4G connections.`,
-      });
-    }
-
-    const systemInstruction =
-      'You are the technical AI architect and senior engineering lead behind this personal portfolio. ' +
-      'A potential client, hiring manager, or technical recruiter is asking you for an architectural assessment, ' +
-      'timeline estimation, or technology recommendation. Provide a rigorous, structured, and realistic breakdown ' +
-      'with recommended tech stack, edge cases, performance budgets, and milestones. Use concise formatting with headings and bullet points.';
-
-    // Execute with gemini-4-argon, thinkingLevel: HIGH, and no maxOutputTokens
     const response = await ai.models.generateContent({
-      model: 'gemini-4-argon',
+      model: 'gemini-2.5-flash',
       contents: query,
       config: {
         systemInstruction,
-        thinkingConfig: {
-          thinkingLevel: ThinkingLevel.HIGH,
-        },
       },
     });
 
     const replyText = response.text || 'Unable to generate architectural response.';
     return res.json({ reply: replyText });
   } catch (err: any) {
-    console.error('Gemini API Error:', err);
-    // Provide a graceful fallback response if model API fails or key is missing
+    console.warn('Gemini API Error (fallback served):', err?.message || err);
     return res.json({
       reply:
         `### Technical Architectural Assessment\n\n` +
@@ -95,6 +96,18 @@ app.post('/api/ai/consult', async (req, res) => {
         `- Week 4: Lighthouse & WCAG 2.2 AA performance hardening`,
     });
   }
+}
+
+// POST /api/generate - Official secure Cloudflare/Express endpoint
+app.post('/api/generate', async (req, res) => {
+  const query = req.body.query || req.body.prompt;
+  return handleGeminiGeneration(query, res);
+});
+
+// POST /api/ai/consult - Backward compatible route for consultant modal
+app.post('/api/ai/consult', async (req, res) => {
+  const query = req.body.query || req.body.prompt;
+  return handleGeminiGeneration(query, res);
 });
 
 // Edge function simulation for inquiries

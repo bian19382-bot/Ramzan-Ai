@@ -38,12 +38,23 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-[var(--border)]">
           {/* Brand Col */}
           <div className="md:col-span-5 space-y-3">
-            <h3 className="font-display font-bold text-base text-[var(--text)] tracking-tight">
-              {settings.site_name}
-            </h3>
-            <p className="text-xs font-mono text-cyan-600 dark:text-cyan-400 font-semibold">
-              {settings.tagline}
-            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.35)] bg-black shrink-0">
+                <img
+                  src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                  alt="Ramzan Logo"
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-base text-[var(--text)] tracking-tight">
+                  {settings.site_name}
+                </h3>
+                <p className="text-xs font-mono text-cyan-600 dark:text-cyan-400 font-semibold">
+                  {settings.tagline}
+                </p>
+              </div>
+            </div>
             <p className="max-w-sm leading-relaxed text-xs sm:text-sm text-[var(--text-muted)] font-medium">
               Building digital experiences with AI-assisted creativity.
             </p>

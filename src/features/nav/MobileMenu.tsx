@@ -74,9 +74,23 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           >
             <div>
               <div className="flex items-center justify-between pb-6 border-b border-[var(--border)]">
-                <span className="font-display font-bold text-lg tracking-tight text-[var(--text)]">
-                  Menu
-                </span>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl overflow-hidden border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.35)] bg-black shrink-0">
+                    <img
+                      src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                      alt="Ramzan Logo"
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                  <div>
+                    <span className="font-display font-bold text-base tracking-tight text-[var(--text)] block leading-tight">
+                      Ramzan
+                    </span>
+                    <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 block">
+                      AI & Web Portfolio
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={onClose}
                   className="p-2.5 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"

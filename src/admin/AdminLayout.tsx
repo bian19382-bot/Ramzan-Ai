@@ -127,14 +127,18 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           {/* Brand Header */}
           <div className="p-5 border-b border-[var(--border)] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[var(--accent)] text-white flex items-center justify-center font-display font-bold text-sm shadow-md">
-                <Shield className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl overflow-hidden border border-cyan-500/40 shadow-md bg-black shrink-0">
+                <img
+                  src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                  alt="Ramzan Brand"
+                  className="w-full h-full object-cover object-center"
+                />
               </div>
               <div>
                 <h2 className="text-sm font-bold font-display text-[var(--text)] leading-tight">
-                  Portfolio Studio
+                  Ramzan Studio
                 </h2>
-                <span className="text-[10px] font-mono text-[var(--text-muted)]">Control Engine</span>
+                <span className="text-[10px] font-mono text-cyan-500">Admin Engine</span>
               </div>
             </div>
 

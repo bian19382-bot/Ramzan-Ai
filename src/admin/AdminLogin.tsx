@@ -73,15 +73,19 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
         {/* Top Header Badge */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-black flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Shield className="w-5 h-5 text-black" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/40 shadow-lg shadow-cyan-500/20 bg-black flex items-center justify-center shrink-0">
+              <img
+                src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                alt="Ramzan Brand"
+                className="w-full h-full object-cover object-center"
+              />
             </div>
             <div>
               <h1 className="text-base font-bold font-display text-white tracking-tight">
-                Studio Admin
+                Ramzan Admin
               </h1>
               <p className="text-[11px] font-mono text-cyan-400">
-                Protected Control Engine
+                Studio Control Engine
               </p>
             </div>
           </div>

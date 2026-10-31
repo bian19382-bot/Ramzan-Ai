@@ -83,8 +83,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex items-center gap-3 group focus:outline-none"
               aria-label={`${siteName} home`}
             >
-              <div className="w-8 h-8 rounded-full bg-[var(--accent)]/15 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent-text)] font-display font-bold text-xs tracking-wider group-hover:scale-105 transition">
-                {monogram}
+              <div className="relative w-8 h-8 rounded-xl overflow-hidden border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.35)] bg-black group-hover:border-cyan-400 group-hover:shadow-[0_0_18px_rgba(6,182,212,0.6)] group-hover:scale-105 transition-all flex items-center justify-center shrink-0">
+                <img
+                  src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                  alt="Ramzan Logo"
+                  className="w-full h-full object-cover object-center"
+                />
               </div>
               <span className="font-display font-semibold text-sm tracking-tight text-[var(--text)] hidden sm:inline">
                 {siteName}

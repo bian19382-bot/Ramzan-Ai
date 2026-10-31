@@ -43,13 +43,13 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
         {/* Eyebrow, Title & CV Download CTA */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[var(--accent-text)] font-semibold mb-2 font-mono">
+            <p className="text-xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2 font-mono">
               // 05. BACKGROUND & TRACK RECORD
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
               Work Experience & Milestones
             </h2>
-            <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-xl mt-2">
+            <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-xl mt-2 font-medium">
               Demonstrated engineering ownership across mission-critical platforms, high-throughput APIs, and creative products.
             </p>
           </div>
@@ -57,10 +57,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
           <button
             onClick={handleDownloadCV}
             disabled={downloading}
-            className="px-6 py-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--accent)] hover:text-white border border-[var(--border)] text-xs sm:text-sm font-semibold text-[var(--text)] transition flex items-center gap-2 self-start md:self-auto cursor-pointer shadow-sm active:scale-95"
+            className="px-6 py-3 rounded-full bg-[var(--surface-2)] hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-600 hover:text-white border border-[var(--border)] hover:border-cyan-400 text-xs sm:text-sm font-semibold text-[var(--text)] transition-all flex items-center gap-2 self-start md:self-auto cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] active:scale-95"
             aria-label="Download CV"
           >
-            <Download className="w-4 h-4 text-[var(--accent-text)]" />
+            <Download className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <span>{downloading ? 'Preparing File...' : 'Download Resume (CV)'}</span>
           </button>
         </div>
@@ -69,49 +69,49 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
           {/* Left Column (7 cols): Career Timeline */}
           <div className="lg:col-span-7">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] font-mono mb-8 flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-[var(--accent-text)]" />
+              <Briefcase className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
               <span>Career Trajectory</span>
             </h3>
 
-            <div className="relative pl-6 sm:pl-8 border-l-2 border-[var(--border)] space-y-10">
+            <div className="relative pl-6 sm:pl-8 border-l-2 border-cyan-500/40 dark:border-cyan-500/50 space-y-10">
               {experiences.map((exp) => (
                 <div key={exp.id} className="relative group">
                   {/* Timeline Node Dot */}
-                  <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-[var(--surface)] border-2 border-[var(--accent)] group-hover:scale-125 transition-transform" />
+                  <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-[var(--surface)] border-2 border-cyan-500 group-hover:scale-125 group-hover:shadow-[0_0_12px_#06b6d4] transition-all" />
 
-                  <div className="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:border-[var(--accent)]/50 transition">
+                  <div className="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-50/50 dark:hover:bg-cyan-950/20 hover:shadow-[0_0_25px_rgba(6,182,212,0.2)] transition-all duration-300">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <span className="text-xs font-mono text-[var(--accent-text)] font-semibold flex items-center gap-1.5">
+                      <span className="text-xs font-mono text-cyan-700 dark:text-cyan-300 font-semibold flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         {exp.start_date} — {exp.end_date || 'Present'}
                       </span>
                       {exp.is_current && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
                           Active Role
                         </span>
                       )}
                     </div>
 
-                    <h4 className="text-lg font-bold font-display text-[var(--text)] mb-1">
+                    <h4 className="text-lg font-bold font-display text-[var(--text)] mb-1 group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors">
                       {exp.role}
                     </h4>
                     <p className="text-xs sm:text-sm font-medium text-[var(--text-muted)] mb-3 flex items-center gap-2">
-                      <span className="text-[var(--text)]">{exp.organization}</span>
+                      <span className="text-[var(--text)] font-semibold">{exp.organization}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
+                        <MapPin className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
                         {exp.location}
                       </span>
                     </p>
 
-                    <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-4">
+                    <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-4 font-normal">
                       {exp.description}
                     </p>
 
                     <div className="space-y-1.5">
                       {exp.highlights.map((h, hIdx) => (
-                        <div key={hIdx} className="flex items-start gap-2 text-xs text-[var(--text)]">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[var(--accent)] shrink-0 mt-0.5" />
+                        <div key={hIdx} className="flex items-start gap-2 text-xs text-[var(--text)] font-medium">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
                           <span>{h}</span>
                         </div>
                       ))}
@@ -134,18 +134,18 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               {education.map((edu) => (
                 <div
                   key={edu.id}
-                  className="p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-sm"
+                  className="p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-50/50 dark:hover:bg-cyan-950/20 hover:shadow-[0_0_20px_rgba(6,182,212,0.18)] transition-all duration-300"
                 >
-                  <span className="text-[11px] font-mono text-[var(--text-muted)]">
+                  <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300 font-semibold">
                     {edu.start_year} – {edu.end_year || 'Present'}
                   </span>
                   <h4 className="text-base font-bold font-display text-[var(--text)] mt-1">
                     {edu.degree} in {edu.field}
                   </h4>
-                  <p className="text-xs text-[var(--accent-text)] font-medium mb-2">
+                  <p className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mb-2">
                     {edu.institution}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                  <p className="text-xs text-[var(--text-muted)] leading-relaxed font-normal">
                     {edu.notes}
                   </p>
                 </div>
@@ -155,7 +155,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             {/* Certifications */}
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] font-mono mb-4 flex items-center gap-2">
-                <Award className="w-4 h-4 text-purple-400" />
+                <Award className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                 <span>Verified Credentials</span>
               </h3>
 
@@ -163,7 +163,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 {certifications.map((cert) => (
                   <div
                     key={cert.id}
-                    className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-between"
+                    className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] hover:border-purple-400 dark:hover:border-purple-400 hover:bg-purple-50/50 dark:hover:bg-purple-950/20 hover:shadow-[0_0_20px_rgba(168,85,247,0.18)] transition-all duration-300 flex items-center justify-between"
                   >
                     <div>
                       <h4 className="text-xs sm:text-sm font-semibold text-[var(--text)]">
@@ -178,7 +178,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         href={cert.credential_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] font-mono text-[var(--accent-text)] hover:underline"
+                        className="text-[11px] font-mono text-purple-600 dark:text-purple-400 font-semibold hover:underline"
                       >
                         Verify ↗
                       </a>
@@ -191,7 +191,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             {/* Achievements */}
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] font-mono mb-4 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-amber-400" />
+                <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>Honors & Recognition</span>
               </h3>
 
@@ -199,15 +199,15 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 {achievements.map((ach) => (
                   <div
                     key={ach.id}
-                    className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]"
+                    className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] hover:border-amber-400 dark:hover:border-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-950/20 hover:shadow-[0_0_20px_rgba(251,191,36,0.18)] transition-all duration-300"
                   >
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs sm:text-sm font-semibold text-[var(--text)]">
                         {ach.title}
                       </h4>
-                      <span className="text-[11px] font-mono text-[var(--text-muted)]">{ach.year}</span>
+                      <span className="text-[11px] font-mono text-amber-600 dark:text-amber-400 font-semibold">{ach.year}</span>
                     </div>
-                    <p className="text-xs text-[var(--text-muted)] mt-1.5 leading-relaxed">
+                    <p className="text-xs text-[var(--text-muted)] mt-1.5 leading-relaxed font-normal">
                       {ach.description}
                     </p>
                   </div>

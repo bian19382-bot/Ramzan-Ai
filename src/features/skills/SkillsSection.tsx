@@ -220,7 +220,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
           transition={{ duration: 0.45, delay: 0.1 }}
           role="tablist"
           aria-label="Tool categories"
-          className="flex flex-wrap items-center gap-2 mb-10 p-1.5 rounded-2xl bg-[var(--surface-2)] border border-[var(--border)] max-w-3xl shadow-sm"
+          className="flex flex-wrap items-center gap-2 mb-10 p-1.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] max-w-3xl shadow-sm"
         >
           {skillGroups.map((group) => {
             const isActive = activeTab === group.id;
@@ -230,10 +230,10 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveTab(group.id)}
-                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2 cursor-pointer border ${
                   isActive
-                    ? 'bg-[var(--surface)] text-[var(--text)] shadow-md border border-[var(--border)] ring-1 ring-cyan-500/30'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface)]/50'
+                    ? 'bg-gradient-to-r from-cyan-500/15 to-blue-500/15 dark:from-cyan-500/25 dark:to-blue-500/25 text-cyan-800 dark:text-cyan-200 shadow-sm border-cyan-400 dark:border-cyan-400'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-cyan-700 dark:hover:text-cyan-300 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:border-cyan-400/40'
                 }`}
               >
                 {group.icon === 'Sparkles' && <Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />}
@@ -323,13 +323,13 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
                     </p>
 
                     {/* Key Technical Capabilities (Micro-Pill Highlights) */}
-                    <div className="space-y-1.5 mb-5 p-3 rounded-xl bg-[var(--surface-2)]/60 border border-[var(--border)]/60">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-400/90 font-bold block mb-1">
+                    <div className="space-y-1.5 mb-5 p-3 rounded-xl bg-cyan-500/5 dark:bg-cyan-500/10 border border-cyan-500/25 group-hover:border-cyan-400/50 group-hover:bg-cyan-500/10 transition-all">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-300 font-bold block mb-1">
                         {isRoman ? 'Production Khasiyat // Capabilities:' : 'Production Architecture // Capabilities:'}
                       </span>
                       <ul className="space-y-1">
                         {meta.specs.map((spec, i) => (
-                          <li key={i} className="flex items-center gap-2 text-xs text-[var(--text)] font-medium">
+                          <li key={i} className="flex items-center gap-2 text-xs text-[var(--text)] font-semibold">
                             <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                             <span>{spec}</span>
                           </li>

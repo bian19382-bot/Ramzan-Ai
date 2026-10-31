@@ -133,19 +133,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           transition={{ duration: 0.5, delay: 0.2 }}
           className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4"
         >
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-500/10 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm transition-all cursor-default">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-ping" />
             <span>CORE // WEB DEV</span>
           </div>
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-500/10 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm transition-all cursor-default">
             <Sparkles className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             <span>AI ASSISTED</span>
           </div>
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-500/10 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm transition-all cursor-default">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
             <span>DIRECT CHANNELS</span>
           </div>
-          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm">
+          <div className="px-3 py-2 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] dark:border-cyan-500/25 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-500/10 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2 text-[11px] font-mono text-[var(--text-muted)] font-medium shadow-sm transition-all cursor-default">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-600 dark:bg-purple-400" />
             <span>PORTFOLIO ACTIVE</span>
           </div>
@@ -192,7 +192,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={handleScrollToContact}
-              className="px-7 py-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text)] font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+              className="px-7 py-3 rounded-full bg-[var(--surface)] hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 border border-[var(--border)] hover:border-cyan-400 text-[var(--text)] hover:text-cyan-600 dark:hover:text-cyan-300 font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xs hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]"
             >
               <span>{t('heroContactCta')}</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -225,18 +225,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </span>
           <a
             href={`mailto:${settings.contact_email}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500/10 hover:border-cyan-500/40 text-[var(--text)] hover:text-cyan-300 transition border border-[var(--border)] font-mono text-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500/10 hover:border-cyan-400 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 hover:shadow-[0_0_12px_rgba(6,182,212,0.25)] transition border border-[var(--border)] font-mono text-xs"
           >
-            <Mail className="w-3.5 h-3.5 text-cyan-400" />
+            <Mail className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
             <span>{settings.contact_email}</span>
           </a>
           <a
             href={`https://wa.me/92${settings.whatsapp_number.replace(/\D/g, '').replace(/^0/, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--surface-2)] hover:bg-emerald-500/10 hover:border-emerald-500/40 text-[var(--text)] hover:text-emerald-300 transition border border-[var(--border)] font-mono text-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--surface-2)] hover:bg-emerald-500/10 hover:border-emerald-500 text-[var(--text)] hover:text-emerald-700 dark:hover:text-emerald-300 hover:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition border border-[var(--border)] font-mono text-xs"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+            <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>WhatsApp: {settings.whatsapp_number}</span>
           </a>
         </motion.div>

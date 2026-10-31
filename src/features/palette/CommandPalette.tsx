@@ -126,13 +126,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     onClose();
                     onOpenAiConsultant();
                   }}
-                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between hover:bg-[var(--surface-2)] text-[var(--text)] group transition cursor-pointer"
+                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between border border-transparent hover:border-cyan-400/40 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 group transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Sparkles className="w-4 h-4 text-[var(--accent-text)]" />
+                    <Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                     <span>Open AI Scoping Assistant</span>
                   </div>
-                  <span className="text-[10px] font-mono text-[var(--accent-text)]">Gemini 4</span>
+                  <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-semibold">Gemini 4</span>
                 </button>
 
                 <button
@@ -140,10 +140,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     toggleTheme();
                     onClose();
                   }}
-                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between hover:bg-[var(--surface-2)] text-[var(--text)] group transition cursor-pointer"
+                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between border border-transparent hover:border-cyan-400/40 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 group transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    {theme === 'dark' ? <Moon className="w-4 h-4 text-[var(--accent)]" /> : <Sun className="w-4 h-4 text-amber-500" />}
+                    {theme === 'dark' ? <Moon className="w-4 h-4 text-cyan-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
                     <span>Toggle Dark / Light Theme</span>
                   </div>
                   <span className="text-[10px] font-mono text-[var(--text-muted)] capitalize">{theme}</span>
@@ -155,10 +155,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     if (onOpenWelcome) onOpenWelcome();
                     else if (onReplayIntro) onReplayIntro();
                   }}
-                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between hover:bg-[var(--surface-2)] text-[var(--text)] group transition cursor-pointer"
+                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between border border-transparent hover:border-cyan-400/40 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 group transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <RotateCcw className="w-4 h-4 text-cyan-400" />
+                    <RotateCcw className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                     <span>View Welcome Neon Banner</span>
                   </div>
                   <span className="text-[10px] font-mono text-[var(--text-muted)]">Banner</span>
@@ -180,13 +180,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                         onClose();
                         onSelectProject(p);
                       }}
-                      className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between hover:bg-[var(--surface-2)] text-[var(--text)] group transition cursor-pointer"
+                      className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between border border-transparent hover:border-cyan-400/40 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 group transition-all cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5 overflow-hidden">
-                        <FolderKanban className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                        <FolderKanban className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />
                         <span className="truncate">{p.title}</span>
                       </div>
-                      <ArrowRight className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-[var(--accent-text)] shrink-0" />
+                      <ArrowRight className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-cyan-600 dark:group-hover:text-cyan-300 shrink-0" />
                     </button>
                   ))}
                 </div>
@@ -205,10 +205,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       key={idx}
                       href={nav.target}
                       onClick={onClose}
-                      className="px-3 py-2 rounded-xl text-xs sm:text-sm flex items-center justify-between hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] group transition"
+                      className="px-3 py-2 rounded-xl text-xs sm:text-sm flex items-center justify-between border border-transparent hover:border-cyan-400/40 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-700 dark:hover:text-cyan-300 group transition-all"
                     >
                       <span>{nav.label}</span>
-                      <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition text-[var(--accent)]" />
+                      <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition text-cyan-600 dark:text-cyan-400" />
                     </a>
                   ))}
                 </div>

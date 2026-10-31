@@ -106,10 +106,10 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0">
               <button
                 onClick={() => setSelectedCategory('all')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   selectedCategory === 'all'
-                    ? 'bg-[var(--accent)] text-white shadow-sm'
-                    : 'bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400/50'
+                    : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 shadow-xs'
                 }`}
               >
                 All Projects
@@ -118,10 +118,10 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
                     selectedCategory === cat.id
-                      ? 'bg-[var(--accent)] text-white shadow-sm'
-                      : 'bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]'
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400/50'
+                      : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 shadow-xs'
                   }`}
                 >
                   {cat.name}
@@ -235,7 +235,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
           <div className="mt-12 text-center">
             <button
               onClick={() => setVisibleCount((prev) => prev + 6)}
-              className="px-8 py-3.5 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-sm font-semibold text-[var(--text)] transition cursor-pointer shadow-sm"
+              className="px-8 py-3.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-700 dark:hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] text-sm font-semibold text-[var(--text)] transition-all cursor-pointer shadow-sm"
             >
               Load More Works
             </button>

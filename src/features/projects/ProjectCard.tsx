@@ -64,27 +64,27 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Card Body */}
         <div className="p-5 sm:p-6">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="text-lg sm:text-xl font-bold font-display text-[var(--text)] group-hover:text-cyan-300 transition-colors line-clamp-1">
+            <h3 className="text-lg sm:text-xl font-bold font-display text-[var(--text)] group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-1">
               {project.title}
             </h3>
-            <ArrowUpRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+            <ArrowUpRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-cyan-600 dark:group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
           </div>
 
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] line-clamp-2 leading-relaxed mb-4">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] line-clamp-2 leading-relaxed mb-4 font-normal">
             {project.summary}
           </p>
 
           {/* Tech stack metadata */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--text-muted)]">
-            <Code2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <Code2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             {visibleTools.map((tool, idx) => (
               <React.Fragment key={idx}>
-                <span className="font-mono text-[11px] text-cyan-200/90">{tool}</span>
+                <span className="font-mono text-[11px] text-cyan-800 dark:text-cyan-200/90 font-medium">{tool}</span>
                 {idx < visibleTools.length - 1 && <span className="opacity-40">·</span>}
               </React.Fragment>
             ))}
             {remainingToolsCount > 0 && (
-              <span className="text-[10px] font-mono text-cyan-400">
+              <span className="text-[10px] font-mono text-cyan-700 dark:text-cyan-400 font-semibold">
                 +{remainingToolsCount} more
               </span>
             )}
@@ -93,8 +93,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
 
       {/* Card Footer Actions */}
-      <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[var(--border)]/60 flex items-center justify-between text-xs font-medium">
-        <span className="text-cyan-400 font-semibold flex items-center gap-1 group-hover:text-cyan-300 font-mono text-xs">
+      <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[var(--border)]/70 flex items-center justify-between text-xs font-medium">
+        <span className="text-cyan-700 dark:text-cyan-400 font-semibold flex items-center gap-1 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 font-mono text-xs">
           <span>// OPEN CASE STUDY</span>
         </span>
 
@@ -104,7 +104,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
               href={project.live_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500 hover:text-black text-[var(--text-muted)] transition shadow-sm"
+              className="p-2 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500 hover:text-white dark:hover:text-black text-[var(--text-muted)] hover:shadow-[0_0_12px_rgba(6,182,212,0.5)] transition-all shadow-sm"
               title="Launch Live Demo"
               aria-label={`Launch ${project.title} live demo`}
             >
@@ -117,7 +117,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
               href={project.source_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500 hover:text-black text-[var(--text-muted)] transition shadow-sm"
+              className="p-2 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500 hover:text-white dark:hover:text-black text-[var(--text-muted)] hover:shadow-[0_0_12px_rgba(6,182,212,0.5)] transition-all shadow-sm"
               title="View Source Repository"
               aria-label={`View ${project.title} source code`}
             >

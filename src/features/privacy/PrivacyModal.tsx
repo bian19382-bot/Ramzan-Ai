@@ -65,7 +65,7 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
           <div className="pt-2 text-right">
             <button
               onClick={onClose}
-              className="px-5 py-2 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] text-xs font-semibold text-[var(--text)] transition cursor-pointer"
+              className="px-5 py-2 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-xs font-semibold text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all cursor-pointer"
             >
               Close
             </button>

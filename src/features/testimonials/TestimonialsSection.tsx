@@ -32,7 +32,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
       <div className="max-w-[1000px] w-full mx-auto">
         {/* Eyebrow & Title */}
         <div className="text-center mb-16">
-          <p className="text-xs uppercase tracking-widest text-[var(--accent-text)] font-semibold mb-2 font-mono">
+          <p className="text-xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2 font-mono">
             // 06. TRUST & COLLABORATION
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
@@ -41,8 +41,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
         </div>
 
         {/* Testimonial Feature Card */}
-        <div className="relative p-8 sm:p-12 rounded-[28px] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)]">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--accent)]/10 text-[var(--accent-text)] flex items-center justify-center mb-6">
+        <div className="relative p-8 sm:p-12 rounded-[28px] bg-[var(--surface)] border border-[var(--border)] hover:border-cyan-400 dark:hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.2)] transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-6">
             <Quote className="w-6 h-6" />
           </div>
 
@@ -84,17 +84,17 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
               <div className="flex items-center gap-2 self-end sm:self-auto">
                 <button
                   onClick={handlePrev}
-                  className="p-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] text-[var(--text)] transition cursor-pointer"
+                  className="p-3 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-[var(--text)] hover:text-cyan-600 dark:hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all cursor-pointer"
                   aria-label="Previous testimonial"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-xs font-mono text-[var(--text-muted)] px-2">
+                <span className="text-xs font-mono text-cyan-700 dark:text-cyan-300 font-semibold px-2">
                   {currentIndex + 1} / {approvedTestimonials.length}
                 </span>
                 <button
                   onClick={handleNext}
-                  className="p-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] text-[var(--text)] transition cursor-pointer"
+                  className="p-3 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-[var(--text)] hover:text-cyan-600 dark:hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all cursor-pointer"
                   aria-label="Next testimonial"
                 >
                   <ChevronRight className="w-4 h-4" />

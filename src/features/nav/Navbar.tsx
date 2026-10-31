@@ -120,15 +120,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <MagneticWrapper key={item.id} strength={0.28} cursorType="nav">
                     <a
                       href={item.target}
-                      className={`px-3 py-1.5 rounded-full transition-all duration-200 relative block ${
+                      className={`px-3 py-1.5 rounded-full transition-all duration-200 relative block border border-transparent ${
                         isActive
-                          ? 'text-[var(--accent-text)] font-semibold'
-                          : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)]/60'
+                          ? 'text-[var(--accent-text)] font-bold bg-cyan-500/10 dark:bg-cyan-500/15 border-cyan-500/30'
+                          : 'text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:border-cyan-500/30'
                       }`}
                     >
                       {label}
                       {isActive && (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3.5 h-[2px] bg-[var(--accent)] rounded-full" />
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-cyan-500 rounded-full shadow-[0_0_8px_#06b6d4]" />
                       )}
                     </a>
                   </MagneticWrapper>
@@ -155,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenPalette && (
               <button
                 onClick={onOpenPalette}
-                className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
+                className="p-2 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 transition cursor-pointer"
                 title="Search & Quick Actions (⌘K)"
                 aria-label="Open Command Palette"
               >
@@ -166,21 +166,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
+              className="p-2 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 transition cursor-pointer"
               aria-label={`Toggle theme (currently ${theme})`}
             >
-              {theme === 'dark' ? <Moon className="w-4 h-4 text-[var(--accent)]" /> : <Sun className="w-4 h-4 text-amber-500" />}
+              {theme === 'dark' ? <Moon className="w-4 h-4 text-cyan-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
             </button>
 
             {/* Language Switcher */}
             <div className="relative">
               <button
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
-                className="px-2.5 py-1.5 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] text-xs font-mono font-semibold flex items-center gap-1 transition cursor-pointer"
+                className="px-2.5 py-1.5 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 text-xs font-mono font-semibold flex items-center gap-1 transition cursor-pointer"
                 title="Change language / زبان تبدیل کریں"
                 aria-label="Change language"
               >
-                <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
+                <Globe className="w-3.5 h-3.5 text-cyan-500" />
                 <span className="uppercase">{language === 'ur' ? 'اردو' : language === 'ur-roman' ? 'ROM' : 'EN'}</span>
               </button>
 
@@ -193,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setLanguage('en');
                         setLangMenuOpen(false);
                       }}
-                      className={`w-full px-3 py-1.5 text-left hover:bg-[var(--surface-2)] transition flex items-center justify-between ${
+                      className={`w-full px-3 py-1.5 text-left hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:text-cyan-600 dark:hover:text-cyan-300 transition flex items-center justify-between ${
                         language === 'en' ? 'text-[var(--accent-text)] font-bold' : 'text-[var(--text)]'
                       }`}
                     >
@@ -205,7 +205,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setLanguage('ur-roman');
                         setLangMenuOpen(false);
                       }}
-                      className={`w-full px-3 py-1.5 text-left hover:bg-[var(--surface-2)] transition flex items-center justify-between ${
+                      className={`w-full px-3 py-1.5 text-left hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:text-cyan-600 dark:hover:text-cyan-300 transition flex items-center justify-between ${
                         language === 'ur-roman' ? 'text-[var(--accent-text)] font-bold' : 'text-[var(--text)]'
                       }`}
                     >
@@ -217,7 +217,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setLanguage('ur');
                         setLangMenuOpen(false);
                       }}
-                      className={`w-full px-3 py-1.5 text-left hover:bg-[var(--surface-2)] transition flex items-center justify-between font-urdu ${
+                      className={`w-full px-3 py-1.5 text-left hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:text-cyan-600 dark:hover:text-cyan-300 transition flex items-center justify-between font-urdu ${
                         language === 'ur' ? 'text-[var(--accent-text)] font-bold' : 'text-[var(--text)]'
                       }`}
                     >
@@ -233,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <MagneticWrapper strength={0.25} cursorType="nav" className="hidden lg:inline-block">
               <a
                 href="/resume"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 border border-transparent hover:border-cyan-500/30 transition"
                 title="View & Print Resume"
               >
                 <FileText className="w-3.5 h-3.5" />
@@ -254,7 +254,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Menu Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text)] transition cursor-pointer"
+              className="md:hidden p-2 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text)] transition cursor-pointer border border-transparent hover:border-cyan-500/30"
               aria-label="Open navigation menu"
             >
               <Menu className="w-5 h-5" />

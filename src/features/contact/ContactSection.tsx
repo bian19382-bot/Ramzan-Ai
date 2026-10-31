@@ -133,9 +133,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             {/* Direct Contact Channels */}
             <div className="space-y-3.5">
               {/* Email */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-between shadow-sm">
+              <div className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/5 dark:hover:bg-cyan-500/10 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-center justify-between shadow-sm transition-all">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
@@ -144,7 +144,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     </span>
                     <a
                       href={`mailto:${settings.contact_email}`}
-                      className="text-xs sm:text-sm font-semibold text-[var(--text)] hover:text-cyan-400 hover:underline"
+                      className="text-xs sm:text-sm font-semibold text-[var(--text)] hover:text-cyan-600 dark:hover:text-cyan-400 hover:underline"
                     >
                       {settings.contact_email}
                     </a>
@@ -153,11 +153,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] hover:bg-[var(--border)] text-xs text-[var(--text)] transition flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-xs text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
                   title="Copy email address"
                   aria-label="Copy email address"
                 >
-                  {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
                   <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
@@ -167,30 +167,30 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-emerald-500/40 flex items-center justify-between shadow-sm transition group"
+                className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-emerald-500 hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between shadow-sm transition-all group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                     <MessageCircle className="w-5 h-5" />
                   </div>
                   <div>
                     <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase block">
                       {isRoman ? 'WhatsApp Chat' : 'WhatsApp'}
                     </span>
-                    <p className="text-xs sm:text-sm font-semibold text-[var(--text)] group-hover:text-emerald-400 transition">
+                    <p className="text-xs sm:text-sm font-semibold text-[var(--text)] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                       {settings.whatsapp_number}
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-emerald-400 group-hover:translate-x-0.5 transition">
+                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition font-semibold">
                   {isRoman ? 'Chat Karein →' : 'Chat Now →'}
                 </span>
               </a>
             </div>
 
             {/* Availability Note */}
-            <div className="p-4 rounded-xl bg-[var(--surface-2)]/50 border border-[var(--border)] text-xs text-[var(--text-muted)] flex items-start gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 mt-1 shrink-0 animate-pulse" />
+            <div className="p-4 rounded-xl bg-[var(--surface-2)]/60 border border-[var(--border)] hover:border-cyan-400/40 text-xs text-[var(--text-muted)] flex items-start gap-2.5 transition-colors">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 mt-1 shrink-0 animate-pulse" />
               <span>
                 {isRoman
                   ? 'Main un munasib opportunities ke liye available hoon jo meri current abilities ke mutabiq hon.'
@@ -252,7 +252,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         honeypot: '',
                       });
                     }}
-                    className="px-6 py-2.5 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] text-xs font-semibold text-[var(--text)] transition cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-xs font-semibold text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all cursor-pointer"
                   >
                     {isRoman ? 'Naya Message Bhejein' : 'Send Another Message'}
                   </button>
@@ -282,7 +282,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         value={formData.name ?? ''}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="e.g. Ali Khan"
-                        className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none transition ${
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none hover:border-cyan-400/60 transition ${
                           errors.name ? 'border-red-500' : 'border-[var(--border)] focus:border-cyan-500'
                         }`}
                       />
@@ -299,7 +299,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         value={formData.email ?? ''}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="e.g. ali@example.com"
-                        className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none transition ${
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none hover:border-cyan-400/60 transition ${
                           errors.email ? 'border-red-500' : 'border-[var(--border)] focus:border-cyan-500'
                         }`}
                       />
@@ -315,7 +315,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       <select
                         value={formData.service ?? ''}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-cyan-500 cursor-pointer"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400/60 text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-cyan-500 cursor-pointer transition"
                       >
                         <option value="Simple Website / Landing Page">Simple Website / Landing Page</option>
                         <option value="AI-Assisted Website Prototype">AI-Assisted Website Prototype</option>
@@ -333,7 +333,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         value={formData.budget ?? ''}
                         onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                         placeholder="e.g. Flexible / Open"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-cyan-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400/60 text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-cyan-500 transition"
                       />
                     </div>
                   </div>
@@ -352,7 +352,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                           ? 'Apne project ka maqsad aur requirements yahan likhein...'
                           : 'Describe your website idea, requirements, and any specific questions...'
                       }
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none transition leading-relaxed ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none hover:border-cyan-400/60 transition leading-relaxed ${
                         errors.message ? 'border-red-500' : 'border-[var(--border)] focus:border-cyan-500'
                       }`}
                     />

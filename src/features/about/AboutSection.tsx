@@ -92,7 +92,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
               <button
                 type="button"
                 onClick={() => setExpanded(!expanded)}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:underline cursor-pointer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer"
               >
                 <span>{expanded ? t('aboutShowLess') : t('aboutReadMore')}</span>
                 {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -103,7 +103,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a
                 href="#contact"
-                className="px-6 py-3 rounded-full bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white font-medium text-xs sm:text-sm shadow-md transition flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white font-semibold text-xs sm:text-sm shadow-md transition flex items-center gap-2"
               >
                 <Mail className="w-4 h-4" />
                 <span>{isRoman ? 'Rabta Karein' : "Let's Talk"}</span>
@@ -111,9 +111,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
 
               <a
                 href="#projects"
-                className="px-6 py-3 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text)] font-medium text-xs sm:text-sm transition flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-[var(--surface-2)] hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 border border-[var(--border)] hover:border-cyan-400 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shadow-xs hover:shadow-[0_0_15px_rgba(6,182,212,0.25)]"
               >
-                <Layers className="w-4 h-4 text-cyan-400" />
+                <Layers className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                 <span>{t('heroExploreCta')}</span>
               </a>
             </div>
@@ -137,7 +137,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.08 }}
-                className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-500/50 hover:bg-cyan-50/60 dark:hover:bg-cyan-950/20 transition-all duration-300 flex items-start gap-3.5 group cursor-default"
+                className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-50/70 dark:hover:bg-cyan-950/25 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex items-start gap-3.5 group cursor-default"
               >
                 <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/20 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 group-hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all">
                   <CheckCircle2 className="w-4 h-4" />

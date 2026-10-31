@@ -221,7 +221,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   <button
                     type="button"
                     onClick={() => onSelectServiceForContact(service.name)}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500/20 hover:from-cyan-500 to-blue-600/20 hover:to-blue-600 border border-cyan-400/40 hover:border-cyan-300 hover:text-white text-cyan-300 text-xs font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] active:scale-98"
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500/20 hover:from-cyan-500 to-blue-600/20 hover:to-blue-600 border border-cyan-400/50 hover:border-cyan-300 hover:text-white text-cyan-800 dark:text-cyan-300 text-xs font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] active:scale-98"
                   >
                     <span>{getServiceCta(service.name)}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -236,7 +236,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
         {faqs.length > 0 && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="text-center space-y-2 mb-8">
-              <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+              <span className="text-xs font-mono uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold">
                 {isRoman ? 'Aam Sawalat' : 'Got Questions?'}
               </span>
               <h3 className="text-2xl font-bold font-display text-[var(--text)]">
@@ -252,25 +252,25 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   return (
                     <div
                       key={faq.id}
-                      className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden transition"
+                      className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-cyan-400 dark:hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.18)] transition-all overflow-hidden"
                     >
                       <button
                         type="button"
                         onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
-                        className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-[var(--surface-2)]/40 transition"
+                        className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 transition-all group"
                       >
-                        <span className="text-sm font-semibold text-[var(--text)] font-display">
+                        <span className="text-sm font-semibold text-[var(--text)] group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors font-display">
                           {faq.question}
                         </span>
                         <ChevronDown
-                          className={`w-4 h-4 text-cyan-400 shrink-0 transition-transform duration-200 ${
+                          className={`w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 transition-transform duration-200 ${
                             isOpen ? 'rotate-180' : ''
                           }`}
                         />
                       </button>
 
                       {isOpen && (
-                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed border-t border-[var(--border)]/40">
+                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed border-t border-[var(--border)]/40 font-medium">
                           {faq.answer}
                         </div>
                       )}

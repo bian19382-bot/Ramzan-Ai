@@ -295,7 +295,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => {
                       setProfile({
                         ...profile,
-                        portrait_url: '/src/assets/images/ramzan_web_dev_portrait_1792988064226.jpg',
+                        portrait_url: '/assets/images/ramzan_web_dev_portrait_1792988064226.jpg',
                       });
                     }}
                     className="text-[11px] text-[var(--accent-text)] hover:underline flex items-center gap-1 cursor-pointer shrink-0 ml-2"

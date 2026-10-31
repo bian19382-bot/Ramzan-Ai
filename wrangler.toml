@@ -1,0 +1,5 @@
+# Cloudflare Pages / Workers configuration
+name = "ramzan-portfolio"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-31"
+compatibility_flags = ["nodejs_compat"]

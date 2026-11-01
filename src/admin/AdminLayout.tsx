@@ -63,7 +63,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const sampleCount = dataProvider.getTotalSampleCount();
-  const unreadInquiries = dataProvider.getDatabase().inquiries.filter((i) => i.status === 'new').length;
+  const unreadInquiries = (dataProvider.getDatabase()?.inquiries || []).filter((i) => i?.status === 'new').length;
 
   const navLinks: { id: AdminTab; label: string; icon: React.FC<{ className?: string }>; badge?: number | string; badgeColor?: string }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },

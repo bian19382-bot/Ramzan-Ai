@@ -16,6 +16,9 @@ try {
       fs.copyFileSync(path.join('dist', 'index.html'), path.join('dist', `${route}.html`));
     });
 
+    // Also guarantee 404.html is a full SPA index copy
+    fs.copyFileSync(path.join('dist', 'index.html'), path.join('dist', '404.html'));
+
     // Mirror everything to 'build' directory as well
     fs.cpSync('dist', 'build', { recursive: true });
     console.log('[prepare-output] Successfully created physical route fallbacks and mirrored dist/ to build/.');

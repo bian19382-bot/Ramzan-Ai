@@ -3,59 +3,34 @@ import { motion } from 'motion/react';
 import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft, CheckCircle2, Zap } from 'lucide-react';
 import { adminAuth } from './auth/adminAuth';
 import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../assets/brandLogo';
+import { useAuth } from '../features/auth/AuthProvider';
 
 interface AdminLoginProps {
   onSuccess: () => void;
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
+  const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lockoutSeconds, setLockoutSeconds] = useState(0);
-
-  useEffect(() => {
-    // Check initial lockout
-    const sec = adminAuth.getLockoutSeconds();
-    setLockoutSeconds(sec);
-
-    if (sec > 0) {
-      const timer = setInterval(() => {
-        const remaining = adminAuth.getLockoutSeconds();
-        setLockoutSeconds(remaining);
-        if (remaining <= 0) {
-          clearInterval(timer);
-          setError(null);
-        }
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setIsSubmitting(true);
     setError(null);
 
-    // Short synthetic delay for security (prevents timing attacks)
-    setTimeout(() => {
-      const res = adminAuth.login(email, password, remember);
-      setIsSubmitting(false);
+    const res = await adminAuth.loginWithSupabase(email, password, remember);
+    setIsSubmitting(false);
 
-      if (res.success) {
-        onSuccess();
-      } else {
-        setError(res.error || 'Access denied.');
-        const sec = adminAuth.getLockoutSeconds();
-        if (sec > 0) {
-          setLockoutSeconds(sec);
-        }
-      }
-    }, 400);
+    if (res.success) {
+      onSuccess();
+    } else {
+      setError(res.error || 'Access denied.');
+    }
   };
 
   return (
@@ -121,27 +96,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
             <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
             <span>{error}</span>
           </motion.div>
-        )}
-
-        {/* Lockout countdown warning */}
-        {lockoutSeconds > 0 && (
-          <div className="mb-5 p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-xs text-amber-200 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Security Lockout: <strong>{lockoutSeconds}s</strong> intezar karein.</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                adminAuth.clearLockout();
-                setLockoutSeconds(0);
-                setError(null);
-              }}
-              className="text-[11px] font-mono text-cyan-300 hover:text-white underline cursor-pointer bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30"
-            >
-              Reset Lock
-            </button>
-          </div>
         )}
 
         {/* Login Form */}

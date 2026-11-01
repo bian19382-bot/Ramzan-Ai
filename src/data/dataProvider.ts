@@ -111,48 +111,45 @@ class DataProviderService {
   private listeners: Set<() => void> = new Set();
 
   constructor() {
-    let stored = safeStorage.getJSON<PortfolioDatabase | null>(STORAGE_KEYS.DEMO_DATA, null);
+    const defaultDb = getDefaultDatabase();
+    let stored: PortfolioDatabase | null = null;
+    try {
+      stored = safeStorage.getJSON<PortfolioDatabase | null>(STORAGE_KEYS.DEMO_DATA, null);
+    } catch {
+      stored = null;
+    }
+
     if (!stored || (stored.profile?.full_name !== 'Ramzan' && stored.profile?.full_name !== 'Ramzan Ghafoor')) {
-      stored = getDefaultDatabase();
+      stored = defaultDb;
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, stored);
     } else {
-      // Synchronize confirmed real profile & contact details
-      stored.profile.full_name = 'Ramzan';
-      stored.profile.professional_title = 'AI Creator & Digital Professional';
-      stored.profile.value_proposition = INITIAL_PROFILE.value_proposition;
-      stored.profile.bio_short = INITIAL_PROFILE.bio_short;
-      stored.profile.bio_long = INITIAL_PROFILE.bio_long;
-      stored.profile.portrait_url = INITIAL_PROFILE.portrait_url;
-      stored.profile.welcome_banner_url = INITIAL_PROFILE.welcome_banner_url;
-      stored.profile.roles_rotating = INITIAL_PROFILE.roles_rotating;
-      stored.profile.values = INITIAL_PROFILE.values;
+      // Safely ensure nested objects and arrays exist
+      stored.profile = { ...defaultDb.profile, ...(stored.profile || {}) };
+      stored.settings = {
+        ...defaultDb.settings,
+        ...(stored.settings || {}),
+        feature_flags: {
+          ...defaultDb.settings.feature_flags,
+          ...(stored.settings?.feature_flags || {}),
+        },
+      };
 
-      stored.settings.site_name = 'Ramzan';
-      stored.settings.tagline = 'AI Creator & Digital Professional';
-      stored.settings.contact_email = 'babajani543210@gmail.com';
-      stored.settings.whatsapp_number = '03271126457';
-      stored.settings.availability_text = 'Open to suitable opportunities';
-      stored.settings.contact_success_message = 'Thanks for reaching out. Your message has been submitted successfully.';
-      
-      if (stored.settings.feature_flags) {
-        stored.settings.feature_flags.testimonials_enabled = false;
-        stored.settings.feature_flags.intro_enabled = false;
-        stored.settings.feature_flags.welcome_banner_enabled = true;
-        stored.settings.feature_flags.pricing_enabled = false;
-      }
-
-      stored.skills = INITIAL_SKILLS;
-      stored.services = INITIAL_SERVICES;
-      stored.faqs = INITIAL_FAQS;
-      stored.social_links = INITIAL_SOCIAL_LINKS;
-      stored.education = INITIAL_EDUCATION;
-      stored.experiences = [];
-      stored.testimonials = [];
-
-      // Strictly preserve existing projects, or fallback to INITIAL_PROJECTS if empty
-      if (!stored.projects || stored.projects.length === 0) {
-        stored.projects = INITIAL_PROJECTS;
-      }
+      stored.projects = Array.isArray(stored.projects) && stored.projects.length > 0 ? stored.projects : INITIAL_PROJECTS;
+      stored.categories = Array.isArray(stored.categories) ? stored.categories : defaultDb.categories;
+      stored.skills = Array.isArray(stored.skills) ? stored.skills : defaultDb.skills;
+      stored.skill_groups = Array.isArray(stored.skill_groups) ? stored.skill_groups : defaultDb.skill_groups;
+      stored.services = Array.isArray(stored.services) ? stored.services : defaultDb.services;
+      stored.experiences = Array.isArray(stored.experiences) ? stored.experiences : [];
+      stored.testimonials = Array.isArray(stored.testimonials) ? stored.testimonials : [];
+      stored.faqs = Array.isArray(stored.faqs) ? stored.faqs : defaultDb.faqs;
+      stored.blog_posts = Array.isArray(stored.blog_posts) ? stored.blog_posts : defaultDb.blog_posts;
+      stored.inquiries = Array.isArray(stored.inquiries) ? stored.inquiries : [];
+      stored.social_links = Array.isArray(stored.social_links) ? stored.social_links : defaultDb.social_links;
+      stored.education = Array.isArray(stored.education) ? stored.education : defaultDb.education;
+      stored.certifications = Array.isArray(stored.certifications) ? stored.certifications : [];
+      stored.achievements = Array.isArray(stored.achievements) ? stored.achievements : [];
+      stored.audit_logs = Array.isArray(stored.audit_logs) ? stored.audit_logs : [];
+      stored.intro_video = stored.intro_video || defaultDb.intro_video;
 
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, stored);
     }
@@ -190,15 +187,16 @@ class DataProviderService {
 
   // Sample counts
   public getSampleCounts(): Record<string, number> {
+    const db = this.db || {};
     return {
-      projects: this.db.projects.filter((p) => p.is_sample).length,
-      skills: this.db.skills.filter((s) => s.is_sample).length,
-      services: this.db.services.filter((s) => s.is_sample).length,
-      testimonials: this.db.testimonials.filter((t) => t.is_sample).length,
-      experiences: this.db.experiences.filter((e) => e.is_sample).length,
-      faqs: this.db.faqs.filter((f) => f.is_sample).length,
-      blog_posts: this.db.blog_posts.filter((b) => b.is_sample).length,
-      inquiries: this.db.inquiries.filter((i) => i.is_sample).length,
+      projects: (db.projects || []).filter((p) => p?.is_sample).length,
+      skills: (db.skills || []).filter((s) => s?.is_sample).length,
+      services: (db.services || []).filter((s) => s?.is_sample).length,
+      testimonials: (db.testimonials || []).filter((t) => t?.is_sample).length,
+      experiences: (db.experiences || []).filter((e) => e?.is_sample).length,
+      faqs: (db.faqs || []).filter((f) => f?.is_sample).length,
+      blog_posts: (db.blog_posts || []).filter((b) => b?.is_sample).length,
+      inquiries: (db.inquiries || []).filter((i) => i?.is_sample).length,
     };
   }
 

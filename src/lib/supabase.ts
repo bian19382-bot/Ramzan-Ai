@@ -1,32 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+// Official project configuration for Ramzan portfolio (project mzbegnyzktdzhvspjucq)
+// Allows environment variable override if provided in Cloudflare/hosting,
+// with safe fallback to the project's publishable credentials.
+const DEFAULT_SUPABASE_URL = 'https://mzbegnyzktdzhvspjucq.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RmgyJQsfWlzD6xuHBwa4nQ_S-IXDaHL';
+
+const rawUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim();
+const rawKey = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim();
+
+const supabaseUrl =
+  rawUrl && !rawUrl.includes('YOUR_PROJECT_REF') && !rawUrl.includes('placeholder.supabase.co')
+    ? rawUrl
+    : DEFAULT_SUPABASE_URL;
+
+const supabasePublishableKey =
+  rawKey && !rawKey.includes('your_project_key') && !rawKey.includes('placeholder-publishable-key')
+    ? rawKey
+    : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
   supabasePublishableKey &&
   supabaseUrl.trim() !== '' &&
-  supabasePublishableKey.trim() !== '' &&
-  !supabaseUrl.includes('YOUR_PROJECT_REF') &&
-  !supabaseUrl.includes('placeholder.supabase.co')
+  supabasePublishableKey.trim() !== ''
 );
 
-// We use console.warn when unconfigured so dev/test tools and AI Studio don't treat it as an unhandled fatal application crash
-if (!isSupabaseConfigured) {
-  console.warn(
-    'Supabase is not configured yet. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your environment to enable Supabase authentication.'
-  );
-}
-
-export const supabase = createClient(
-  isSupabaseConfigured ? supabaseUrl! : 'https://placeholder.supabase.co',
-  isSupabaseConfigured ? supabasePublishableKey! : 'placeholder-publishable-key',
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  }
-);
+export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+  },
+});

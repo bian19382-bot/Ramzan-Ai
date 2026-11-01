@@ -17,6 +17,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <script>
       (function() {
+        // SPA Deep Link Restoration for Cloudflare Pages / Static Edge
+        try {
+          var redirect = sessionStorage.redirect;
+          delete sessionStorage.redirect;
+          if (redirect && redirect !== location.href && redirect !== location.pathname) {
+            history.replaceState(null, null, redirect);
+          }
+        } catch (e) {}
+
         try {
           var saved = localStorage.getItem('pf:theme');
           var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');

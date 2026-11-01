@@ -17,19 +17,25 @@ import { AdminBackup } from './pages/AdminBackup';
 import { AdminBlog } from './pages/AdminBlog';
 import { AdminSeo } from './pages/AdminSeo';
 import { AdminCategories } from './pages/AdminCategories';
+import { useAuth } from '../features/auth/AuthProvider';
 
 export const AdminPortal: React.FC = () => {
+  const { user, signOut } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return adminAuth.checkAuth();
+    return adminAuth.checkAuth() || Boolean(user && user.email?.toLowerCase() === 'babajani543210@gmail.com');
   });
   const [tab, setTab] = useState<AdminTab>('dashboard');
 
   useEffect(() => {
-    // Re-verify auth on mount and tab change
-    setIsAuthenticated(adminAuth.checkAuth());
-  }, []);
+    setIsAuthenticated(
+      adminAuth.checkAuth() || Boolean(user && user.email?.toLowerCase() === 'babajani543210@gmail.com')
+    );
+  }, [user]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch {}
     adminAuth.logout();
     setIsAuthenticated(false);
   };

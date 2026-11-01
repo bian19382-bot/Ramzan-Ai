@@ -9,6 +9,7 @@ import { PublicPortfolio } from './pages/PublicPortfolio';
 import { ResumePage } from './pages/ResumePage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { AdminPortal } from './admin/AdminPortal';
+import { AdminErrorBoundary } from './admin/AdminErrorBoundary';
 
 export default function App() {
   return (
@@ -22,10 +23,35 @@ export default function App() {
               <Route path="/resume" element={<ResumePage />} />
               <Route path="/projects/:slug" element={<ProjectDetailPage />} />
 
-              {/* Admin Portal & Login Routes */}
-              <Route path="/login" element={<Navigate to="/admin" replace />} />
-              <Route path="/admin" element={<AdminPortal />} />
-              <Route path="/admin/*" element={<AdminPortal />} />
+              {/* Admin Authentication Route */}
+              <Route
+                path="/login"
+                element={
+                  <AdminErrorBoundary>
+                    <LoginPage />
+                  </AdminErrorBoundary>
+                }
+              />
+
+              {/* Protected Admin Portal */}
+              <Route element={<ProtectedRoute />}>
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminErrorBoundary>
+                      <AdminPortal />
+                    </AdminErrorBoundary>
+                  }
+                />
+                <Route
+                  path="/admin/*"
+                  element={
+                    <AdminErrorBoundary>
+                      <AdminPortal />
+                    </AdminErrorBoundary>
+                  }
+                />
+              </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

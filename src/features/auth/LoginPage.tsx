@@ -1,34 +1,44 @@
 import React, { useState } from 'react';
-import { Navigate, useLocation, Link } from 'react-router-dom';
+import { Navigate, useLocation, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft, Zap } from 'lucide-react';
 import { useAuth } from './AuthProvider';
+import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../../assets/brandLogo';
 
 type RedirectState = { from?: { pathname?: string; search?: string; hash?: string } };
 
 export function LoginPage() {
-  const { user, loading, isConfigured, signIn } = useAuth();
+  const { user, loading, signIn } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
   const from = (location.state as RedirectState | null)?.from;
-  const destination = from?.pathname && from.pathname !== '/'
+  const destination = from?.pathname && from.pathname !== '/' && from.pathname !== '/login'
     ? `${from.pathname}${from.search ?? ''}${from.hash ?? ''}`
     : '/admin';
 
-  if (!loading && user) return <Navigate to={destination} replace />;
+  if (!loading && user && user.email?.toLowerCase() === 'babajani543210@gmail.com') {
+    return <Navigate to={destination} replace />;
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
     setSubmitting(true);
+
     try {
       await signIn(email, password);
+      navigate(destination, { replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to sign in.';
       setError(
         /invalid login credentials/i.test(message)
-          ? 'Email ya password durust nahi. Dobara koshish karein.'
+          ? 'Ghalat Email ya Password! Meharbani farma kar durust credentials darj karein.'
           : message
       );
     } finally {
@@ -37,65 +47,159 @@ export function LoginPage() {
   };
 
   return (
-    <main className="auth-login-page">
-      <section className="auth-login-card" aria-labelledby="auth-login-title">
-        <div className="auth-brand-mark" aria-hidden="true">A</div>
-        <p className="auth-eyebrow">ADMIN PORTAL ACCESS</p>
-        <h1 id="auth-login-title">Admin Login</h1>
-        <p className="auth-subtitle">Sign in to manage your portfolio, projects, and settings.</p>
+    <div className="min-h-screen bg-[#07090e] text-[#f0f4f8] flex items-center justify-center p-4 relative overflow-hidden font-sans select-none">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-600/15 via-purple-600/15 to-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {!isConfigured && (
-          <div className="p-3 mb-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs leading-relaxed">
-            <p className="font-semibold mb-1">Notice: Supabase Credentials Pending</p>
-            <p className="text-amber-200/80 mb-2">
-              Set <code className="font-mono text-[11px]">VITE_SUPABASE_URL</code> and{' '}
-              <code className="font-mono text-[11px]">VITE_SUPABASE_PUBLISHABLE_KEY</code> in environment variables to enable cloud authentication.
-            </p>
-            <Link
-              to="/admin"
-              className="inline-block px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-semibold transition"
-            >
-              Continue to Admin Portal (Local Passcode Mode) →
-            </Link>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative w-full max-w-md bg-[#0e121a]/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(6,182,212,0.15)] z-10"
+      >
+        {/* Top Header Badge */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/40 shadow-lg shadow-cyan-500/20 bg-black flex items-center justify-center shrink-0">
+              <img
+                src={BRAND_LOGO_URL}
+                onError={(e) => {
+                  e.currentTarget.src = BRAND_LOGO_FALLBACK;
+                }}
+                alt="Ramzan Brand"
+                className="w-full h-full object-cover object-center"
+              />
+            </div>
+            <div>
+              <h1 className="text-base font-bold font-display text-white tracking-tight">
+                Ramzan Admin
+              </h1>
+              <p className="text-[11px] font-mono text-cyan-400">
+                Studio Control Engine
+              </p>
+            </div>
           </div>
+
+          <Link
+            to="/"
+            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition px-2.5 py-1.5 rounded-lg hover:bg-white/5"
+            title="Wapis Portfolio Par Jayein"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Site</span>
+          </Link>
+        </div>
+
+        {/* Security Notice */}
+        <div className="mb-6 p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/20 text-xs text-cyan-200/90 leading-relaxed flex items-start gap-2.5">
+          <Lock className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <span>
+            Ye private panel sirf authorized admin k liye mehfooz ha. Sahi credentials darj karein.
+          </span>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-5 p-3 rounded-xl bg-red-950/60 border border-red-500/40 text-xs text-red-200 flex items-start gap-2.5 leading-relaxed"
+          >
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </motion.div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="auth-email">Admin Email</label>
-          <input
-            id="auth-email"
-            type="email"
-            autoComplete="username"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="admin@example.com"
-            required
-          />
-          <label htmlFor="auth-password">Password</label>
-          <input
-            id="auth-password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Enter your admin password"
-            required
-          />
-          {error && <p className="auth-inline-error" role="alert">{error}</p>}
-          <button className="auth-submit" type="submit" disabled={submitting || loading}>
-            {submitting ? 'Signing in…' : 'Sign in to Admin'}
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-mono font-medium text-gray-300">
+                Admin Gmail / Email
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('babajani543210@gmail.com');
+                  setError('');
+                }}
+                className="text-[11px] font-mono text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1 cursor-pointer bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/40 transition active:scale-95 shadow-sm"
+                title="Click karein to auto-fill babajani543210@gmail.com"
+              >
+                <Zap className="w-3 h-3 text-cyan-400" />
+                <span>Refill Gmail</span>
+              </button>
+            </div>
+            <div className="relative">
+              <input
+                type="email"
+                required
+                autoComplete="email"
+                disabled={submitting}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="babajani543210@gmail.com"
+                className="w-full bg-[#141a24] border border-gray-700/80 focus:border-cyan-400 rounded-xl px-3.5 py-2.5 pl-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition"
+              />
+              <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3 pointer-events-none" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono font-medium text-gray-300 mb-1.5">
+              Secret Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                autoComplete="current-password"
+                disabled={submitting}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Secret password darj karein"
+                className="w-full bg-[#141a24] border border-gray-700/80 focus:border-cyan-400 rounded-xl px-3.5 py-2.5 pl-10 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition font-mono"
+              />
+              <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3 pointer-events-none" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 p-1 text-gray-400 hover:text-white transition cursor-pointer"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-[11px] font-mono text-cyan-400/80">Authorized Access Only</span>
+            <span className="text-[11px] font-mono text-gray-500">Supabase Secured</span>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting || loading}
+            className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 hover:from-cyan-400 to-blue-600 hover:to-blue-500 text-black font-bold text-sm tracking-wide transition shadow-lg shadow-cyan-500/25 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+          >
+            {submitting ? (
+              <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <Shield className="w-4 h-4" />
+                <span>Admin Panel Unlock Karein</span>
+              </>
+            )}
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-[var(--border)] text-center">
-          <Link
-            to="/"
-            className="text-xs text-[var(--accent-text)] hover:underline inline-flex items-center gap-1 font-medium"
-          >
-            ← Back to Public Website
-          </Link>
+        <div className="mt-6 pt-5 border-t border-gray-800 text-center">
+          <p className="text-[11px] font-mono text-gray-500">
+            Encrypted Security Guard • Ramzan Portfolio Studio
+          </p>
         </div>
-      </section>
-    </main>
+      </motion.div>
+    </div>
   );
 }

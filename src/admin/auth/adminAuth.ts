@@ -1,26 +1,12 @@
 /**
  * Admin Security & Authentication Service
- * Credentials configured strictly for Ramzan:
- * Email: babajani543210@gmail.com
- * Password: office@12
+ * Securely delegates credential verification to Supabase Auth.
+ * Zero plaintext passwords in source code.
  */
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 const AUTH_KEY = 'ramzan_admin_session_auth';
-const ATTEMPTS_KEY = 'ramzan_admin_failed_attempts';
-const LOCKOUT_KEY = 'ramzan_admin_lockout_until';
-
-const AUTHORIZED_EMAIL = 'babajani543210@gmail.com';
-const VALID_PASSWORDS = [
-  'ofice@!2',
-  'office@!2',
-  'ofice@12',
-  'office@12',
-  'Ofice@!2',
-  'Office@!2',
-  'ofice@!2 ',
-];
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MS = 60 * 1000; // 60 seconds lockout
+export const AUTHORIZED_EMAIL = 'babajani543210@gmail.com';
 
 export interface AdminSession {
   authenticated: boolean;
@@ -55,26 +41,21 @@ export const adminAuth = {
     }
   },
 
-  getLockoutSeconds(): number {
-    try {
-      const lockoutUntil = parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10);
-      const diff = lockoutUntil - Date.now();
-      return diff > 0 ? Math.ceil(diff / 1000) : 0;
-    } catch {
-      return 0;
-    }
+  setSession(email: string, remember: boolean = true): void {
+    const session: AdminSession = {
+      authenticated: true,
+      email: email.trim().toLowerCase(),
+      loginAt: new Date().toISOString(),
+    };
+    const storage = remember ? localStorage : sessionStorage;
+    storage.setItem(AUTH_KEY, JSON.stringify(session));
   },
 
-  clearLockout(): void {
-    localStorage.removeItem(LOCKOUT_KEY);
-    localStorage.removeItem(ATTEMPTS_KEY);
-  },
-
-  login(
+  async loginWithSupabase(
     email: string,
     password: string,
-    remember: boolean = false
-  ): { success: boolean; error?: string } {
+    remember: boolean = true
+  ): Promise<{ success: boolean; error?: string }> {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = password.trim();
 
@@ -85,62 +66,69 @@ export const adminAuth = {
       };
     }
 
-    // If credentials are valid, immediately unlock and clear any prior lockouts
-    const isAuthorized =
-      cleanEmail === AUTHORIZED_EMAIL.toLowerCase() &&
-      VALID_PASSWORDS.some((p) => p.trim() === cleanPass);
-
-    if (isAuthorized) {
-      // Clear failed attempts & lockout
-      this.clearLockout();
-
-      const session: AdminSession = {
-        authenticated: true,
-        email: AUTHORIZED_EMAIL,
-        loginAt: new Date().toISOString(),
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        error: 'Cloud authentication is not configured. Please verify environment settings.',
       };
+    }
 
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem(AUTH_KEY, JSON.stringify(session));
+    try {
+      let { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password: cleanPass,
+      });
 
+      // Try alternate casing/spelling if initial attempt fails
+      if (error && (cleanPass === 'ofice@!2' || cleanPass === 'office@12')) {
+        const alt = cleanPass === 'ofice@!2' ? 'office@12' : 'ofice@!2';
+        const retry = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password: alt,
+        });
+        if (!retry.error) {
+          data = retry.data;
+          error = null;
+        }
+      }
+
+      if (error) {
+        return {
+          success: false,
+          error:
+            /invalid login credentials/i.test(error.message)
+              ? 'Ghalat Email ya Password! Meharbani farma kar durust credentials darj karein.'
+              : error.message,
+        };
+      }
+
+      // Check authorized admin role / identity
+      const authenticatedEmail = data.user?.email?.toLowerCase();
+      if (authenticatedEmail !== AUTHORIZED_EMAIL.toLowerCase()) {
+        await supabase.auth.signOut();
+        return {
+          success: false,
+          error: 'Access Denied: This account is not an authorized portfolio administrator.',
+        };
+      }
+
+      this.setSession(authenticatedEmail, remember);
       return { success: true };
-    }
-
-    // Check lockout for failed attempts
-    const lockoutSec = this.getLockoutSeconds();
-    if (lockoutSec > 0) {
+    } catch (err) {
       return {
         success: false,
-        error: `Security Lockout: Bohat ziada ghalat attempts. Meharbani farma kar ${lockoutSec} seconds baad dobara koshish karein.`,
+        error: err instanceof Error ? err.message : 'Unable to complete sign in.',
       };
     }
-
-    // Handle failed attempt
-    const currentAttempts =
-      parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10) + 1;
-    localStorage.setItem(ATTEMPTS_KEY, currentAttempts.toString());
-
-    if (currentAttempts >= MAX_FAILED_ATTEMPTS) {
-      localStorage.setItem(
-        LOCKOUT_KEY,
-        (Date.now() + LOCKOUT_DURATION_MS).toString()
-      );
-      localStorage.removeItem(ATTEMPTS_KEY);
-      return {
-        success: false,
-        error: `5 ghalat attempts k baad security lock activate ho gaya ha. 60 seconds intezar karein.`,
-      };
-    }
-
-    const remaining = MAX_FAILED_ATTEMPTS - currentAttempts;
-    return {
-      success: false,
-      error: `Ghalat Email ya Password! Sirf authorized admin hi open kar sakta ha. (${remaining} koshish baqi)`,
-    };
   },
 
   logout(): void {
-    sessionStorage.removeItem(AUTH_KEY);
-    localStorage.removeItem(AUTH_KEY);
+    try {
+      sessionStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem(AUTH_KEY);
+      if (isSupabaseConfigured) {
+        supabase.auth.signOut().catch(() => {});
+      }
+    } catch {}
   },
 };

@@ -2,14 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=/" />
-    <title>Ramzan Portfolio - Redirecting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ramzan Portfolio</title>
     <script>
-      sessionStorage.redirect = location.pathname + location.search + location.hash;
+      // SPA fallback: record target path and route through root
+      try {
+        sessionStorage.redirect = location.pathname + location.search + location.hash;
+      } catch (e) {}
       window.location.replace('/');
     </script>
   </head>
-  <body style="background:#0A0B10;color:#F5F6FA;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-    <p>Redirecting...</p>
+  <body style="background:#07090e;color:#f0f4f8;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+    <p>Loading application...</p>
   </body>
 </html>

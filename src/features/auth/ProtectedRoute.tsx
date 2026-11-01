@@ -1,48 +1,32 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
+import { adminAuth } from '../../admin/auth/adminAuth';
+
+const AUTHORIZED_ADMIN_EMAIL = 'babajani543210@gmail.com';
 
 export function ProtectedRoute() {
-  const { user, loading, signOut, isConfigured } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
-  const [signOutError, setSignOutError] = React.useState('');
 
   if (loading) {
     return (
-      <main className="auth-loading" aria-live="polite">
-        <div className="auth-spinner" aria-hidden="true" />
-        <p>Verifying your session…</p>
+      <main className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col items-center justify-center p-4">
+        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-xs font-mono text-[var(--text-muted)]">Verifying authorized admin session…</p>
       </main>
     );
   }
 
-  // When Supabase is not yet configured in environment variables,
-  // render the app in preview mode so the site remains usable.
-  if (!isConfigured) {
-    return <Outlet />;
-  }
+  // Check Supabase authentication AND local session fallback
+  const isSupabaseAdmin = Boolean(
+    user && user.email?.toLowerCase() === AUTHORIZED_ADMIN_EMAIL.toLowerCase()
+  );
+  const isLocalAdmin = adminAuth.checkAuth();
 
-  if (!user) {
+  if (!isSupabaseAdmin && !isLocalAdmin) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  const handleSignOut = async () => {
-    setSignOutError('');
-    try {
-      await signOut();
-    } catch {
-      setSignOutError('Sign out failed. Please try again.');
-    }
-  };
-
-  return (
-    <>
-      <div className="auth-session-bar">
-        <span title={user.email ?? 'Signed in'}>{user.email ?? 'Signed in'}</span>
-        <button type="button" onClick={handleSignOut}>Sign out</button>
-      </div>
-      {signOutError && <p className="auth-inline-error" role="alert">{signOutError}</p>}
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }

@@ -120,6 +120,19 @@ export const AdminProjectsCloud: React.FC = () => {
       setError('Please enter a valid project title or slug.');
       return;
     }
+    if (form.status === 'published' && !form.live_url?.trim()) {
+      setError('Published projects need a live website URL. Paste your deployed project link before publishing.');
+      return;
+    }
+    if (form.live_url?.trim()) {
+      try {
+        const liveUrl = new URL(form.live_url.trim());
+        if (!['http:', 'https:'].includes(liveUrl.protocol)) throw new Error('invalid protocol');
+      } catch {
+        setError('Live website URL sahi nahi hai. Full link https:// se start hona chahiye.');
+        return;
+      }
+    }
     const category = dataProvider.getDatabase().categories.find((item) => item.id === form.category_id);
     setSaving(true);
     setError('');
@@ -241,6 +254,7 @@ export const AdminProjectsCloud: React.FC = () => {
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-sm text-[var(--text)] truncate">{project.title}</p>
                     <p className="text-xs text-[var(--text-muted)] line-clamp-2 mt-1">{project.summary}</p>
+                    {project.live_url && <a href={project.live_url} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()} className="inline-flex items-center gap-1 mt-2 text-[11px] text-cyan-500 hover:underline"><ExternalLink className="w-3 h-3" />Visit live website</a>}
                     <span className="inline-block mt-2 text-[10px] uppercase tracking-wide text-cyan-500">{project.status}</span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -276,7 +290,7 @@ export const AdminProjectsCloud: React.FC = () => {
           </div>
           <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Tools (comma separated)</span><input value={toolsInput} onChange={(event) => setToolsInput(event.target.value)} className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Live project URL</span><input type="url" value={form.live_url ?? ''} onChange={(event) => setForm((current) => ({ ...current, live_url: event.target.value }))} placeholder="https://…" className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
+            <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Live project URL</span><input type="url" required={form.status === 'published'} value={form.live_url ?? ''} onChange={(event) => setForm((current) => ({ ...current, live_url: event.target.value }))} placeholder="https://your-project.pages.dev" className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
             <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Source code URL</span><input type="url" value={form.source_url ?? ''} onChange={(event) => setForm((current) => ({ ...current, source_url: event.target.value }))} placeholder="https://github.com/…" className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
           </div>
           <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Role</span><input value={form.role ?? ''} onChange={(event) => setForm((current) => ({ ...current, role: event.target.value }))} className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>

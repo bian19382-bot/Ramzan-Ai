@@ -18,6 +18,7 @@ import { CommandPalette } from '../features/palette/CommandPalette';
 import { AiProjectConsultant } from '../features/ai/AiProjectConsultant';
 import { PrivacyModal } from '../features/privacy/PrivacyModal';
 import { Project } from '../types/portfolio';
+import { getPublishedProjects, subscribeToProjectChanges } from '../data/projectRepository';
 import { FuturisticCursor } from '../components/ui/FuturisticCursor';
 import { FuturisticMarquee } from '../components/ui/FuturisticMarquee';
 import { FuturisticHudDock } from '../components/ui/FuturisticHudDock';
@@ -33,11 +34,31 @@ export const PublicPortfolio: React.FC = () => {
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [preselectedService, setPreselectedService] = useState('');
 
-  // Subscribe to reactive database changes
+  // Keep non-project portfolio content locally cached, but always load projects
+  // from the shared Supabase database so every device sees the same published work.
   useEffect(() => {
-    return dataProvider.subscribe(() => {
-      setDb({ ...dataProvider.getDatabase() });
+    let active = true;
+    const refreshProjects = async () => {
+      try {
+        const projects = await getPublishedProjects();
+        if (active) {
+          setDb((current) => ({ ...current, projects }));
+        }
+      } catch (error) {
+        console.error('Unable to load published projects from Supabase:', error);
+        // Keep the existing local snapshot visible if the cloud is temporarily unavailable.
+      }
+    };
+    const unsubscribeLocal = dataProvider.subscribe(() => {
+      setDb((current) => ({ ...dataProvider.getDatabase(), projects: current.projects }));
     });
+    const unsubscribeRealtime = subscribeToProjectChanges(() => { void refreshProjects(); });
+    void refreshProjects();
+    return () => {
+      active = false;
+      unsubscribeLocal();
+      unsubscribeRealtime();
+    };
   }, []);
 
   // Track page view analytics

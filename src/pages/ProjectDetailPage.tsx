@@ -1,16 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Github, Share2, Check, ArrowRight, X, Sparkles, FolderKanban } from 'lucide-react';
 import { dataProvider } from '../data/dataProvider';
+import { getPublishedProjectBySlug, getPublishedProjects } from '../data/projectRepository';
 import { AiProjectConsultant } from '../features/ai/AiProjectConsultant';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const db = dataProvider.getDatabase();
-  const project = db.projects.find((p) => p.slug === slug);
+  const [db, setDb] = useState(dataProvider.getDatabase());
+  const [project, setProject] = useState<import('../types/portfolio').Project | null>(null);
+  const [loadingProject, setLoadingProject] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [consultantOpen, setConsultantOpen] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setLoadingProject(true);
+    getPublishedProjectBySlug(slug || '')
+      .then((cloudProject) => {
+        if (active) setProject(cloudProject);
+      })
+      .catch((error) => {
+        console.error('Unable to load project case study from Supabase:', error);
+      })
+      .finally(() => {
+        if (active) setLoadingProject(false);
+      });
+    getPublishedProjects()
+      .then((projects) => {
+        if (active) setDb((current) => ({ ...current, projects }));
+      })
+      .catch((error) => console.error('Unable to load project navigation:', error));
+    return () => { active = false; };
+  }, [slug]);
+  if (loadingProject && !project) {
+    return <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center p-6">Loading project case study…</div>;
+  }
 
   if (!project) {
     return (

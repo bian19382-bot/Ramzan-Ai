@@ -3,7 +3,7 @@ import { AdminLayout, AdminTab } from './AdminLayout';
 import { AdminLogin } from './AdminLogin';
 import { adminAuth } from './auth/adminAuth';
 import { AdminDashboard } from './pages/AdminDashboard';
-import { AdminProjects } from './pages/AdminProjects';
+import { AdminProjectsCloud } from './pages/AdminProjectsCloud';
 import { AdminSkills } from './pages/AdminSkills';
 import { AdminServices } from './pages/AdminServices';
 import { AdminExperience } from './pages/AdminExperience';
@@ -49,7 +49,7 @@ export const AdminPortal: React.FC = () => {
       case 'dashboard':
         return <AdminDashboard onNavigateTab={(newTab) => setTab(newTab)} />;
       case 'projects':
-        return <AdminProjects />;
+        return <AdminProjectsCloud />;
       case 'categories':
         return <AdminCategories />;
       case 'skills':

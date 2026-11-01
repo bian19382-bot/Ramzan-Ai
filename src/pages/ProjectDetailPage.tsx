@@ -11,6 +11,8 @@ export const ProjectDetailPage: React.FC = () => {
   const [project, setProject] = useState(() => dataProvider.getDatabase().projects.find((p) => p.slug === slug) || null);
   const [loadingProject, setLoadingProject] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [consultantOpen, setConsultantOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -32,9 +34,6 @@ export const ProjectDetailPage: React.FC = () => {
       .catch((error) => console.error('Unable to load project navigation:', error));
     return () => { active = false; };
   }, [slug]);
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [consultantOpen, setConsultantOpen] = useState(false);
-
   if (loadingProject && !project) {
     return <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center p-6">Loading project case study…</div>;
   }

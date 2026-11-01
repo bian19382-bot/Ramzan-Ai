@@ -104,11 +104,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
               href={project.live_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-[var(--surface-2)] hover:bg-cyan-500 hover:text-white dark:hover:text-black text-[var(--text-muted)] hover:shadow-[0_0_12px_rgba(6,182,212,0.5)] transition-all shadow-sm"
-              title="Launch Live Demo"
-              aria-label={`Launch ${project.title} live demo`}
+              referrerPolicy="no-referrer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--accent)] text-white hover:brightness-110 transition-all shadow-sm text-[11px] sm:text-xs font-semibold"
+              title="Open the live project website"
+              aria-label={`Visit ${project.title} website`}
             >
               <ExternalLink className="w-3.5 h-3.5" />
+              <span>Visit Website</span>
             </a>
           )}
 

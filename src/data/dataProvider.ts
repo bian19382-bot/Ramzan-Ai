@@ -45,6 +45,7 @@ import {
   INITIAL_INQUIRIES,
 } from './initialData';
 import { safeStorage, STORAGE_KEYS } from '../lib/storage';
+import { syncPortfolioDatabase } from './supabasePortfolioSync';
 
 export interface PortfolioDatabase {
   profile: Profile;
@@ -170,6 +171,9 @@ class DataProviderService {
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
     }
     this.notify();
+    void syncPortfolioDatabase(this.db).catch((error) => {
+      console.error('Portfolio cloud sync failed. Local changes are preserved:', error);
+    });
   }
 
   public subscribe(listener: () => void): () => void {

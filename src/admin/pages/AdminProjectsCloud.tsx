@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Check, Download, Edit2, ExternalLink, ImagePlus, Loader2, Plus, RefreshCw, Search, Trash2, Upload, X } from 'lucide-react';
+import { Check, Download, Edit2, ExternalLink, Loader2, Plus, RefreshCw, Search, Trash2, Upload, X } from 'lucide-react';
 import type { Project, ContentStatus } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
 import { safeStorage, STORAGE_KEYS } from '../../lib/storage';
@@ -275,6 +275,10 @@ export const AdminProjectsCloud: React.FC = () => {
             </div>
           </div>
           <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Tools (comma separated)</span><input value={toolsInput} onChange={(event) => setToolsInput(event.target.value)} className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Live project URL</span><input type="url" value={form.live_url ?? ''} onChange={(event) => setForm((current) => ({ ...current, live_url: event.target.value }))} placeholder="https://…" className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
+            <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Source code URL</span><input type="url" value={form.source_url ?? ''} onChange={(event) => setForm((current) => ({ ...current, source_url: event.target.value }))} placeholder="https://github.com/…" className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
+          </div>
           <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Role</span><input value={form.role ?? ''} onChange={(event) => setForm((current) => ({ ...current, role: event.target.value }))} className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
           <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Problem statement</span><textarea rows={2} value={form.problem ?? ''} onChange={(event) => setForm((current) => ({ ...current, problem: event.target.value }))} className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>
           <label className="block space-y-1"><span className="text-xs text-[var(--text-muted)]">Approach / strategy</span><textarea rows={2} value={form.approach ?? ''} onChange={(event) => setForm((current) => ({ ...current, approach: event.target.value }))} className="w-full rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3 text-sm text-[var(--text)]" /></label>

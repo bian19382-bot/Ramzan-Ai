@@ -47,7 +47,9 @@ function toRow(project: Partial<Project>, id: string): ProjectRow {
     slug: project.slug,
     title: project.title,
     summary: project.summary ?? '',
-    category_id: project.category_id || null,
+    // The existing cloud categories table is empty; keep the human-readable category
+    // but do not send a browser-only category ID that violates the database FK.
+    category_id: null,
     category_name: project.category_name ?? 'Web Applications',
     cover_image_url: project.cover_image_url ?? '',
     demo_video_url: project.demo_video_url || null,
@@ -128,7 +130,23 @@ export async function saveCloudProject(
 ): Promise<Project> {
   await requirePortfolioAdmin();
   const id = existingId || `proj-${crypto.randomUUID()}`;
-  const row = toRow(project, id);
+  const normalizedLiveUrl = project.live_url?.trim() || '';
+  if (normalizedLiveUrl) {
+    let parsed: URL;
+    try { parsed = new URL(normalizedLiveUrl); } catch { throw new Error('Project website URL is not valid. Include https:// or http://.'); }
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      throw new Error('Project website URL must start with https:// or http://.');
+    }
+  }
+  const normalizedSourceUrl = project.source_url?.trim() || '';
+  if (normalizedSourceUrl) {
+    let parsed: URL;
+    try { parsed = new URL(normalizedSourceUrl); } catch { throw new Error('Source code URL is not valid. Include https:// or http://.'); }
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      throw new Error('Source code URL must start with https:// or http://.');
+    }
+  }
+  const row = toRow({ ...project, live_url: normalizedLiveUrl, source_url: normalizedSourceUrl }, id);
   if (!existingId) row.created_at = new Date().toISOString();
   const { data, error } = await supabase
     .from(TABLE)

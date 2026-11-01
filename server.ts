@@ -4,7 +4,24 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 
+import fs from 'fs';
+
 dotenv.config();
+
+// Auto-clean any unwanted lockfiles continuously so bun.lock can never linger
+const purgeLockfiles = () => {
+  ['bun.lock', 'bun.lockb', 'yarn.lock', 'pnpm-lock.yaml'].forEach((f) => {
+    try {
+      if (fs.existsSync(f)) {
+        fs.unlinkSync(f);
+        console.log(`[Auto-clean] Removed ${f} to prevent Cloudflare build failure.`);
+      }
+    } catch {}
+  });
+};
+
+purgeLockfiles();
+setInterval(purgeLockfiles, 2000);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

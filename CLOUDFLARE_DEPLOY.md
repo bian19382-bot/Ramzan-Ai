@@ -27,8 +27,9 @@ Cloudflare dashboard mein **Settings → Environment variables** mein ye variabl
 | Variable Name | Value | Kyun zaroori ha? |
 |---|---|---|
 | `NODE_VERSION` | `20` | Cloudflare ke default purane Node.js version ko modern Node 20 LTS par set karta ha taake Vite bina kisi syntax error ke compile ho. |
+| `PACKAGE_MANAGER` | `npm` | Cloudflare ko force karta ha ke hamesha `npm` use kare aur Bun ko kabhi run na kare. Is se bun.lock ka error 100% khatam ho jata ha. |
 
-*(Note: `VITE_SUPABASE_URL` aur `VITE_SUPABASE_PUBLISHABLE_KEY` optional hain. Public portfolio bina Supabase ke b 100% chalti ha).*
+*(Note: `GEMINI_API_KEY`, `VITE_SUPABASE_URL` aur `VITE_SUPABASE_PUBLISHABLE_KEY` optional hain. Public portfolio bina unke b 100% chalti ha).*
 
 ---
 

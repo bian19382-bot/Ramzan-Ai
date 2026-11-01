@@ -7,13 +7,16 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "predev": "node scripts/clean-lockfiles.js",
     "dev": "tsx server.ts",
     "start": "node server.ts",
+    "postinstall": "node scripts/clean-lockfiles.js",
     "prebuild": "node scripts/clean-lockfiles.js",
     "build": "vite build && node scripts/prepare-output.js",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
+    "clean": "rm -rf dist server.js bun.lock bun.lockb",
     "lint": "tsc --noEmit",
+    "pretest": "node scripts/clean-lockfiles.js",
     "test": "tsx --test src/features/intro/introMachine.test.ts"
   },
   "dependencies": {

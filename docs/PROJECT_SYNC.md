@@ -8,17 +8,8 @@ Portfolio project records are stored in the existing `public.portfolio_projects`
 - The existing `portfolio_projects_admin_all` and `portfolio_projects_public_read` RLS policies remain in place.
 - Realtime is enabled for `public.portfolio_projects` so open pages can refresh after a project change.
 
-## Existing desktop Local Storage data
-Local Storage is isolated to each browser profile and device. It cannot be automatically read by a different device or imported by the server.
-
-1. Open the deployed branch preview on the same desktop browser that contains the old projects.
-2. Sign in to the portfolio admin and open Projects.
-3. Use **Import to Supabase** when the legacy-data notice appears.
-4. Review the imported/skipped totals and verify the projects appear in the cloud list.
-5. Open the same site on a phone and verify the published projects appear there.
-6. Keep the browser's old Local Storage backup until the imported records and images have been checked on desktop and mobile.
-
-The import skips rows whose ID or slug already exists in Supabase. It does not overwrite cloud rows and does not delete local records. Data-URL images are uploaded to the shared Storage bucket during import.
+## Legacy desktop-only projects
+The Admin Projects screen no longer displays the legacy-project detection banner or an Import to Supabase action. Projects that existed only in an old browser's Local Storage are not automatically copied into the shared database. If those records are needed, they must be recovered separately from that browser's data; this deployment does not delete the browser's existing Local Storage.
 
 ## Project images
 The `portfolio-projects` bucket is public-read for rendering portfolio images. Upload, update, and delete operations are restricted by Storage RLS to the existing `public.is_portfolio_admin()` check. Supported types: JPEG, PNG, WebP, GIF; maximum 8 MiB.
@@ -30,7 +21,6 @@ The existing `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` settings ar
 - [ ] Cloudflare Pages preview for this branch builds successfully.
 - [ ] Admin login works on the branch preview.
 - [ ] Desktop Projects admin loads cloud rows.
-- [ ] Import the desktop browser's legacy projects and verify counts.
 - [ ] Create a test draft; confirm it appears in admin but not public pages.
 - [ ] Publish a test project; confirm it appears on desktop and phone.
 - [ ] Edit the project on desktop; confirm refresh/realtime updates mobile.

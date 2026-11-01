@@ -174,11 +174,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Admin Portal Direct Link */}
             <a
               href="/admin"
-              className="p-2 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 transition cursor-pointer"
+              className="px-2.5 py-1.5 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 transition flex items-center gap-1.5 text-xs font-mono font-medium shadow-sm hover:shadow-[0_0_12px_rgba(6,182,212,0.3)] cursor-pointer"
               title="Admin Studio Portal (Projects & Settings)"
               aria-label="Open Admin Studio Portal"
             >
-              <Shield className="w-4 h-4 text-cyan-500" />
+              <Shield className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline font-semibold">Admin</span>
             </a>
 
             {/* Theme Toggle */}

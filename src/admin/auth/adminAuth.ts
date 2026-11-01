@@ -10,7 +10,7 @@ const ATTEMPTS_KEY = 'ramzan_admin_failed_attempts';
 const LOCKOUT_KEY = 'ramzan_admin_lockout_until';
 
 const AUTHORIZED_EMAIL = 'babajani543210@gmail.com';
-const AUTHORIZED_PASSWORD = 'office@12';
+const VALID_PASSWORDS = ['ofice@!2', 'office@12'];
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 60 * 1000; // 60 seconds lockout
 
@@ -83,7 +83,7 @@ export const adminAuth = {
 
     if (
       cleanEmail === AUTHORIZED_EMAIL.toLowerCase() &&
-      cleanPass === AUTHORIZED_PASSWORD
+      VALID_PASSWORDS.includes(cleanPass)
     ) {
       // Clear failed attempts & lockout
       localStorage.removeItem(ATTEMPTS_KEY);

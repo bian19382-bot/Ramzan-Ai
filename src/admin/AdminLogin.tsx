@@ -207,35 +207,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
             <span className="text-[11px] font-mono text-cyan-400/80">Authorized Access Only</span>
           </div>
 
-          {/* Quick Auto-Fill credentials bar */}
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-xs">
-            <span className="text-[11px] font-mono text-gray-400">Quick Auto-Fill:</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail('babajani543210@gmail.com');
-                  setError(null);
-                }}
-                className="text-[11px] font-mono text-cyan-300 hover:text-white bg-cyan-500/15 hover:bg-cyan-500/25 px-2 py-1 rounded-lg border border-cyan-500/30 transition cursor-pointer"
-              >
-                Refill Gmail
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail('babajani543210@gmail.com');
-                  setPassword('office@12');
-                  setError(null);
-                }}
-                className="text-[11px] font-mono text-cyan-300 hover:text-white bg-cyan-500/25 hover:bg-cyan-500/40 px-2.5 py-1 rounded-lg border border-cyan-500/40 transition cursor-pointer font-bold flex items-center gap-1"
-              >
-                <Zap className="w-3 h-3 text-cyan-400" />
-                <span>Fill Credentials</span>
-              </button>
-            </div>
-          </div>
-
           <button
             type="submit"
             disabled={lockoutSeconds > 0 || isSubmitting}

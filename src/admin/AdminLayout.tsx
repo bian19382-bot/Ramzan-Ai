@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../features/theme/ThemeContext';
 import { dataProvider } from '../data/dataProvider';
+import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../assets/brandLogo';
 
 export type AdminTab =
   | 'dashboard'
@@ -129,7 +130,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl overflow-hidden border border-cyan-500/40 shadow-md bg-black shrink-0">
                 <img
-                  src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                  src={BRAND_LOGO_URL}
+                  onError={(e) => {
+                    e.currentTarget.src = BRAND_LOGO_FALLBACK;
+                  }}
                   alt="Ramzan Brand"
                   className="w-full h-full object-cover object-center"
                 />

@@ -149,9 +149,9 @@ class DataProviderService {
       stored.experiences = [];
       stored.testimonials = [];
 
-      // Strictly preserve existing projects
-      if (!stored.projects) {
-        stored.projects = [];
+      // Strictly preserve existing projects, or fallback to INITIAL_PROJECTS if empty
+      if (!stored.projects || stored.projects.length === 0) {
+        stored.projects = INITIAL_PROJECTS;
       }
 
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, stored);

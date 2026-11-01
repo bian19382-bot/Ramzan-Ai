@@ -5,6 +5,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useLanguage, LanguageCode } from '../i18n/LanguageContext';
 import { MobileMenu } from './MobileMenu';
 import { MagneticWrapper } from '../../components/ui/MagneticWrapper';
+import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../../assets/brandLogo';
 
 interface NavbarProps {
   siteName: string;
@@ -85,7 +86,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <div className="relative w-8 h-8 rounded-xl overflow-hidden border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.35)] bg-black group-hover:border-cyan-400 group-hover:shadow-[0_0_18px_rgba(6,182,212,0.6)] group-hover:scale-105 transition-all flex items-center justify-center shrink-0">
                 <img
-                  src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                  src={BRAND_LOGO_URL}
+                  onError={(e) => {
+                    e.currentTarget.src = BRAND_LOGO_FALLBACK;
+                  }}
                   alt="Ramzan Logo"
                   className="w-full h-full object-cover object-center"
                 />
@@ -166,6 +170,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Search className="w-4 h-4" />
               </button>
             )}
+
+            {/* Admin Portal Direct Link */}
+            <a
+              href="/admin"
+              className="p-2 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 transition cursor-pointer"
+              title="Admin Studio Portal (Projects & Settings)"
+              aria-label="Open Admin Studio Portal"
+            >
+              <Shield className="w-4 h-4 text-cyan-500" />
+            </a>
 
             {/* Theme Toggle */}
             <button

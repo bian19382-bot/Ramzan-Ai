@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowUp, RotateCcw, Shield, Sun, Moon, Mail, MessageCircle } from 'lucide-react';
 import { SiteSettings, SocialLink, NavItem } from '../../types/portfolio';
 import { useTheme } from '../theme/ThemeContext';
+import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../../assets/brandLogo';
 
 interface FooterProps {
   settings: SiteSettings;
@@ -41,7 +42,10 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.35)] bg-black shrink-0">
                 <img
-                  src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                  src={BRAND_LOGO_URL}
+                  onError={(e) => {
+                    e.currentTarget.src = BRAND_LOGO_FALLBACK;
+                  }}
                   alt="Ramzan Logo"
                   className="w-full h-full object-cover object-center"
                 />
@@ -116,6 +120,14 @@ export const Footer: React.FC<FooterProps> = ({
                 {theme === 'dark' ? <Moon className="w-3.5 h-3.5 text-[var(--accent)]" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
                 <span className="capitalize">Theme: {theme}</span>
               </button>
+
+              <a
+                href="/admin"
+                className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 transition-colors cursor-pointer text-left font-mono"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>Admin Studio Portal</span>
+              </a>
             </div>
           </div>
         </div>

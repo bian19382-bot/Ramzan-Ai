@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft, CheckCircle2, Zap } from 'lucide-react';
 import { adminAuth } from './auth/adminAuth';
+import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../assets/brandLogo';
 
 interface AdminLoginProps {
   onSuccess: () => void;
@@ -75,7 +76,10 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/40 shadow-lg shadow-cyan-500/20 bg-black flex items-center justify-center shrink-0">
               <img
-                src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                src={BRAND_LOGO_URL}
+                onError={(e) => {
+                  e.currentTarget.src = BRAND_LOGO_FALLBACK;
+                }}
                 alt="Ramzan Brand"
                 className="w-full h-full object-cover object-center"
               />
@@ -131,9 +135,23 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-mono font-medium text-gray-300 mb-1.5">
-              Admin Gmail / Email
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-mono font-medium text-gray-300">
+                Admin Gmail / Email
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('babajani543210@gmail.com');
+                  setError(null);
+                }}
+                className="text-[11px] font-mono text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1 cursor-pointer bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/40 transition active:scale-95 shadow-sm"
+                title="Click karein to auto-fill babajani543210@gmail.com"
+              >
+                <Zap className="w-3 h-3 text-cyan-400" />
+                <span>Refill Gmail</span>
+              </button>
+            </div>
             <div className="relative">
               <input
                 type="email"
@@ -142,7 +160,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
                 disabled={lockoutSeconds > 0 || isSubmitting}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Admin email darj karein"
+                placeholder="babajani543210@gmail.com"
                 className="w-full bg-[#141a24] border border-gray-700/80 focus:border-cyan-400 rounded-xl px-3.5 py-2.5 pl-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition"
               />
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3 pointer-events-none" />
@@ -187,6 +205,35 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
               <span>Remember session</span>
             </label>
             <span className="text-[11px] font-mono text-cyan-400/80">Authorized Access Only</span>
+          </div>
+
+          {/* Quick Auto-Fill credentials bar */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-xs">
+            <span className="text-[11px] font-mono text-gray-400">Quick Auto-Fill:</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('babajani543210@gmail.com');
+                  setError(null);
+                }}
+                className="text-[11px] font-mono text-cyan-300 hover:text-white bg-cyan-500/15 hover:bg-cyan-500/25 px-2 py-1 rounded-lg border border-cyan-500/30 transition cursor-pointer"
+              >
+                Refill Gmail
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('babajani543210@gmail.com');
+                  setPassword('office@12');
+                  setError(null);
+                }}
+                className="text-[11px] font-mono text-cyan-300 hover:text-white bg-cyan-500/25 hover:bg-cyan-500/40 px-2.5 py-1 rounded-lg border border-cyan-500/40 transition cursor-pointer font-bold flex items-center gap-1"
+              >
+                <Zap className="w-3 h-3 text-cyan-400" />
+                <span>Fill Credentials</span>
+              </button>
+            </div>
           </div>
 
           <button

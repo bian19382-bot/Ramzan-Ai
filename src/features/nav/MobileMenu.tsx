@@ -4,6 +4,7 @@ import { X, Sun, Moon, Sparkles, Shield, ArrowRight, Globe, FileText } from 'luc
 import { NavItem, SocialLink } from '../../types/portfolio';
 import { useTheme } from '../theme/ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../../assets/brandLogo';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -77,7 +78,10 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-xl overflow-hidden border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.35)] bg-black shrink-0">
                     <img
-                      src="/assets/aistudio/Neon_R_Monogram_with_Ramzan_Branding_4d04e86b.png"
+                      src={BRAND_LOGO_URL}
+                      onError={(e) => {
+                        e.currentTarget.src = BRAND_LOGO_FALLBACK;
+                      }}
                       alt="Ramzan Logo"
                       className="w-full h-full object-cover object-center"
                     />
@@ -146,6 +150,19 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                     <span>Resume (CV)</span>
                   </div>
                   <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition text-[var(--accent)]" />
+                </a>
+
+                {/* Admin Portal Link */}
+                <a
+                  href="/admin"
+                  onClick={onClose}
+                  className="px-4 py-3 rounded-xl text-base font-medium text-[var(--text)] hover:bg-[var(--surface-2)] hover:text-cyan-400 transition flex items-center justify-between group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Shield className="w-4 h-4 text-cyan-400" />
+                    <span>Admin Studio Portal</span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition text-cyan-400" />
                 </a>
 
                 {onOpenAiConsultant && (

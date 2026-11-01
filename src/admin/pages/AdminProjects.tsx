@@ -13,6 +13,7 @@ import {
   Check,
   FolderKanban,
   Link,
+  Download,
   Github,
 } from 'lucide-react';
 import { Project, ContentStatus } from '../../types/portfolio';
@@ -216,13 +217,33 @@ export const AdminProjects: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreate}
-          className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-2 cursor-pointer shadow-md self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Project</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => {
+              const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(projects, null, 2));
+              const downloadAnchor = document.createElement('a');
+              downloadAnchor.setAttribute('href', dataStr);
+              downloadAnchor.setAttribute('download', `ramzan_projects_${new Date().toISOString().split('T')[0]}.json`);
+              document.body.appendChild(downloadAnchor);
+              downloadAnchor.click();
+              downloadAnchor.remove();
+            }}
+            className="px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--surface-2)]/80 text-[var(--text)] border border-[var(--border)] text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            title="Download all projects as JSON"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export JSON</span>
+          </button>
+
+          <button
+            onClick={handleOpenCreate}
+            className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-2 cursor-pointer shadow-md"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Project</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter / Search Bar */}

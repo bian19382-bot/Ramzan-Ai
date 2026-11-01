@@ -22,14 +22,10 @@ export default function App() {
               <Route path="/resume" element={<ResumePage />} />
               <Route path="/projects/:slug" element={<ProjectDetailPage />} />
 
-              {/* Admin Login Route */}
-              <Route path="/login" element={<LoginPage />} />
-
-              {/* Login sirf Admin Panel ke liye */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/admin" element={<AdminPortal />} />
-                <Route path="/admin/*" element={<AdminPortal />} />
-              </Route>
+              {/* Admin Portal & Login Routes */}
+              <Route path="/login" element={<Navigate to="/admin" replace />} />
+              <Route path="/admin" element={<AdminPortal />} />
+              <Route path="/admin/*" element={<AdminPortal />} />
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

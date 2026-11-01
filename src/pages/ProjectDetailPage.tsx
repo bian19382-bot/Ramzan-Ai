@@ -8,7 +8,7 @@ import { AiProjectConsultant } from '../features/ai/AiProjectConsultant';
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [db, setDb] = useState(dataProvider.getDatabase());
-  const [project, setProject] = useState(() => dataProvider.getDatabase().projects.find((p) => p.slug === slug) || null);
+  const [project, setProject] = useState<import('../types/portfolio').Project | null>(null);
   const [loadingProject, setLoadingProject] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);

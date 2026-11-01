@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, Sun, Moon, Search, Sparkles, Shield, Globe, FileText } from 'lucide-react';
 import { NavItem, SocialLink } from '../../types/portfolio';
 import { useTheme } from '../theme/ThemeContext';
@@ -172,15 +173,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
 
             {/* Admin Portal Direct Link */}
-            <a
-              href="/admin"
+            <Link
+              to="/admin"
               className="px-2.5 py-1.5 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 transition flex items-center gap-1.5 text-xs font-mono font-medium shadow-sm hover:shadow-[0_0_12px_rgba(6,182,212,0.3)] cursor-pointer"
               title="Admin Studio Portal (Projects & Settings)"
               aria-label="Open Admin Studio Portal"
             >
               <Shield className="w-3.5 h-3.5 text-cyan-400" />
               <span className="hidden sm:inline font-semibold">Admin</span>
-            </a>
+            </Link>
 
             {/* Theme Toggle */}
             <button

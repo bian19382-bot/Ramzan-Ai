@@ -69,6 +69,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     { label: 'Work Experience & Timeline', target: '#experience', icon: FileText },
     { label: 'Client Endorsements', target: '#testimonials', icon: FileText },
     { label: 'Start Project Discussion', target: '#contact', icon: Mail },
+    { label: 'Admin Studio Portal (Management)', target: '/admin', icon: Shield },
   ].filter((n) => n.label.toLowerCase().includes(query.toLowerCase()));
 
   return (

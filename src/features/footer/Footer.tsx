@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowUp, RotateCcw, Shield, Sun, Moon, Mail, MessageCircle } from 'lucide-react';
 import { SiteSettings, SocialLink, NavItem } from '../../types/portfolio';
 import { useTheme } from '../theme/ThemeContext';
@@ -121,13 +122,13 @@ export const Footer: React.FC<FooterProps> = ({
                 <span className="capitalize">Theme: {theme}</span>
               </button>
 
-              <a
-                href="/admin"
+              <Link
+                to="/admin"
                 className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 transition-colors cursor-pointer text-left font-mono"
               >
                 <Shield className="w-3.5 h-3.5" />
                 <span>Admin Studio Portal</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

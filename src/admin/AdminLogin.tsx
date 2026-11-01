@@ -37,7 +37,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (lockoutSeconds > 0) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -126,9 +125,22 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
 
         {/* Lockout countdown warning */}
         {lockoutSeconds > 0 && (
-          <div className="mb-5 p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-xs text-amber-200 flex items-center gap-2">
-            <Lock className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Security Lockout: <strong>{lockoutSeconds}s</strong> intezar karein.</span>
+          <div className="mb-5 p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-xs text-amber-200 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Security Lockout: <strong>{lockoutSeconds}s</strong> intezar karein.</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                adminAuth.clearLockout();
+                setLockoutSeconds(0);
+                setError(null);
+              }}
+              className="text-[11px] font-mono text-cyan-300 hover:text-white underline cursor-pointer bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30"
+            >
+              Reset Lock
+            </button>
           </div>
         )}
 
@@ -157,7 +169,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
                 type="email"
                 required
                 autoComplete="email"
-                disabled={lockoutSeconds > 0 || isSubmitting}
+                disabled={isSubmitting}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="babajani543210@gmail.com"
@@ -176,7 +188,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
                 type={showPassword ? 'text' : 'password'}
                 required
                 autoComplete="current-password"
-                disabled={lockoutSeconds > 0 || isSubmitting}
+                disabled={isSubmitting}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Secret password darj karein"
@@ -209,7 +221,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
 
           <button
             type="submit"
-            disabled={lockoutSeconds > 0 || isSubmitting}
+            disabled={isSubmitting}
             className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 hover:from-cyan-400 to-blue-600 hover:to-blue-500 text-black font-bold text-sm tracking-wide transition shadow-lg shadow-cyan-500/25 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
           >
             {isSubmitting ? (

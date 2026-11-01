@@ -2,13 +2,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Ensures that both 'dist' and 'build' directories exist with identical production assets.
-// This prevents Cloudflare Pages build errors if the user configures the output directory as either 'dist' or 'build'.
+// Ensures physical HTML files for client-side routes (/admin, /login, /resume)
+// so that direct browser navigation, hard refreshes, and trailing slashes
+// NEVER return a 404 on Cloudflare Pages or any static edge CDN.
 try {
   if (fs.existsSync('dist')) {
+    const routes = ['admin', 'login', 'resume'];
+
+    routes.forEach((route) => {
+      const routeDir = path.join('dist', route);
+      fs.mkdirSync(routeDir, { recursive: true });
+      fs.copyFileSync(path.join('dist', 'index.html'), path.join(routeDir, 'index.html'));
+      fs.copyFileSync(path.join('dist', 'index.html'), path.join('dist', `${route}.html`));
+    });
+
+    // Mirror everything to 'build' directory as well
     fs.cpSync('dist', 'build', { recursive: true });
-    console.log('[prepare-output] Successfully mirrored dist/ to build/ for Cloudflare compatibility.');
+    console.log('[prepare-output] Successfully created physical route fallbacks and mirrored dist/ to build/.');
   }
 } catch (err) {
-  console.warn('[prepare-output] Warning while mirroring dist to build:', err);
+  console.warn('[prepare-output] Warning while preparing output:', err);
 }

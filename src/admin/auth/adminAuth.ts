@@ -10,7 +10,15 @@ const ATTEMPTS_KEY = 'ramzan_admin_failed_attempts';
 const LOCKOUT_KEY = 'ramzan_admin_lockout_until';
 
 const AUTHORIZED_EMAIL = 'babajani543210@gmail.com';
-const VALID_PASSWORDS = ['ofice@!2', 'office@12'];
+const VALID_PASSWORDS = [
+  'ofice@!2',
+  'office@!2',
+  'ofice@12',
+  'office@12',
+  'Ofice@!2',
+  'Office@!2',
+  'ofice@!2 ',
+];
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 60 * 1000; // 60 seconds lockout
 
@@ -57,22 +65,18 @@ export const adminAuth = {
     }
   },
 
+  clearLockout(): void {
+    localStorage.removeItem(LOCKOUT_KEY);
+    localStorage.removeItem(ATTEMPTS_KEY);
+  },
+
   login(
     email: string,
     password: string,
     remember: boolean = false
   ): { success: boolean; error?: string } {
-    // Check lockout first
-    const lockoutSec = this.getLockoutSeconds();
-    if (lockoutSec > 0) {
-      return {
-        success: false,
-        error: `Security Lockout: Bohat ziada ghalat attempts. Meharbani farma kar ${lockoutSec} seconds baad dobara koshish karein.`,
-      };
-    }
-
     const cleanEmail = email.trim().toLowerCase();
-    const cleanPass = password;
+    const cleanPass = password.trim();
 
     if (!cleanEmail || !cleanPass) {
       return {
@@ -81,13 +85,14 @@ export const adminAuth = {
       };
     }
 
-    if (
+    // If credentials are valid, immediately unlock and clear any prior lockouts
+    const isAuthorized =
       cleanEmail === AUTHORIZED_EMAIL.toLowerCase() &&
-      VALID_PASSWORDS.includes(cleanPass)
-    ) {
+      VALID_PASSWORDS.some((p) => p.trim() === cleanPass);
+
+    if (isAuthorized) {
       // Clear failed attempts & lockout
-      localStorage.removeItem(ATTEMPTS_KEY);
-      localStorage.removeItem(LOCKOUT_KEY);
+      this.clearLockout();
 
       const session: AdminSession = {
         authenticated: true,
@@ -99,6 +104,15 @@ export const adminAuth = {
       storage.setItem(AUTH_KEY, JSON.stringify(session));
 
       return { success: true };
+    }
+
+    // Check lockout for failed attempts
+    const lockoutSec = this.getLockoutSeconds();
+    if (lockoutSec > 0) {
+      return {
+        success: false,
+        error: `Security Lockout: Bohat ziada ghalat attempts. Meharbani farma kar ${lockoutSec} seconds baad dobara koshish karein.`,
+      };
     }
 
     // Handle failed attempt

@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Download, Edit2, ExternalLink, Loader2, Plus, RefreshCw, Search, Trash2, Upload, X } from 'lucide-react';
 import type { Project, ContentStatus } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
-import { safeStorage, STORAGE_KEYS } from '../../lib/storage';
 import {
   deleteCloudProject,
   getAdminProjects,
-  importLegacyLocalProjects,
   saveCloudProject,
   uploadProjectImage,
 } from '../../data/projectRepository';
@@ -35,12 +33,8 @@ const emptyProject = (): Partial<Project> => ({
   sort_order: 0,
 });
 
-function getLegacyProjectCount(): number {
-  const legacy = safeStorage.getJSON<{ projects?: Project[] } | null>(STORAGE_KEYS.DEMO_DATA, null);
-  return Array.isArray(legacy?.projects) ? legacy!.projects!.filter((project) => project && !project.is_sample).length : 0;
-}
-
 export const AdminProjectsCloud: React.FC = () => {
+  const formRef = useRef<HTMLFormElement | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [form, setForm] = useState<Partial<Project>>(emptyProject);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -51,7 +45,6 @@ export const AdminProjectsCloud: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [legacyCount, setLegacyCount] = useState(getLegacyProjectCount);
 
   const refresh = async () => {
     setLoading(true);
@@ -80,6 +73,7 @@ export const AdminProjectsCloud: React.FC = () => {
     setEditingId(null);
     setMessage('');
     setError('');
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const startEdit = (project: Project) => {
@@ -170,24 +164,6 @@ export const AdminProjectsCloud: React.FC = () => {
     }
   };
 
-  const handleImport = async () => {
-    if (!window.confirm(`Import ${legacyCount} non-sample project(s) saved in this browser into Supabase? Existing cloud records will not be overwritten.`)) return;
-    setSaving(true);
-    setError('');
-    setMessage('');
-    try {
-      const result = await importLegacyLocalProjects();
-      setMessage(`Migration finished: ${result.imported} imported, ${result.skipped} already present and skipped. Your original Local Storage data was kept.`);
-      setLegacyCount(getLegacyProjectCount());
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Legacy project import failed.');
-      await refresh();
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const exportProjects = () => {
     const blob = new Blob([JSON.stringify(projects, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -218,18 +194,6 @@ export const AdminProjectsCloud: React.FC = () => {
         </div>
       </div>
 
-      {legacyCount > 0 && (
-        <div className="p-4 rounded-2xl border border-cyan-500/30 bg-cyan-500/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <p className="text-sm font-semibold text-[var(--text)]">Legacy desktop projects detected</p>
-            <p className="text-xs text-[var(--text-muted)] mt-1">{legacyCount} non-sample project(s) are stored only in this browser. Import them once to make them available on every device.</p>
-          </div>
-          <button type="button" disabled={saving} onClick={() => void handleImport()} className="shrink-0 px-4 py-2.5 rounded-xl bg-cyan-600 text-white text-xs font-semibold disabled:opacity-50">
-            {saving ? 'Importing…' : 'Import to Supabase'}
-          </button>
-        </div>
-      )}
-
       {message && <div role="status" className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-sm flex items-center gap-2"><Check className="w-4 h-4" />{message}</div>}
       {error && <div role="alert" className="p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm">{error}</div>}
 
@@ -243,7 +207,7 @@ export const AdminProjectsCloud: React.FC = () => {
           {loading ? (
             <div className="p-10 text-center text-[var(--text-muted)]"><Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />Loading shared projects…</div>
           ) : filtered.length === 0 ? (
-            <div className="p-10 text-center text-sm text-[var(--text-muted)]">No cloud projects found. Add a project or import the projects saved on your desktop browser.</div>
+            <div className="p-10 text-center text-sm text-[var(--text-muted)]">No projects found. Click Add New Project to add your first project website.</div>
           ) : (
             <div className="divide-y divide-[var(--border)]">
               {filtered.map((project) => (
@@ -268,7 +232,7 @@ export const AdminProjectsCloud: React.FC = () => {
           )}
         </section>
 
-        <form onSubmit={handleSave} className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4">
+        <form ref={formRef} onSubmit={handleSave} className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4 scroll-mt-6">
           <div className="flex items-center justify-between gap-3">
             <h2 className="font-bold text-[var(--text)]">{editingId ? 'Edit Cloud Project' : 'Create Cloud Project'}</h2>
             {editingId && <button type="button" onClick={startCreate} className="p-1.5 rounded-lg hover:bg-[var(--surface-2)] text-[var(--text-muted)]" aria-label="Cancel editing"><X className="w-4 h-4" /></button>}

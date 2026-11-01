@@ -10,6 +10,10 @@ const singleton = (item: Record<string, unknown>, id = 1) => ({ ...item, id });
  * portfolio_* tables; existing public tables and Local Storage fallback remain intact.
  */
 export async function syncPortfolioDatabase(db: PortfolioDatabase): Promise<void> {
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  // Public visitors must never attempt privileged CMS upserts.
+  if (!session?.user) return;
   const writes: Array<[string, Row[]]> = [
     ['portfolio_profile', [singleton(db.profile as unknown as Row)]],
     ['portfolio_settings', [singleton(db.settings as unknown as Row)]],
@@ -19,7 +23,7 @@ export async function syncPortfolioDatabase(db: PortfolioDatabase): Promise<void
     ['portfolio_intro_video', [singleton(db.intro_video as unknown as Row)]],
     ['portfolio_categories', rows(db.categories)],
     ['portfolio_tags', rows(db.tags)],
-    ['portfolio_projects', db.projects.map(p => ({ ...p, gallery: p.gallery ?? [] })) as unknown as Row[]],
+    ['portfolio_projects', db.projects.map(p => ({ ...p, project_date: p.project_date || null, publish_at: p.publish_at || null, gallery: p.gallery ?? [] })) as unknown as Row[]],
     ['portfolio_skill_groups', rows(db.skill_groups)],
     ['portfolio_skills', rows(db.skills)],
     ['portfolio_experiences', rows(db.experiences)],

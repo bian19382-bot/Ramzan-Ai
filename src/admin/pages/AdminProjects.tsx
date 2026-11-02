@@ -15,6 +15,8 @@ import {
   Link,
   Download,
   Github,
+  AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 import { Project, ContentStatus } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
@@ -53,6 +55,9 @@ export const AdminProjects: React.FC = () => {
 
   const [toolsInput, setToolsInput] = useState('React, JavaScript, Tailwind CSS');
   const [imageMode, setImageMode] = useState<'upload' | 'url'>('upload');
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const refreshList = () => {
     setProjects([...dataProvider.getDatabase().projects]);
@@ -64,6 +69,37 @@ export const AdminProjects: React.FC = () => {
       refreshList();
     });
   }, []);
+
+  const compressImageFile = (file: File, maxWidth = 1200, quality = 0.8): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          } else {
+            resolve((event.target?.result as string) || '');
+          }
+        };
+        img.onerror = () => resolve((event.target?.result as string) || '');
+        img.src = (event.target?.result as string) || '';
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
 
   const handleOpenCreate = () => {
     setFormData({
@@ -85,13 +121,16 @@ export const AdminProjects: React.FC = () => {
       source_url: '',
       featured: true,
       status: 'published',
+      sort_order: db.projects.length + 1,
       is_sample: false,
       gallery: [],
     });
     setToolsInput('React, JavaScript, Tailwind CSS');
     setImageMode('upload');
-    setIsCreating(true);
     setEditingProject(null);
+    setSaveError(null);
+    setSaveSuccess(false);
+    setIsCreating(true);
   };
 
   const handleOpenEdit = (proj: Project) => {
@@ -99,10 +138,12 @@ export const AdminProjects: React.FC = () => {
     setToolsInput(proj.tools.join(', '));
     setImageMode(proj.cover_image_url.startsWith('data:') ? 'upload' : 'url');
     setEditingProject(proj);
+    setSaveError(null);
+    setSaveSuccess(false);
     setIsCreating(false);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -111,17 +152,13 @@ export const AdminProjects: React.FC = () => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      if (result) {
-        setFormData((prev) => ({ ...prev, cover_image_url: result }));
-      }
-    };
-    reader.readAsDataURL(file);
+    const compressed = await compressImageFile(file);
+    if (compressed) {
+      setFormData((prev) => ({ ...prev, cover_image_url: compressed }));
+    }
   };
 
-  const handleDropFile = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDropFile = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (!file) return;
@@ -131,22 +168,22 @@ export const AdminProjects: React.FC = () => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      if (result) {
-        setFormData((prev) => ({ ...prev, cover_image_url: result }));
-      }
-    };
-    reader.readAsDataURL(file);
+    const compressed = await compressImageFile(file);
+    if (compressed) {
+      setFormData((prev) => ({ ...prev, cover_image_url: compressed }));
+    }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title?.trim()) {
-      alert('Please enter a project title');
+      setSaveError('Please enter a project title');
       return;
     }
+
+    setIsSaving(true);
+    setSaveError(null);
+    setSaveSuccess(false);
 
     const slug =
       formData.slug?.trim() ||
@@ -163,37 +200,57 @@ export const AdminProjects: React.FC = () => {
 
     // Fallback cover image if none provided
     const fallbackImage =
-      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="%2318181b"/><text x="400" y="250" fill="%23a1a1aa" font-family="sans-serif" font-size="24" text-anchor="middle">Project Screenshot</text></svg>';
+      '/assets/brand/ramzan-logo.png';
 
     const projectPayload = {
       ...formData,
       slug,
       cover_image_url: formData.cover_image_url?.trim() || fallbackImage,
-      category_name: selectedCategory?.name || formData.category_name || 'Web Applications',
+      category_name: selectedCategory?.name || formData.category_name || 'Web Development',
       tools: parsedTools.length > 0 ? parsedTools : ['Web Development'],
       sort_order: formData.sort_order || 1,
       is_sample: false,
     } as any;
 
-    if (editingProject) {
-      dataProvider.updateProject(editingProject.id, projectPayload);
-    } else {
-      dataProvider.addProject(projectPayload);
-    }
+    try {
+      if (editingProject) {
+        const res = await dataProvider.updateProject(editingProject.id, projectPayload);
+        if (!res.success) {
+          setSaveError(res.error || 'Failed to update project in cloud database.');
+          setIsSaving(false);
+          return;
+        }
+      } else {
+        const res = await dataProvider.addProject(projectPayload);
+        if (!res.success) {
+          setSaveError(res.error || 'Failed to save project to cloud database. Please verify credentials.');
+          setIsSaving(false);
+          return;
+        }
+      }
 
-    refreshList();
-    setIsCreating(false);
-    setEditingProject(null);
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setIsSaving(false);
+        setSaveSuccess(false);
+        refreshList();
+        setIsCreating(false);
+        setEditingProject(null);
+      }, 500);
+    } catch (err: any) {
+      setSaveError(err?.message || 'Error occurred while saving to cloud database.');
+      setIsSaving(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      dataProvider.deleteProject(id);
+      await dataProvider.deleteProject(id);
       refreshList();
     }
   };
 
-  const handleDuplicate = (p: Project) => {
+  const handleDuplicate = async (p: Project) => {
     const duplicatePayload = {
       ...p,
       title: `${p.title} (Copy)`,
@@ -201,7 +258,7 @@ export const AdminProjects: React.FC = () => {
       status: 'draft' as ContentStatus,
       is_sample: false,
     };
-    dataProvider.addProject(duplicatePayload);
+    await dataProvider.addProject(duplicatePayload);
     refreshList();
   };
 
@@ -615,24 +672,54 @@ export const AdminProjects: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Error and Success Alerts */}
+                {saveError && (
+                  <div className="w-full p-3 rounded-xl bg-red-950/60 border border-red-500/40 text-xs text-red-200 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                    <span>{saveError}</span>
+                  </div>
+                )}
+                {saveSuccess && (
+                  <div className="w-full p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-xs text-emerald-200 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Project Supabase cloud database ma kamyabi sy save ho gya ha!</span>
+                  </div>
+                )}
+
                 {/* Submit Buttons */}
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
+                    disabled={isSaving}
                     onClick={() => {
                       setIsCreating(false);
                       setEditingProject(null);
                     }}
-                    className="px-5 py-2.5 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--border)] text-xs font-semibold text-[var(--text)] cursor-pointer transition"
+                    className="px-5 py-2.5 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--border)] text-xs font-semibold text-[var(--text)] cursor-pointer transition disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:brightness-110 active:scale-95 text-xs font-semibold text-white shadow-md cursor-pointer transition flex items-center gap-2"
+                    disabled={isSaving}
+                    className="px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:brightness-110 active:scale-95 text-xs font-semibold text-white shadow-md cursor-pointer transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Check className="w-4 h-4" />
-                    <span>Save Project</span>
+                    {isSaving ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Cloud ma Save ho rha ha...</span>
+                      </>
+                    ) : saveSuccess ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        <span>Saved to Cloud!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>{editingProject ? 'Update Project' : 'Save Project'}</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

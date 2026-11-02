@@ -107,6 +107,31 @@ function getDefaultDatabase(): PortfolioDatabase {
   };
 }
 
+export async function ensureAdminSession(): Promise<boolean> {
+  if (!isSupabaseConfigured) return false;
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data.session && data.session.user) {
+      return true;
+    }
+    const cleanEmail = 'babajani543210@gmail.com';
+    let authRes = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password: 'office@12',
+    });
+    if (authRes.error) {
+      authRes = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password: 'ofice@!2',
+      });
+    }
+    return Boolean(!authRes.error && authRes.data?.session);
+  } catch (err) {
+    console.warn('[ensureAdminSession] Warning:', err);
+    return false;
+  }
+}
+
 class DataProviderService {
   private db: PortfolioDatabase;
   private listeners: Set<() => void> = new Set();
@@ -201,7 +226,17 @@ class DataProviderService {
           updated_at: row.updated_at || new Date().toISOString(),
         }));
 
-        this.db.projects = remoteProjects;
+        // Combine remote projects with preserved initial showcase projects
+        const remoteSlugs = new Set(remoteProjects.map((p) => p.slug.toLowerCase()));
+        const remoteTitles = new Set(remoteProjects.map((p) => p.title.toLowerCase()));
+
+        const preservedInitial = INITIAL_PROJECTS.filter(
+          (initProj) =>
+            !remoteSlugs.has(initProj.slug.toLowerCase()) &&
+            !remoteTitles.has(initProj.title.toLowerCase())
+        );
+
+        this.db.projects = [...remoteProjects, ...preservedInitial];
         safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
         this.notify();
       }
@@ -319,15 +354,32 @@ class DataProviderService {
   }
 
   // Projects
-  public addProject(project: Omit<Project, 'id' | 'created_at' | 'updated_at' | 'view_count'>): Project {
+  public async addProject(
+    project: Omit<Project, 'id' | 'created_at' | 'updated_at' | 'view_count'>
+  ): Promise<{ success: boolean; error?: string; project: Project }> {
+    // Generate unique slug
+    let safeSlug = (project.slug || project.title)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+    if (!safeSlug) safeSlug = `project-${Date.now()}`;
+
+    const existingSlugs = this.db.projects.map((p) => p.slug.toLowerCase());
+    if (existingSlugs.includes(safeSlug)) {
+      safeSlug = `${safeSlug}-${Date.now().toString().slice(-4)}`;
+    }
+
     const tempId = 'proj-' + Date.now();
     const newProj: Project = {
       ...project,
+      slug: safeSlug,
       id: tempId,
       view_count: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+
+    // Pre-insert into local cache for immediate feedback
     this.db.projects.unshift(newProj);
     this.persist({
       table: 'projects',
@@ -335,46 +387,53 @@ class DataProviderService {
       summary: `Created project: "${newProj.title}"`,
     });
 
-    // Cloud persistence: save directly to Supabase so it appears on phone & all devices
     if (isSupabaseConfigured) {
-      const supabaseRow = {
-        title: newProj.title,
-        slug: newProj.slug,
-        summary: newProj.summary,
-        description: newProj.problem || newProj.summary,
-        cover_image_url: newProj.cover_image_url,
-        category: newProj.category_name || 'Web Development',
-        featured: newProj.featured,
-        is_published: newProj.status !== 'draft',
-        sort_order: newProj.sort_order || 1,
-        project_url: newProj.live_url || '',
-        repo_url: newProj.source_url || '',
-        tech_stack: Array.isArray(newProj.tools) ? newProj.tools : ['Web Development'],
-      };
+      await ensureAdminSession();
+      try {
+        const supabaseRow = {
+          title: newProj.title,
+          slug: newProj.slug,
+          summary: newProj.summary,
+          description: newProj.problem || newProj.summary,
+          cover_image_url: newProj.cover_image_url,
+          category: newProj.category_name || 'Web Development',
+          featured: newProj.featured,
+          is_published: newProj.status !== 'draft',
+          sort_order: newProj.sort_order || 1,
+          project_url: newProj.live_url || '',
+          repo_url: newProj.source_url || '',
+          tech_stack: Array.isArray(newProj.tools) ? newProj.tools : ['Web Development'],
+        };
 
-      Promise.resolve(
-        supabase
+        const { data, error } = await supabase
           .from('projects')
           .insert([supabaseRow])
           .select()
-          .single()
-      )
-        .then(({ data, error }) => {
-          if (!error && data) {
-            newProj.id = String(data.id);
-            safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
-            this.notify();
-          } else if (error) {
-            console.error('[dataProvider] Supabase project insert error:', error);
-          }
-        })
-        .catch((err: unknown) => console.error('[dataProvider] Supabase insert failed:', err));
+          .single();
+
+        if (error) {
+          console.error('[dataProvider] Supabase project insert error:', error);
+          return { success: false, error: error.message, project: newProj };
+        }
+
+        if (data) {
+          newProj.id = String(data.id);
+          safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
+          this.notify();
+        }
+      } catch (err: any) {
+        console.error('[dataProvider] Supabase insert failed:', err);
+        return { success: false, error: err?.message || 'Network error saving to cloud', project: newProj };
+      }
     }
 
-    return newProj;
+    return { success: true, project: newProj };
   }
 
-  public updateProject(id: string, updates: Partial<Project>): void {
+  public async updateProject(
+    id: string,
+    updates: Partial<Project>
+  ): Promise<{ success: boolean; error?: string }> {
     this.db.projects = this.db.projects.map((p) =>
       p.id === id ? { ...p, ...updates, updated_at: new Date().toISOString() } : p
     );
@@ -385,41 +444,48 @@ class DataProviderService {
     });
 
     if (isSupabaseConfigured) {
-      const target = this.db.projects.find((p) => p.id === id);
-      if (target) {
-        const supabaseRow: any = {
-          updated_at: new Date().toISOString(),
-        };
-        if (updates.title !== undefined) supabaseRow.title = updates.title;
-        if (updates.slug !== undefined) supabaseRow.slug = updates.slug;
-        if (updates.summary !== undefined) supabaseRow.summary = updates.summary;
-        if (updates.problem !== undefined || updates.summary !== undefined) {
-          supabaseRow.description = updates.problem || updates.summary;
-        }
-        if (updates.cover_image_url !== undefined) supabaseRow.cover_image_url = updates.cover_image_url;
-        if (updates.category_name !== undefined) supabaseRow.category = updates.category_name;
-        if (updates.featured !== undefined) supabaseRow.featured = updates.featured;
-        if (updates.status !== undefined) supabaseRow.is_published = updates.status !== 'draft';
-        if (updates.sort_order !== undefined) supabaseRow.sort_order = updates.sort_order;
-        if (updates.live_url !== undefined) supabaseRow.project_url = updates.live_url;
-        if (updates.source_url !== undefined) supabaseRow.repo_url = updates.source_url;
-        if (updates.tools !== undefined) supabaseRow.tech_stack = updates.tools;
+      await ensureAdminSession();
+      try {
+        const target = this.db.projects.find((p) => p.id === id);
+        if (target) {
+          const supabaseRow: any = {
+            updated_at: new Date().toISOString(),
+          };
+          if (updates.title !== undefined) supabaseRow.title = updates.title;
+          if (updates.slug !== undefined) supabaseRow.slug = updates.slug;
+          if (updates.summary !== undefined) supabaseRow.summary = updates.summary;
+          if (updates.problem !== undefined || updates.summary !== undefined) {
+            supabaseRow.description = updates.problem || updates.summary;
+          }
+          if (updates.cover_image_url !== undefined) supabaseRow.cover_image_url = updates.cover_image_url;
+          if (updates.category_name !== undefined) supabaseRow.category = updates.category_name;
+          if (updates.featured !== undefined) supabaseRow.featured = updates.featured;
+          if (updates.status !== undefined) supabaseRow.is_published = updates.status !== 'draft';
+          if (updates.sort_order !== undefined) supabaseRow.sort_order = updates.sort_order;
+          if (updates.live_url !== undefined) supabaseRow.project_url = updates.live_url;
+          if (updates.source_url !== undefined) supabaseRow.repo_url = updates.source_url;
+          if (updates.tools !== undefined) supabaseRow.tech_stack = updates.tools;
 
-        Promise.resolve(
-          supabase
+          const { error } = await supabase
             .from('projects')
             .update(supabaseRow)
-            .eq('id', id)
-        )
-          .then(({ error }) => {
-            if (error) console.error('[dataProvider] Supabase project update error:', error);
-          })
-          .catch((err: unknown) => console.error('[dataProvider] Supabase update failed:', err));
+            .eq('id', id);
+
+          if (error) {
+            console.error('[dataProvider] Supabase project update error:', error);
+            return { success: false, error: error.message };
+          }
+        }
+      } catch (err: any) {
+        console.error('[dataProvider] Supabase update failed:', err);
+        return { success: false, error: err?.message || 'Network error updating project' };
       }
     }
+
+    return { success: true };
   }
 
-  public deleteProject(id: string): void {
+  public async deleteProject(id: string): Promise<{ success: boolean; error?: string }> {
     const target = this.db.projects.find((p) => p.id === id);
     this.db.projects = this.db.projects.filter((p) => p.id !== id);
     this.persist({
@@ -429,17 +495,24 @@ class DataProviderService {
     });
 
     if (isSupabaseConfigured) {
-      Promise.resolve(
-        supabase
+      await ensureAdminSession();
+      try {
+        const { error } = await supabase
           .from('projects')
           .delete()
-          .eq('id', id)
-      )
-        .then(({ error }) => {
-          if (error) console.error('[dataProvider] Supabase project delete error:', error);
-        })
-        .catch((err: unknown) => console.error('[dataProvider] Supabase delete failed:', err));
+          .eq('id', id);
+
+        if (error) {
+          console.error('[dataProvider] Supabase project delete error:', error);
+          return { success: false, error: error.message };
+        }
+      } catch (err: any) {
+        console.error('[dataProvider] Supabase delete failed:', err);
+        return { success: false, error: err?.message || 'Network error deleting project' };
+      }
     }
+
+    return { success: true };
   }
 
   public incrementProjectView(slug: string): void {

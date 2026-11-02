@@ -33,8 +33,9 @@ export const PublicPortfolio: React.FC = () => {
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [preselectedService, setPreselectedService] = useState('');
 
-  // Subscribe to reactive database changes
+  // Subscribe to reactive database changes & sync cloud data from Supabase
   useEffect(() => {
+    void dataProvider.syncWithSupabase();
     return dataProvider.subscribe(() => {
       setDb({ ...dataProvider.getDatabase() });
     });

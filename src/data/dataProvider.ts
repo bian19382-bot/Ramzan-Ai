@@ -45,6 +45,7 @@ import {
   INITIAL_INQUIRIES,
 } from './initialData';
 import { safeStorage, STORAGE_KEYS } from '../lib/storage';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface PortfolioDatabase {
   profile: Profile;
@@ -154,6 +155,59 @@ class DataProviderService {
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, stored);
     }
     this.db = stored;
+
+    // Trigger non-blocking sync with Supabase so all devices (mobile/desktop) receive cloud data
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        void this.syncWithSupabase();
+      }, 0);
+    }
+  }
+
+  public async syncWithSupabase(): Promise<void> {
+    if (!isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        const remoteProjects = data.map((row: any): Project => ({
+          id: String(row.id),
+          slug: row.slug || `project-${row.id}`,
+          title: row.title || 'Untitled Project',
+          summary: row.summary || row.description || '',
+          category_id: 'cat-1',
+          category_name: row.category || 'Web Development',
+          cover_image_url: row.cover_image_url || '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png',
+          problem: row.description || row.summary || 'Project engineered for high performance.',
+          approach: 'Built using modern AI workflows and scalable web technologies.',
+          role: 'Creator & Developer',
+          process: 'Requirements scoping, iterative component building, testing, and edge deployment.',
+          challenges: 'Optimizing performance, responsive layout across all device viewports, and edge caching.',
+          results: 'Published and live system.',
+          tools: Array.isArray(row.tech_stack) && row.tech_stack.length > 0 ? row.tech_stack : ['Web Development'],
+          project_date: row.created_at ? row.created_at.slice(0, 10) : '2026',
+          live_url: row.project_url || '',
+          source_url: row.repo_url || '',
+          featured: Boolean(row.featured),
+          status: row.is_published ? 'published' : 'draft',
+          sort_order: typeof row.sort_order === 'number' ? row.sort_order : 1,
+          view_count: 0,
+          is_sample: false,
+          gallery: [],
+          created_at: row.created_at || new Date().toISOString(),
+          updated_at: row.updated_at || new Date().toISOString(),
+        }));
+
+        this.db.projects = remoteProjects;
+        safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
+        this.notify();
+      }
+    } catch (err) {
+      console.warn('[dataProvider] Error syncing projects from Supabase:', err);
+    }
   }
 
   private persist(action?: { table: string; action: AuditLog['action']; summary: string }) {
@@ -266,9 +320,10 @@ class DataProviderService {
 
   // Projects
   public addProject(project: Omit<Project, 'id' | 'created_at' | 'updated_at' | 'view_count'>): Project {
+    const tempId = 'proj-' + Date.now();
     const newProj: Project = {
       ...project,
-      id: 'proj-' + Date.now(),
+      id: tempId,
       view_count: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -279,6 +334,43 @@ class DataProviderService {
       action: 'insert',
       summary: `Created project: "${newProj.title}"`,
     });
+
+    // Cloud persistence: save directly to Supabase so it appears on phone & all devices
+    if (isSupabaseConfigured) {
+      const supabaseRow = {
+        title: newProj.title,
+        slug: newProj.slug,
+        summary: newProj.summary,
+        description: newProj.problem || newProj.summary,
+        cover_image_url: newProj.cover_image_url,
+        category: newProj.category_name || 'Web Development',
+        featured: newProj.featured,
+        is_published: newProj.status !== 'draft',
+        sort_order: newProj.sort_order || 1,
+        project_url: newProj.live_url || '',
+        repo_url: newProj.source_url || '',
+        tech_stack: Array.isArray(newProj.tools) ? newProj.tools : ['Web Development'],
+      };
+
+      Promise.resolve(
+        supabase
+          .from('projects')
+          .insert([supabaseRow])
+          .select()
+          .single()
+      )
+        .then(({ data, error }) => {
+          if (!error && data) {
+            newProj.id = String(data.id);
+            safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
+            this.notify();
+          } else if (error) {
+            console.error('[dataProvider] Supabase project insert error:', error);
+          }
+        })
+        .catch((err: unknown) => console.error('[dataProvider] Supabase insert failed:', err));
+    }
+
     return newProj;
   }
 
@@ -291,6 +383,40 @@ class DataProviderService {
       action: 'update',
       summary: `Updated project ID: ${id}`,
     });
+
+    if (isSupabaseConfigured) {
+      const target = this.db.projects.find((p) => p.id === id);
+      if (target) {
+        const supabaseRow: any = {
+          updated_at: new Date().toISOString(),
+        };
+        if (updates.title !== undefined) supabaseRow.title = updates.title;
+        if (updates.slug !== undefined) supabaseRow.slug = updates.slug;
+        if (updates.summary !== undefined) supabaseRow.summary = updates.summary;
+        if (updates.problem !== undefined || updates.summary !== undefined) {
+          supabaseRow.description = updates.problem || updates.summary;
+        }
+        if (updates.cover_image_url !== undefined) supabaseRow.cover_image_url = updates.cover_image_url;
+        if (updates.category_name !== undefined) supabaseRow.category = updates.category_name;
+        if (updates.featured !== undefined) supabaseRow.featured = updates.featured;
+        if (updates.status !== undefined) supabaseRow.is_published = updates.status !== 'draft';
+        if (updates.sort_order !== undefined) supabaseRow.sort_order = updates.sort_order;
+        if (updates.live_url !== undefined) supabaseRow.project_url = updates.live_url;
+        if (updates.source_url !== undefined) supabaseRow.repo_url = updates.source_url;
+        if (updates.tools !== undefined) supabaseRow.tech_stack = updates.tools;
+
+        Promise.resolve(
+          supabase
+            .from('projects')
+            .update(supabaseRow)
+            .eq('id', id)
+        )
+          .then(({ error }) => {
+            if (error) console.error('[dataProvider] Supabase project update error:', error);
+          })
+          .catch((err: unknown) => console.error('[dataProvider] Supabase update failed:', err));
+      }
+    }
   }
 
   public deleteProject(id: string): void {
@@ -301,6 +427,19 @@ class DataProviderService {
       action: 'delete',
       summary: `Deleted project: "${target?.title || id}"`,
     });
+
+    if (isSupabaseConfigured) {
+      Promise.resolve(
+        supabase
+          .from('projects')
+          .delete()
+          .eq('id', id)
+      )
+        .then(({ error }) => {
+          if (error) console.error('[dataProvider] Supabase project delete error:', error);
+        })
+        .catch((err: unknown) => console.error('[dataProvider] Supabase delete failed:', err));
+    }
   }
 
   public incrementProjectView(slug: string): void {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Plus,
   Search,
@@ -57,6 +57,13 @@ export const AdminProjects: React.FC = () => {
   const refreshList = () => {
     setProjects([...dataProvider.getDatabase().projects]);
   };
+
+  useEffect(() => {
+    void dataProvider.syncWithSupabase();
+    return dataProvider.subscribe(() => {
+      refreshList();
+    });
+  }, []);
 
   const handleOpenCreate = () => {
     setFormData({

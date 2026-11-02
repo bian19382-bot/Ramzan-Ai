@@ -202,9 +202,14 @@ export const AdminProjects: React.FC = () => {
     const fallbackImage =
       '/assets/brand/ramzan-logo.png';
 
+    const fullText = (formData.summary || formData.problem || '').trim();
+    const safeSummary = fullText.length > 490 ? fullText.slice(0, 487) + '...' : fullText;
+
     const projectPayload = {
       ...formData,
       slug,
+      summary: safeSummary,
+      problem: fullText,
       cover_image_url: formData.cover_image_url?.trim() || fallbackImage,
       category_name: selectedCategory?.name || formData.category_name || 'Web Development',
       tools: parsedTools.length > 0 ? parsedTools : ['Web Development'],

@@ -22,7 +22,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'featured' | 'newest' | 'title'>('featured');
   const [activeCaseStudy, setActiveCaseStudy] = useState<Project | null>(null);
-  const [visibleCount, setVisibleCount] = useState<number>(6);
+  const [visibleCount, setVisibleCount] = useState<number>(24);
 
   // Filter and Sort logic
   const filteredProjects = useMemo(() => {

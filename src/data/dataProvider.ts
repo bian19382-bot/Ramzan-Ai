@@ -390,11 +390,16 @@ class DataProviderService {
     if (isSupabaseConfigured) {
       await ensureAdminSession();
       try {
+        const fullDescription = (newProj.problem || newProj.summary || '').trim();
+        const safeSummary = (newProj.summary && newProj.summary.length <= 490)
+          ? newProj.summary
+          : fullDescription.slice(0, 487) + (fullDescription.length > 487 ? '...' : '');
+
         const supabaseRow = {
           title: newProj.title,
           slug: newProj.slug,
-          summary: newProj.summary,
-          description: newProj.problem || newProj.summary,
+          summary: safeSummary || 'Project engineered for high performance.',
+          description: fullDescription || safeSummary,
           cover_image_url: newProj.cover_image_url,
           category: newProj.category_name || 'Web Development',
           featured: newProj.featured,
@@ -453,9 +458,13 @@ class DataProviderService {
           };
           if (updates.title !== undefined) supabaseRow.title = updates.title;
           if (updates.slug !== undefined) supabaseRow.slug = updates.slug;
-          if (updates.summary !== undefined) supabaseRow.summary = updates.summary;
-          if (updates.problem !== undefined || updates.summary !== undefined) {
-            supabaseRow.description = updates.problem || updates.summary;
+          if (updates.summary !== undefined || updates.problem !== undefined) {
+            const fullDescription = (updates.problem ?? updates.summary ?? target.problem ?? target.summary ?? '').trim();
+            const safeSummary = (updates.summary && updates.summary.length <= 490)
+              ? updates.summary
+              : fullDescription.slice(0, 487) + (fullDescription.length > 487 ? '...' : '');
+            supabaseRow.summary = safeSummary || 'Project engineered for high performance.';
+            supabaseRow.description = fullDescription || safeSummary;
           }
           if (updates.cover_image_url !== undefined) supabaseRow.cover_image_url = updates.cover_image_url;
           if (updates.category_name !== undefined) supabaseRow.category = updates.category_name;

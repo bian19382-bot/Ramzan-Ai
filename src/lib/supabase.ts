@@ -6,8 +6,9 @@ import { createClient } from '@supabase/supabase-js';
 const DEFAULT_SUPABASE_URL = 'https://mzbegnyzktdzhvspjucq.supabase.co';
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RmgyJQsfWlzD6xuHBwa4nQ_S-IXDaHL';
 
-const rawUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL as string | undefined)?.trim();
-const rawKey = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim();
+const env = typeof import.meta !== 'undefined' ? (import.meta as any).env : undefined;
+const rawUrl = typeof env?.VITE_SUPABASE_URL === 'string' ? env.VITE_SUPABASE_URL.trim() : undefined;
+const rawKey = typeof env?.VITE_SUPABASE_PUBLISHABLE_KEY === 'string' ? env.VITE_SUPABASE_PUBLISHABLE_KEY.trim() : undefined;
 
 const supabaseUrl =
   rawUrl && !rawUrl.includes('YOUR_PROJECT_REF') && !rawUrl.includes('placeholder.supabase.co')

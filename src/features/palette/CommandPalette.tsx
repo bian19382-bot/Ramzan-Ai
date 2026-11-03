@@ -85,10 +85,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         />
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: -10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: -10 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0, scale: 0.92, rotateY: -35, transformOrigin: 'top center' }}
+          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+          exit={{ opacity: 0, scale: 0.92, rotateY: 35 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          style={{ perspective: 1000 }}
           className="relative w-full max-w-xl bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden z-10"
           role="dialog"
           aria-modal="true"

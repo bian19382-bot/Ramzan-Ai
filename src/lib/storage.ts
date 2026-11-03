@@ -1,14 +1,22 @@
+const memoryStore = new Map<string, string>();
+
 export const safeStorage = {
   get: (key: string): string | null => {
     try {
-      return localStorage.getItem(key);
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem(key);
+      }
+      return memoryStore.get(key) ?? null;
     } catch {
-      return null;
+      return memoryStore.get(key) ?? null;
     }
   },
   set: (key: string, value: string): boolean => {
     try {
-      localStorage.setItem(key, value);
+      memoryStore.set(key, value);
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
       return true;
     } catch {
       return false;
@@ -16,7 +24,10 @@ export const safeStorage = {
   },
   remove: (key: string): boolean => {
     try {
-      localStorage.removeItem(key);
+      memoryStore.delete(key);
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(key);
+      }
       return true;
     } catch {
       return false;
@@ -24,7 +35,7 @@ export const safeStorage = {
   },
   getJSON: <T>(key: string, fallback: T): T => {
     try {
-      const item = localStorage.getItem(key);
+      const item = safeStorage.get(key);
       return item ? JSON.parse(item) : fallback;
     } catch {
       return fallback;
@@ -32,8 +43,7 @@ export const safeStorage = {
   },
   setJSON: <T>(key: string, value: T): boolean => {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
-      return true;
+      return safeStorage.set(key, JSON.stringify(value));
     } catch {
       return false;
     }
@@ -47,4 +57,5 @@ export const STORAGE_KEYS = {
   ACCENT: 'pf:accent',
   DEMO_DATA: 'pf:ramzan_data_v1',
   AUTH_SESSION: 'pf:auth_session',
+  DELETED_PROJECTS: 'pf:deleted_projects_v1',
 } as const;

@@ -136,6 +136,39 @@ class DataProviderService {
   private db: PortfolioDatabase;
   private listeners: Set<() => void> = new Set();
 
+  public getDeletedTombstones(): Array<{ id?: string; slug?: string; title?: string }> {
+    return safeStorage.getJSON<Array<{ id?: string; slug?: string; title?: string }>>(
+      STORAGE_KEYS.DELETED_PROJECTS,
+      []
+    );
+  }
+
+  public addDeletedTombstone(id?: string, slug?: string, title?: string): void {
+    const current = this.getDeletedTombstones();
+    const updated = [
+      ...current.filter((item) => (id && item.id !== id) || (slug && item.slug !== slug)),
+      {
+        id: id || undefined,
+        slug: slug ? slug.toLowerCase().trim() : undefined,
+        title: title ? title.toLowerCase().trim() : undefined,
+      },
+    ];
+    safeStorage.setJSON(STORAGE_KEYS.DELETED_PROJECTS, updated);
+  }
+
+  public isTombstoned(p: { id?: string; slug?: string; title?: string }): boolean {
+    const tombstones = this.getDeletedTombstones();
+    if (!tombstones || tombstones.length === 0) return false;
+    const pSlug = p.slug?.toLowerCase().trim();
+    const pTitle = p.title?.toLowerCase().trim();
+    return tombstones.some((t) => {
+      if (t.id && p.id && t.id === p.id) return true;
+      if (t.slug && pSlug && t.slug === pSlug) return true;
+      if (t.title && pTitle && t.title === pTitle) return true;
+      return false;
+    });
+  }
+
   constructor() {
     const defaultDb = getDefaultDatabase();
     let stored: PortfolioDatabase | null = null;
@@ -147,6 +180,8 @@ class DataProviderService {
 
     if (!stored || (stored.profile?.full_name !== 'Ramzan' && stored.profile?.full_name !== 'Ramzan Ghafoor')) {
       stored = defaultDb;
+      // Filter out tombstoned items from initial projects
+      stored.projects = INITIAL_PROJECTS.filter((p) => !this.isTombstoned(p));
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, stored);
     } else {
       // Safely ensure nested objects and arrays exist
@@ -160,7 +195,8 @@ class DataProviderService {
         },
       };
 
-      stored.projects = Array.isArray(stored.projects) && stored.projects.length > 0 ? stored.projects : INITIAL_PROJECTS;
+      const rawProjects = Array.isArray(stored.projects) && stored.projects.length > 0 ? stored.projects : INITIAL_PROJECTS;
+      stored.projects = rawProjects.filter((p) => !this.isTombstoned(p));
       stored.categories = Array.isArray(stored.categories) ? stored.categories : defaultDb.categories;
       stored.skills = Array.isArray(stored.skills) ? stored.skills : defaultDb.skills;
       stored.skill_groups = Array.isArray(stored.skill_groups) ? stored.skill_groups : defaultDb.skill_groups;
@@ -197,46 +233,63 @@ class DataProviderService {
         .select('*')
         .order('sort_order', { ascending: true });
 
-      if (!error && Array.isArray(data) && data.length > 0) {
-        const remoteProjects = data.map((row: any): Project => ({
-          id: String(row.id),
-          slug: row.slug || `project-${row.id}`,
-          title: row.title || 'Untitled Project',
-          summary: row.summary || row.description || '',
-          category_id: 'cat-1',
-          category_name: row.category || 'Web Development',
-          cover_image_url: row.cover_image_url || '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png',
-          problem: row.description || row.summary || 'Project engineered for high performance.',
-          approach: 'Built using modern AI workflows and scalable web technologies.',
-          role: 'Creator & Developer',
-          process: 'Requirements scoping, iterative component building, testing, and edge deployment.',
-          challenges: 'Optimizing performance, responsive layout across all device viewports, and edge caching.',
-          results: 'Published and live system.',
-          tools: Array.isArray(row.tech_stack) && row.tech_stack.length > 0 ? row.tech_stack : ['Web Development'],
-          project_date: row.created_at ? row.created_at.slice(0, 10) : '2026',
-          live_url: row.project_url || '',
-          source_url: row.repo_url || '',
-          featured: Boolean(row.featured),
-          status: row.is_published ? 'published' : 'draft',
-          sort_order: typeof row.sort_order === 'number' ? row.sort_order : 1,
-          view_count: 0,
-          is_sample: false,
-          gallery: [],
-          created_at: row.created_at || new Date().toISOString(),
-          updated_at: row.updated_at || new Date().toISOString(),
-        }));
+      if (!error && Array.isArray(data)) {
+        const remoteProjects = data
+          .map((row: any): Project => ({
+            id: String(row.id),
+            slug: row.slug || `project-${row.id}`,
+            title: row.title || 'Untitled Project',
+            summary: row.summary || row.description || '',
+            category_id: 'cat-1',
+            category_name: row.category || 'Web Development',
+            cover_image_url: row.cover_image_url || '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png',
+            problem: row.description || row.summary || 'Project engineered for high performance.',
+            approach: 'Built using modern AI workflows and scalable web technologies.',
+            role: 'Creator & Developer',
+            process: 'Requirements scoping, iterative component building, testing, and edge deployment.',
+            challenges: 'Optimizing performance, responsive layout across all device viewports, and edge caching.',
+            results: 'Published and live system.',
+            tools: Array.isArray(row.tech_stack) && row.tech_stack.length > 0 ? row.tech_stack : ['Web Development'],
+            project_date: row.created_at ? row.created_at.slice(0, 10) : '2026',
+            live_url: row.project_url || '',
+            source_url: row.repo_url || '',
+            featured: Boolean(row.featured),
+            status: row.is_published ? 'published' : 'draft',
+            sort_order: typeof row.sort_order === 'number' ? row.sort_order : 1,
+            view_count: 0,
+            is_sample: false,
+            gallery: [],
+            created_at: row.created_at || new Date().toISOString(),
+            updated_at: row.updated_at || new Date().toISOString(),
+          }))
+          .filter((p) => !this.isTombstoned(p));
 
-        // Combine remote projects with preserved initial showcase projects
         const remoteSlugs = new Set(remoteProjects.map((p) => p.slug.toLowerCase()));
         const remoteTitles = new Set(remoteProjects.map((p) => p.title.toLowerCase()));
 
-        const preservedInitial = INITIAL_PROJECTS.filter(
-          (initProj) =>
-            !remoteSlugs.has(initProj.slug.toLowerCase()) &&
-            !remoteTitles.has(initProj.title.toLowerCase())
-        );
+        let combined: Project[] = [];
+        if (remoteProjects.length > 0) {
+          // If remote projects exist, remote projects are the ground truth
+          const localOnlyDrafts = this.db.projects.filter(
+            (p) =>
+              !p.id.includes('-') &&
+              !this.isTombstoned(p) &&
+              !remoteSlugs.has(p.slug.toLowerCase()) &&
+              !remoteTitles.has(p.title.toLowerCase())
+          );
+          combined = [...remoteProjects, ...localOnlyDrafts];
+        } else {
+          // If remote is empty, show non-deleted initial projects
+          const preservedInitial = INITIAL_PROJECTS.filter(
+            (initProj) =>
+              !this.isTombstoned(initProj) &&
+              !remoteSlugs.has(initProj.slug.toLowerCase()) &&
+              !remoteTitles.has(initProj.title.toLowerCase())
+          );
+          combined = preservedInitial;
+        }
 
-        this.db.projects = [...remoteProjects, ...preservedInitial];
+        this.db.projects = combined;
         safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
         this.notify();
       }
@@ -469,16 +522,27 @@ class DataProviderService {
           if (updates.cover_image_url !== undefined) supabaseRow.cover_image_url = updates.cover_image_url;
           if (updates.category_name !== undefined) supabaseRow.category = updates.category_name;
           if (updates.featured !== undefined) supabaseRow.featured = updates.featured;
-          if (updates.status !== undefined) supabaseRow.is_published = updates.status !== 'draft';
+          if (updates.status !== undefined) supabaseRow.is_published = updates.status === 'published';
           if (updates.sort_order !== undefined) supabaseRow.sort_order = updates.sort_order;
           if (updates.live_url !== undefined) supabaseRow.project_url = updates.live_url;
           if (updates.source_url !== undefined) supabaseRow.repo_url = updates.source_url;
           if (updates.tools !== undefined) supabaseRow.tech_stack = updates.tools;
 
-          const { error } = await supabase
-            .from('projects')
-            .update(supabaseRow)
-            .eq('id', id);
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+          let error: any = null;
+          if (isUuid) {
+            const res = await supabase
+              .from('projects')
+              .update(supabaseRow)
+              .eq('id', id);
+            error = res.error;
+          } else if (target.slug) {
+            const res = await supabase
+              .from('projects')
+              .update(supabaseRow)
+              .eq('slug', target.slug);
+            error = res.error;
+          }
 
           if (error) {
             console.error('[dataProvider] Supabase project update error:', error);
@@ -496,24 +560,48 @@ class DataProviderService {
 
   public async deleteProject(id: string): Promise<{ success: boolean; error?: string }> {
     const target = this.db.projects.find((p) => p.id === id);
-    this.db.projects = this.db.projects.filter((p) => p.id !== id);
+    const targetSlug = target?.slug?.toLowerCase().trim();
+    const targetTitle = target?.title?.toLowerCase().trim();
+
+    // 1. Add to permanent tombstone list so this project NEVER resurrects on sync or reload
+    this.addDeletedTombstone(id, targetSlug, targetTitle);
+
+    // 2. Remove immediately from local state
+    this.db.projects = this.db.projects.filter(
+      (p) => p.id !== id && (!targetSlug || p.slug.toLowerCase().trim() !== targetSlug)
+    );
     this.persist({
       table: 'projects',
       action: 'delete',
       summary: `Deleted project: "${target?.title || id}"`,
     });
+    this.notify();
 
+    // 3. Remove from Supabase cloud database if configured
     if (isSupabaseConfigured) {
       await ensureAdminSession();
       try {
-        const { error } = await supabase
-          .from('projects')
-          .delete()
-          .eq('id', id);
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        if (isUuid) {
+          const { error } = await supabase
+            .from('projects')
+            .delete()
+            .eq('id', id);
 
-        if (error) {
-          console.error('[dataProvider] Supabase project delete error:', error);
-          return { success: false, error: error.message };
+          if (error) {
+            console.error('[dataProvider] Supabase project delete error by ID:', error);
+            return { success: false, error: error.message };
+          }
+        } else if (targetSlug) {
+          // If not UUID, delete from remote by slug if exists
+          const { error } = await supabase
+            .from('projects')
+            .delete()
+            .eq('slug', targetSlug);
+
+          if (error) {
+            console.warn('[dataProvider] Supabase delete by slug warning:', error);
+          }
         }
       } catch (err: any) {
         console.error('[dataProvider] Supabase delete failed:', err);

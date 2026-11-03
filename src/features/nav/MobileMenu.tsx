@@ -63,12 +63,13 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             aria-hidden="true"
           />
 
-          {/* Drawer */}
+          {/* Drawer with Mosque Door Perspective Unfold */}
           <motion.aside
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, rotateY: 65, x: 50, transformOrigin: 'right center' }}
+            animate={{ opacity: 1, rotateY: 0, x: 0 }}
+            exit={{ opacity: 0, rotateY: 65, x: 50 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            style={{ perspective: 1200 }}
             className="fixed top-0 right-0 bottom-0 w-[88%] max-w-sm z-50 glass-panel border-l border-[var(--border)] shadow-2xl flex flex-col justify-between p-6 overflow-y-auto"
             role="dialog"
             aria-modal="true"

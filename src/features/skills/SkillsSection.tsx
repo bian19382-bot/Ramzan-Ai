@@ -4,6 +4,7 @@ import { Sparkles, Server, Code, Zap, ShieldCheck, CheckCircle2 } from 'lucide-r
 import { Skill, SkillGroup } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
+import { mosqueDoorVariants, squidInkVariants, spinInVariants } from '../../lib/animations';
 import {
   GoogleAiStudioLogo,
   OpenAiLogo,
@@ -193,12 +194,12 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
   return (
     <section id="skills" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/30">
       <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title */}
+        {/* Eyebrow & Title with Mosque Door Arched Reveal */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={mosqueDoorVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="mb-12"
         >
           <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
@@ -212,21 +213,26 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
           </p>
         </motion.div>
 
-        {/* Tabbed category selector */}
+        {/* Tabbed category selector with Squid Ink Blossom & Spin In Tabs */}
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={squidInkVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.45, delay: 0.1 }}
           role="tablist"
           aria-label="Tool categories"
           className="flex flex-wrap items-center gap-2 mb-10 p-1.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] max-w-3xl shadow-sm"
         >
-          {skillGroups.map((group) => {
+          {skillGroups.map((group, gIdx) => {
             const isActive = activeTab === group.id;
             return (
-              <button
+              <motion.button
                 key={group.id}
+                variants={spinInVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={gIdx}
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveTab(group.id)}
@@ -240,7 +246,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
                 {group.icon === 'Server' && <Server className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
                 {group.icon === 'Code' && <Code className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
                 <span>{group.name}</span>
-              </button>
+              </motion.button>
             );
           })}
         </motion.div>
@@ -255,7 +261,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
             transition={{ duration: 0.3 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {activeSkills.map((sk) => {
+            {activeSkills.map((sk, idx) => {
               const meta = getToolMeta(sk.name);
               const cleanName = sk.name.replace(/\(Exploring\)/i, '').trim();
 
@@ -283,15 +289,24 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
                 <FuturisticSpotlightCard
                   key={sk.id}
                   glowColor={meta.glowColor}
+                  animationType="squid-ink"
+                  animationDelay={idx % 4}
                   className="p-6 flex flex-col justify-between h-full"
                 >
                   <div>
                     {/* Top Header: Official Brand Logo & Paid Tier Tag */}
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-[var(--border)]/70">
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-[var(--surface-2)] flex items-center justify-center border border-[var(--border)] group-hover:border-cyan-500/50 group-hover:shadow-[0_0_18px_rgba(6,182,212,0.25)] transition-all shrink-0">
+                        <motion.div
+                          variants={spinInVariants}
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{ once: true }}
+                          custom={idx * 0.1}
+                          className="w-11 h-11 rounded-xl bg-[var(--surface-2)] flex items-center justify-center border border-[var(--border)] group-hover:border-cyan-500/50 group-hover:shadow-[0_0_18px_rgba(6,182,212,0.25)] transition-all shrink-0"
+                        >
                           {meta.icon}
-                        </div>
+                        </motion.div>
                         <div>
                           <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] block">
                             ENTERPRISE STACK

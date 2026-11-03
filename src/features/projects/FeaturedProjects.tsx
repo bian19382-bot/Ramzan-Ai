@@ -5,6 +5,7 @@ import { Project, Category } from '../../types/portfolio';
 import { ProjectCard } from './ProjectCard';
 import { CaseStudyModal } from './CaseStudyModal';
 import { useLanguage } from '../i18n/LanguageContext';
+import { mosqueDoorVariants, spinInVariants, squidInkVariants } from '../../lib/animations';
 
 interface FeaturedProjectsProps {
   projects: Project[];
@@ -64,12 +65,12 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
   return (
     <section id="projects" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative">
       <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title */}
+        {/* Eyebrow & Title with Mosque Door Arched Reveal */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={mosqueDoorVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
         >
           <div>
@@ -86,25 +87,36 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
 
           <div className="flex items-center gap-3 self-start md:self-auto">
             {projects.length > 0 && (
-              <div className="text-xs font-mono text-[var(--text-muted)] bg-[var(--surface-2)] px-3 py-1.5 rounded-full border border-[var(--border)]">
+              <motion.div
+                variants={spinInVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="text-xs font-mono text-[var(--text-muted)] bg-[var(--surface-2)] px-3 py-1.5 rounded-full border border-[var(--border)]"
+              >
                 Showing {displayedProjects.length} of {filteredProjects.length} projects
-              </div>
+              </motion.div>
             )}
           </div>
         </motion.div>
 
-        {/* Filter Bar & Controls only shown if there are projects */}
+        {/* Filter Bar & Controls with Squid Ink & Spin In */}
         {projects.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={squidInkVariants}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.45, delay: 0.1 }}
             className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8"
           >
-            {/* Category Filter */}
+            {/* Category Filter with Spin In Tabs */}
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0">
-              <button
+              <motion.button
+                variants={spinInVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={0}
                 onClick={() => setSelectedCategory('all')}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   selectedCategory === 'all'
@@ -113,10 +125,15 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                 }`}
               >
                 All Projects
-              </button>
-              {categories.map((cat) => (
-                <button
+              </motion.button>
+              {categories.map((cat, idx) => (
+                <motion.button
                   key={cat.id}
+                  variants={spinInVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={idx + 1}
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
                     selectedCategory === cat.id
@@ -125,7 +142,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                   }`}
                 >
                   {cat.name}
-                </button>
+                </motion.button>
               ))}
             </div>
 
@@ -181,6 +198,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                   project={project}
                   onOpenCaseStudy={(proj) => setActiveCaseStudy(proj)}
                   isLargeFeatured={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery}
+                  index={idx}
                 />
               </motion.div>
             ))}

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
+import { mosqueDoorVariants, squidInkVariants, spinInVariants } from '../../lib/animations';
 
 interface FuturisticSpotlightCardProps {
   children: React.ReactNode;
@@ -8,6 +9,8 @@ interface FuturisticSpotlightCardProps {
   cornerAccents?: boolean;
   glowColor?: 'cyan' | 'purple' | 'emerald';
   cursorType?: 'project' | 'card' | 'button' | 'nav';
+  animationType?: 'mosque-door' | 'squid-ink' | 'spin-in' | 'default';
+  animationDelay?: number;
 }
 
 export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = ({
@@ -17,6 +20,8 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
   cornerAccents = true,
   glowColor = 'cyan',
   cursorType,
+  animationType = 'default',
+  animationDelay = 0,
 }) => {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -49,6 +54,15 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       ? 'rgba(16, 185, 129, 0.22)'
       : 'rgba(6, 182, 212, 0.24)';
 
+  const selectedVariants =
+    animationType === 'mosque-door'
+      ? mosqueDoorVariants
+      : animationType === 'squid-ink'
+      ? squidInkVariants
+      : animationType === 'spin-in'
+      ? spinInVariants
+      : undefined;
+
   return (
     <motion.div
       ref={cardRef}
@@ -56,11 +70,20 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      animate={{
-        rotateX: tilt.rotateX,
-        rotateY: tilt.rotateY,
-        y: isHovered ? -5 : 0,
-      }}
+      variants={selectedVariants}
+      initial={selectedVariants ? 'hidden' : undefined}
+      whileInView={selectedVariants ? 'visible' : undefined}
+      viewport={{ once: true, margin: '-40px' }}
+      custom={animationDelay}
+      animate={
+        !selectedVariants
+          ? {
+              rotateX: tilt.rotateX,
+              rotateY: tilt.rotateY,
+              y: isHovered ? -5 : 0,
+            }
+          : undefined
+      }
       transition={{
         type: 'spring',
         damping: 20,
@@ -74,21 +97,21 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       data-cursor={cursorType}
       className={`relative rounded-2xl overflow-hidden bg-[var(--surface)]/98 dark:bg-[#0d1017]/95 backdrop-blur-xl border border-[var(--border)] transition-all duration-300 hover:border-cyan-500 dark:hover:border-cyan-400 hover:shadow-[0_4px_28px_rgba(2,132,199,0.2)] dark:hover:shadow-[0_0_35px_rgba(6,182,212,0.3)] group ${className}`}
     >
-      {/* Interactive Radial Spotlight Follower */}
+      {/* Squid Ink In Liquid Aura on Hover */}
       <div
-        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out z-10 [clip-path:circle(0%_at_50%_50%)] group-hover:[clip-path:circle(140%_at_50%_50%)]"
         style={{
-          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, ${glowGradient}, transparent 70%)`,
+          background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${glowGradient}, transparent 70%)`,
         }}
       />
 
       {/* Cyber Corner HUD Brackets */}
       {cornerAccents && (
         <>
-          <span className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-cyan-500/40 dark:border-cyan-400/40 group-hover:border-cyan-500 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-cyan-500/40 dark:border-cyan-400/40 group-hover:border-cyan-500 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
-          <span className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-cyan-500/40 dark:border-cyan-400/40 group-hover:border-cyan-500 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
-          <span className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b-2 border-r-2 border-cyan-500/40 dark:border-cyan-400/40 group-hover:border-cyan-500 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
+          <span className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
+          <span className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
+          <span className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b-2 border-r-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
         </>
       )}
 

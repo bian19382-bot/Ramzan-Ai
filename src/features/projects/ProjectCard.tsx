@@ -1,18 +1,22 @@
 import React from 'react';
-import { ExternalLink, Github, ArrowUpRight, Code2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowUpRight, Code2, ExternalLink, Github } from 'lucide-react';
 import { Project } from '../../types/portfolio';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
+import { spinInVariants } from '../../lib/animations';
 
 interface ProjectCardProps {
   project: Project;
   onOpenCaseStudy: (project: Project) => void;
   isLargeFeatured?: boolean;
+  index?: number;
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   project,
   onOpenCaseStudy,
   isLargeFeatured = false,
+  index = 0,
 }) => {
   const visibleTools = project.tools.slice(0, 4);
   const remainingToolsCount = project.tools.length - 4;
@@ -25,6 +29,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       onClick={() => onOpenCaseStudy(project)}
       glowColor="cyan"
       cursorType="project"
+      animationType="mosque-door"
+      animationDelay={index % 6}
       className={`cursor-pointer flex flex-col justify-between ${
         isLargeFeatured ? 'lg:col-span-2' : ''
       }`}
@@ -42,12 +48,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
 
-          {/* Futuristic Category Overlay */}
+          {/* Futuristic Category Overlay with Spin-In Tag */}
           <div className="absolute top-3 left-3 z-20">
-            <span className="text-[10px] font-mono uppercase tracking-wider bg-black/80 backdrop-blur-md text-cyan-300 px-3 py-1 rounded-md border border-cyan-500/30 flex items-center gap-1.5 shadow-md">
+            <motion.span
+              variants={spinInVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={index * 0.1}
+              className="text-[10px] font-mono uppercase tracking-wider bg-black/80 backdrop-blur-md text-cyan-300 px-3 py-1 rounded-md border border-cyan-500/30 flex items-center gap-1.5 shadow-md"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
               <span>{project.category_name}</span>
-            </span>
+            </motion.span>
           </div>
 
           {/* Live indicator if demo is available */}
@@ -74,14 +87,24 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             {project.summary}
           </p>
 
-          {/* Tech stack metadata */}
+          {/* Tech stack metadata with Spin-In Whirl effect */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--text-muted)]">
             <Code2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             {visibleTools.map((tool, idx) => (
-              <React.Fragment key={idx}>
-                <span className="font-mono text-[11px] text-cyan-800 dark:text-cyan-200/90 font-medium">{tool}</span>
-                {idx < visibleTools.length - 1 && <span className="opacity-40">·</span>}
-              </React.Fragment>
+              <motion.span
+                key={idx}
+                variants={spinInVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={idx}
+                className="inline-flex items-center"
+              >
+                <span className="font-mono text-[11px] text-cyan-800 dark:text-cyan-200/90 font-medium px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
+                  {tool}
+                </span>
+                {idx < visibleTools.length - 1 && <span className="opacity-40 ml-1.5 mr-0.5">·</span>}
+              </motion.span>
             ))}
             {remainingToolsCount > 0 && (
               <span className="text-[10px] font-mono text-cyan-700 dark:text-cyan-400 font-semibold">

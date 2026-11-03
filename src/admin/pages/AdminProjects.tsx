@@ -17,6 +17,8 @@ import {
   Github,
   AlertCircle,
   CheckCircle2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { Project, ContentStatus } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
@@ -58,6 +60,9 @@ export const AdminProjects: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [actionNotification, setActionNotification] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const refreshList = () => {
     setProjects([...dataProvider.getDatabase().projects]);
@@ -248,10 +253,68 @@ export const AdminProjects: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this project?')) {
-      await dataProvider.deleteProject(id);
-      refreshList();
+  const handleToggleVisibility = async (proj: Project) => {
+    const newStatus: ContentStatus = proj.status === 'published' ? 'draft' : 'published';
+    setTogglingId(proj.id);
+    setActionNotification(null);
+    try {
+      const res = await dataProvider.updateProject(proj.id, { status: newStatus });
+      if (!res.success) {
+        setActionNotification({
+          type: 'error',
+          text: res.error || 'Failed to update project status in cloud database.',
+        });
+      } else {
+        setActionNotification({
+          type: 'success',
+          text:
+            newStatus === 'published'
+              ? `"${proj.title}" is now LIVE and visible on the website!`
+              : `"${proj.title}" is now HIDDEN from the website (Draft).`,
+        });
+        refreshList();
+      }
+    } catch (err: any) {
+      setActionNotification({
+        type: 'error',
+        text: err?.message || 'Error occurred while updating visibility.',
+      });
+    } finally {
+      setTogglingId(null);
+      setTimeout(() => setActionNotification(null), 4000);
+    }
+  };
+
+  const handleDelete = async (id: string, title?: string) => {
+    const projectTitle = title || 'this project';
+    if (!window.confirm(`Are you sure you want to permanently delete "${projectTitle}"?\n\nThis will remove it from the website and the Supabase cloud database.`)) {
+      return;
+    }
+
+    setDeletingId(id);
+    setActionNotification(null);
+    try {
+      const res = await dataProvider.deleteProject(id);
+      if (!res.success) {
+        setActionNotification({
+          type: 'error',
+          text: res.error || 'Failed to delete project from cloud database.',
+        });
+      } else {
+        setActionNotification({
+          type: 'success',
+          text: `Project "${projectTitle}" permanently deleted.`,
+        });
+        refreshList();
+      }
+    } catch (err: any) {
+      setActionNotification({
+        type: 'error',
+        text: err?.message || 'Error occurred while deleting project.',
+      });
+    } finally {
+      setDeletingId(null);
+      setTimeout(() => setActionNotification(null), 4000);
     }
   };
 
@@ -315,6 +378,32 @@ export const AdminProjects: React.FC = () => {
         </div>
       </div>
 
+      {/* Action Notification Toast */}
+      {actionNotification && (
+        <div
+          className={`p-3.5 rounded-xl border flex items-center justify-between text-xs font-medium transition-all ${
+            actionNotification.type === 'success'
+              ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
+              : 'bg-red-950/60 border-red-500/40 text-red-200'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {actionNotification.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            )}
+            <span>{actionNotification.text}</span>
+          </div>
+          <button
+            onClick={() => setActionNotification(null)}
+            className="p-1 rounded hover:bg-black/20 text-current cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Filter / Search Bar */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
@@ -339,7 +428,7 @@ export const AdminProjects: React.FC = () => {
                   <th className="py-3.5 px-4">Screenshot</th>
                   <th className="py-3.5 px-4">Title & Slug</th>
                   <th className="py-3.5 px-4">Category</th>
-                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">Visibility / Status</th>
                   <th className="py-3.5 px-4">Featured</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
@@ -374,15 +463,30 @@ export const AdminProjects: React.FC = () => {
                       {proj.category_name}
                     </td>
                     <td className="py-4 px-4">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold uppercase ${
+                      <button
+                        type="button"
+                        disabled={togglingId === proj.id}
+                        onClick={() => handleToggleVisibility(proj)}
+                        className={`px-3 py-1 rounded-full font-mono text-[10px] font-bold uppercase inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 disabled:opacity-50 ${
                           proj.status === 'published'
-                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-zinc-500/15 text-zinc-400 border border-zinc-500/30'
+                            ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+                            : 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30'
                         }`}
+                        title={
+                          proj.status === 'published'
+                            ? 'Click to HIDE this project from website (Draft)'
+                            : 'Click to SHOW this project on website (Publish)'
+                        }
                       >
-                        {proj.status}
-                      </span>
+                        {togglingId === proj.id ? (
+                          <div className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : proj.status === 'published' ? (
+                          <Eye className="w-3 h-3 text-emerald-500" />
+                        ) : (
+                          <EyeOff className="w-3 h-3 text-amber-500" />
+                        )}
+                        <span>{proj.status === 'published' ? 'Live on Site' : 'Hidden (Draft)'}</span>
+                      </button>
                     </td>
                     <td className="py-4 px-4">
                       {proj.featured ? (
@@ -391,7 +495,23 @@ export const AdminProjects: React.FC = () => {
                         <span className="text-[10px] font-mono text-[var(--text-muted)]">—</span>
                       )}
                     </td>
-                    <td className="py-4 px-4 text-right space-x-2">
+                    <td className="py-4 px-4 text-right space-x-1.5">
+                      <button
+                        disabled={togglingId === proj.id}
+                        onClick={() => handleToggleVisibility(proj)}
+                        className={`p-1.5 rounded-lg transition cursor-pointer ${
+                          proj.status === 'published'
+                            ? 'hover:bg-amber-500/15 text-[var(--text-muted)] hover:text-amber-600 dark:hover:text-amber-400'
+                            : 'hover:bg-emerald-500/15 text-[var(--text-muted)] hover:text-emerald-600 dark:hover:text-emerald-400'
+                        }`}
+                        title={proj.status === 'published' ? 'Hide from website' : 'Show on website'}
+                      >
+                        {proj.status === 'published' ? (
+                          <EyeOff className="w-3.5 h-3.5" />
+                        ) : (
+                          <Eye className="w-3.5 h-3.5" />
+                        )}
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(proj)}
                         className="p-1.5 rounded-lg hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
@@ -407,11 +527,16 @@ export const AdminProjects: React.FC = () => {
                         <Copy className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => handleDelete(proj.id)}
-                        className="p-1.5 rounded-lg hover:bg-red-500/15 text-[var(--text-muted)] hover:text-red-400 transition cursor-pointer"
-                        title="Delete project"
+                        disabled={deletingId === proj.id}
+                        onClick={() => handleDelete(proj.id, proj.title)}
+                        className="p-1.5 rounded-lg hover:bg-red-500/15 text-[var(--text-muted)] hover:text-red-400 transition cursor-pointer disabled:opacity-50"
+                        title="Delete project permanently"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        {deletingId === proj.id ? (
+                          <div className="w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
                       </button>
                     </td>
                   </tr>
@@ -419,6 +544,7 @@ export const AdminProjects: React.FC = () => {
               </tbody>
             </table>
           </div>
+
         ) : (
           <div className="py-16 px-6 text-center">
             <div className="w-14 h-14 rounded-2xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4 text-[var(--text-muted)]">
@@ -665,14 +791,14 @@ export const AdminProjects: React.FC = () => {
                   </label>
 
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[var(--text-muted)]">Status:</span>
+                    <span className="text-[var(--text-muted)] font-medium">Website Visibility:</span>
                     <select
                       value={formData.status ?? 'published'}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as ContentStatus })}
-                      className="px-2.5 py-1 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] text-xs text-[var(--text)] focus:outline-none"
+                      className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-medium"
                     >
-                      <option value="published">Published</option>
-                      <option value="draft">Draft</option>
+                      <option value="published">🟢 Published (Visible on Website)</option>
+                      <option value="draft">⚪ Draft (Hidden from Website)</option>
                     </select>
                   </div>
                 </div>

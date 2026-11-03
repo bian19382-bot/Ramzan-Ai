@@ -6,6 +6,7 @@ import { SiteSettings, Service } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
 import { useLanguage } from '../i18n/LanguageContext';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
+import { mosqueDoorVariants, mosqueDoorRightVariants, spinInVariants, squidInkVariants } from '../../lib/animations';
 
 interface ContactSectionProps {
   settings: SiteSettings;
@@ -110,12 +111,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     <section id="contact" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/20">
       <div className="max-w-[1200px] w-full mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column (5 cols): Direct channels & Approach */}
+          {/* Left Column (5 cols): Direct channels & Approach with Mosque Door Swing */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            variants={mosqueDoorVariants}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-5 space-y-8"
           >
             <div>
@@ -135,9 +136,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               {/* Email */}
               <div className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/5 dark:hover:bg-cyan-500/10 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-center justify-between shadow-sm transition-all">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                  <motion.div
+                    variants={spinInVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={0}
+                    className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center"
+                  >
                     <Mail className="w-5 h-5" />
-                  </div>
+                  </motion.div>
                   <div>
                     <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase block">
                       {isRoman ? 'Email Raabta' : 'Direct Email'}
@@ -170,9 +178,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-emerald-500 hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between shadow-sm transition-all group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <motion.div
+                    variants={spinInVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={1}
+                    className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"
+                  >
                     <MessageCircle className="w-5 h-5" />
-                  </div>
+                  </motion.div>
                   <div>
                     <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase block">
                       {isRoman ? 'WhatsApp Chat' : 'WhatsApp'}
@@ -199,15 +214,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             </div>
           </motion.div>
 
-          {/* Right Column (7 cols): Contact Form */}
+          {/* Right Column (7 cols): Contact Form with Mosque Door Right Swing */}
           <motion.div
-            initial={{ opacity: 0, x: 30, scale: 0.98 }}
-            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            variants={mosqueDoorRightVariants}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-7"
           >
-            <FuturisticSpotlightCard glowColor="cyan" className="p-6 sm:p-8">
+            <FuturisticSpotlightCard
+              glowColor="cyan"
+              animationType="squid-ink"
+              className="p-6 sm:p-8"
+            >
               {/* Terminal Title Bar */}
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">

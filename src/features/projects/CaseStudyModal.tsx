@@ -76,12 +76,13 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
           aria-hidden="true"
         />
 
-        {/* Modal Window Container */}
+        {/* Modal Window Container with Mosque Door Arched 3D Unfold */}
         <motion.article
-          initial={{ opacity: 0, scale: 0.96, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 20 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, scale: 0.92, rotateY: -45, transformOrigin: 'left center' }}
+          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+          exit={{ opacity: 0, scale: 0.92, rotateY: 45, transformOrigin: 'right center' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          style={{ perspective: 1200 }}
           className="relative w-full max-w-4xl bg-[var(--surface)] border border-[var(--border)] rounded-[24px] shadow-2xl overflow-hidden z-10 my-8 text-[var(--text)]"
           role="dialog"
           aria-modal="true"

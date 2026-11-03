@@ -1,10 +1,229 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { ArrowDown, ArrowUpRight, Sparkles, ShieldCheck, Mail, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, Variants } from 'motion/react';
+import {
+  ArrowDown,
+  ArrowUpRight,
+  Sparkles,
+  ShieldCheck,
+  Mail,
+  MessageCircle,
+  Play,
+  Pause,
+  ChevronLeft,
+  ChevronRight,
+  Terminal,
+} from 'lucide-react';
 import { Profile, SocialLink, SiteSettings } from '../../types/portfolio';
 import { AmbientCanvas } from './AmbientCanvas';
 import { useLanguage } from '../i18n/LanguageContext';
 import { MagneticWrapper } from '../../components/ui/MagneticWrapper';
+
+interface TypewriterTextProps {
+  text: string;
+  speed?: number;
+  delay?: number;
+  className?: string;
+  cursorChar?: string;
+}
+
+const TypewriterText: React.FC<TypewriterTextProps> = ({
+  text,
+  speed = 28,
+  delay = 80,
+  className = '',
+  cursorChar = '▋',
+}) => {
+  const [displayed, setDisplayed] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    setDisplayed('');
+    setIsTyping(true);
+    let index = 0;
+    let intervalId: ReturnType<typeof setInterval>;
+
+    const timeoutId = setTimeout(() => {
+      intervalId = setInterval(() => {
+        if (index < text.length) {
+          setDisplayed(text.slice(0, index + 1));
+          index++;
+        } else {
+          setIsTyping(false);
+          clearInterval(intervalId);
+        }
+      }, speed);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [text, speed, delay]);
+
+  return (
+    <span className={`inline-flex items-center ${className}`}>
+      <span>{displayed}</span>
+      <span
+        className={`ml-0.5 text-cyan-400 font-mono transition-opacity duration-150 ${
+          isTyping ? 'opacity-100 animate-pulse' : 'opacity-40 animate-pulse'
+        }`}
+      >
+        {cursorChar}
+      </span>
+    </span>
+  );
+};
+
+export type BannerAnimationType = 'fade-in' | 'pop-jump' | 'mosque-door';
+
+interface HeroBannerItem {
+  id: string;
+  url: string;
+  title: string;
+  titleRoman: string;
+  category: string;
+  categoryRoman: string;
+  alt: string;
+  animationType: BannerAnimationType;
+  animationLabel: string;
+  animationLabelRoman: string;
+}
+
+const HERO_BANNERS: HeroBannerItem[] = [
+  {
+    id: 'banner-ai-creator',
+    url: '/assets/aistudio/AI-Powered_Digital_Professional_Banner_5eadb61b.png',
+    title: 'AI Creator & Digital Professional',
+    titleRoman: 'AI Creator aur Digital Professional',
+    category: 'AI & DIGITAL CREATIVE WORKFLOWS',
+    categoryRoman: 'AI AUR MODERN DIGITAL WORKFLOWS',
+    alt: "Welcome - I'm Ramzan, AI Creator & Digital Professional - Web Development",
+    animationType: 'fade-in',
+    animationLabel: 'Fade In',
+    animationLabelRoman: 'Fade In',
+  },
+  {
+    id: 'banner-web-dev',
+    url: '/assets/aistudio/Futuristic_Web_Development_Showcase_0fb0ba38.png',
+    title: 'Modern Web Development & Solutions',
+    titleRoman: 'Modern Web Development aur Creative Websites',
+    category: 'FULL-STACK & RESPONSIVE DESIGN',
+    categoryRoman: 'RESPONSIVE DESIGN AUR FAST PERFORMANCE',
+    alt: "Ramzan Web Development - Modern Websites & Creative Digital Solutions",
+    animationType: 'pop-jump',
+    animationLabel: 'Pop & Jump',
+    animationLabelRoman: 'Pop & Jump',
+  },
+  {
+    id: 'banner-portfolio',
+    url: '/assets/aistudio/Neon_Portfolio_Showcase_Banner_6ba44114.png',
+    title: 'Projects & Interactive Portfolio',
+    titleRoman: 'Real Projects aur Live Portfolio Showcase',
+    category: 'LIVE DEMOS & CASE STUDIES',
+    categoryRoman: 'CHALTE HUYE PROJECTS AUR DEMOS',
+    alt: "Ramzan Projects & Portfolio - Creative Ideas & Digital Experiences",
+    animationType: 'mosque-door',
+    animationLabel: 'Mosque Door 3D',
+    animationLabelRoman: 'Mosque Door 3D',
+  },
+];
+
+const bannerAnimationVariants: Record<BannerAnimationType, Variants> = {
+  'fade-in': {
+    initial: {
+      opacity: 0,
+      scale: 0.96,
+      filter: 'blur(10px) brightness(1.2)',
+    },
+    animate: {
+      opacity: 1,
+      scale: 1,
+      filter: 'blur(0px) brightness(1)',
+      transition: {
+        duration: 0.85,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 1.02,
+      filter: 'blur(8px)',
+      transition: {
+        duration: 0.45,
+        ease: [0.4, 0, 1, 1] as const,
+      },
+    },
+  },
+  'pop-jump': {
+    initial: {
+      scale: 0.58,
+      y: 80,
+      opacity: 0,
+      filter: 'blur(8px) brightness(1.5)',
+    },
+    animate: {
+      scale: [0.58, 1.12, 0.95, 1.02, 1],
+      y: [80, -28, 10, -3, 0],
+      opacity: [0, 1, 1, 1, 1],
+      filter: [
+        'blur(8px) brightness(1.5)',
+        'blur(0px) brightness(1.25)',
+        'blur(0px) brightness(1)',
+        'blur(0px) brightness(1)',
+        'blur(0px) brightness(1)',
+      ],
+      transition: {
+        duration: 0.8,
+        times: [0, 0.42, 0.68, 0.86, 1],
+        ease: [0.34, 1.56, 0.64, 1] as const,
+      },
+    },
+    exit: {
+      scale: [1, 1.06, 0.68],
+      y: [0, -14, -80],
+      opacity: [1, 0.85, 0],
+      filter: 'blur(8px)',
+      transition: {
+        duration: 0.5,
+        ease: [0.4, 0, 0.2, 1] as const,
+      },
+    },
+  },
+  'mosque-door': {
+    initial: {
+      opacity: 0,
+      rotateY: -72,
+      transformPerspective: 1200,
+      transformOrigin: 'left center',
+      scale: 0.88,
+      filter: 'blur(8px) brightness(0.65)',
+    },
+    animate: {
+      opacity: 1,
+      rotateY: 0,
+      transformPerspective: 1200,
+      transformOrigin: 'left center',
+      scale: 1,
+      filter: 'blur(0px) brightness(1)',
+      transition: {
+        duration: 0.9,
+        ease: [0.16, 1, 0.3, 1] as const,
+      },
+    },
+    exit: {
+      opacity: 0,
+      rotateY: 65,
+      transformPerspective: 1200,
+      transformOrigin: 'right center',
+      scale: 0.88,
+      filter: 'blur(8px)',
+      transition: {
+        duration: 0.5,
+        ease: [0.4, 0, 1, 1] as const,
+      },
+    },
+  },
+};
 
 interface HeroSectionProps {
   profile: Profile;
@@ -22,9 +241,40 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const { language, t } = useLanguage();
   const isRoman = language === 'ur-roman';
 
-  const bannerUrl =
-    profile.welcome_banner_url ||
-    '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png';
+  // Banner rotation state
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  // Auto-advance with smooth fade every 4.5 seconds
+  useEffect(() => {
+    if (!isPlaying) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % HERO_BANNERS.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  const currentBanner = HERO_BANNERS[currentIndex];
+
+  const handleTogglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsPlaying((prev) => !prev);
+  };
+
+  const handlePrevBanner = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev - 1 + HERO_BANNERS.length) % HERO_BANNERS.length);
+  };
+
+  const handleNextBanner = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % HERO_BANNERS.length);
+  };
+
+  const handleSelectBanner = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex(index);
+  };
 
   const handleScrollToProjects = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -80,7 +330,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {t('heroEyebrow')}
         </motion.p>
 
-        {/* Centerpiece: Official Neon Welcome Banner with Cyber Scanline & HUD */}
+        {/* Centerpiece: 3-Banner Dynamic Fade Showcase with Stop/Play Control */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -91,38 +341,206 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Subtle outer animated glow aura */}
           <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-blue-500/30 blur-2xl opacity-75 group-hover:opacity-100 transition duration-500 pointer-events-none" />
 
-          <div className="relative rounded-[18px] sm:rounded-[22px] overflow-hidden bg-black aspect-[16/9] w-full flex items-center justify-center cyber-scanline">
+          <div className="relative rounded-[18px] sm:rounded-[22px] overflow-hidden bg-black aspect-[16/9] w-full flex items-center justify-center cyber-scanline select-none">
             {/* Cyber HUD Corner Brackets */}
             <span className="absolute top-2.5 left-2.5 w-3.5 h-3.5 border-t-2 border-l-2 border-cyan-400 z-30 pointer-events-none" />
             <span className="absolute top-2.5 right-2.5 w-3.5 h-3.5 border-t-2 border-r-2 border-cyan-400 z-30 pointer-events-none" />
             <span className="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 border-cyan-400 z-30 pointer-events-none" />
             <span className="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 border-cyan-400 z-30 pointer-events-none" />
 
-            {/* Top Verified Badge */}
-            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-cyan-400/40 text-[10px] sm:text-xs font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{isRoman ? 'Asal Portfolio Showcase' : 'Official Portfolio Showcase'}</span>
+            {/* Top Left: Slide Counter & Status Pill with Dynamic Animation Indicator */}
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full bg-black/85 backdrop-blur-md border border-cyan-400/40 text-[10px] sm:text-xs font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                }`}
+              />
+              <span className="font-semibold tracking-wider">
+                {currentIndex + 1} / {HERO_BANNERS.length}
+              </span>
+              <span className="text-white/30 hidden xs:inline">•</span>
+              <span className="text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-400/40 text-[9px] uppercase tracking-wider font-bold hidden xs:inline shadow-[0_0_8px_rgba(6,182,212,0.3)]">
+                {isRoman ? currentBanner.animationLabelRoman : currentBanner.animationLabel}
+              </span>
+              <span className="text-white/70 hidden sm:inline text-[10px]">
+                {isPlaying ? (isRoman ? 'CHAL RAHA HAI' : 'AUTO-PLAY') : (isRoman ? 'ROKA HUA' : 'PAUSED')}
+              </span>
             </div>
 
-            {/* Neon Banner Image */}
-            <img
-              src={bannerUrl}
-              alt="Welcome - I'm Ramzan, AI Creator & Digital Professional"
-              fetchPriority="high"
-              className="w-full h-full object-contain sm:object-cover transition-transform duration-700 group-hover:scale-[1.01]"
-            />
+            {/* Cyber Terminal Typewriter Overlay (Top Left below Counter) */}
+            <div className="absolute top-12 left-3 sm:top-14 sm:left-4 z-30 max-w-[85%] sm:max-w-[70%] flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-black/90 backdrop-blur-md border border-cyan-400/40 text-left shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+              <Terminal className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider shrink-0 hidden xs:inline">
+                SYS_ANIM //
+              </span>
+              <TypewriterText
+                key={`term-${currentBanner.id}`}
+                text={`${isRoman ? currentBanner.titleRoman : currentBanner.title} • [${currentBanner.animationLabel}]`}
+                speed={20}
+                delay={80}
+                className="text-[11px] sm:text-xs font-mono font-bold text-white tracking-wide truncate"
+              />
+            </div>
 
-            {/* Interactive click hotspot for "Explore My Work" inside graphic */}
+            {/* Top Right: Stop/Play Button & Verified Badge */}
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 flex items-center gap-2">
+              {/* Stop / Play Toggle Button */}
+              <button
+                type="button"
+                onClick={handleTogglePlay}
+                className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md border font-mono text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-lg active:scale-95 ${
+                  isPlaying
+                    ? 'bg-black/85 border-cyan-400/50 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.35)]'
+                    : 'bg-amber-500/25 border-amber-400/80 text-amber-200 hover:bg-amber-500/35 hover:border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.5)]'
+                }`}
+                title={
+                  isPlaying
+                    ? 'Banner ko stop / pause karein'
+                    : 'Banner ko dobara chalaein / resume karein'
+                }
+                aria-label={
+                  isPlaying
+                    ? 'Stop banner rotation'
+                    : 'Play banner rotation'
+                }
+              >
+                {isPlaying ? (
+                  <>
+                    <Pause className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
+                    <span>{isRoman ? 'Stop Karein' : 'Stop Slide'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3.5 h-3.5 text-amber-400 fill-amber-400 animate-pulse" />
+                    <span>{isRoman ? 'Chalaein' : 'Resume Slide'}</span>
+                  </>
+                )}
+              </button>
+
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-cyan-400/40 text-xs font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
+                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{isRoman ? 'Asal Showcase' : 'Official Showcase'}</span>
+              </div>
+            </div>
+
+            {/* Left Prev Arrow Button */}
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleScrollToProjects();
-              }}
-              className="absolute left-[5%] bottom-[12%] sm:bottom-[16%] opacity-0 sm:opacity-100 px-6 py-2.5 rounded-xl bg-transparent hover:bg-cyan-500/20 border border-transparent hover:border-cyan-400/50 transition cursor-pointer"
-              title={t('heroExploreCta')}
-              aria-label={t('heroExploreCta')}
-            />
+              onClick={handlePrevBanner}
+              className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/75 hover:bg-cyan-500/30 backdrop-blur-md border border-white/20 hover:border-cyan-400 text-white hover:text-cyan-300 flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-90"
+              title={isRoman ? 'Pichla banner dekhein' : 'Previous banner'}
+              aria-label="Previous banner"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            {/* Right Next Arrow Button */}
+            <button
+              type="button"
+              onClick={handleNextBanner}
+              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/75 hover:bg-cyan-500/30 backdrop-blur-md border border-white/20 hover:border-cyan-400 text-white hover:text-cyan-300 flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-90"
+              title={isRoman ? 'Agla banner dekhein' : 'Next banner'}
+              aria-label="Next banner"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            {/* Dynamic Per-Banner Animated Display (Banner 1: Fade In | Banner 2: Pop & Jump | Banner 3: Mosque Door 3D) */}
+            <div className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center [perspective:1400px]">
+              <AnimatePresence initial={false} mode="wait">
+                <motion.img
+                  key={currentBanner.id}
+                  src={currentBanner.url}
+                  alt={currentBanner.alt}
+                  variants={bannerAnimationVariants[currentBanner.animationType]}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  fetchPriority="high"
+                  className="absolute inset-0 w-full h-full object-contain sm:object-cover drop-shadow-2xl"
+                />
+              </AnimatePresence>
+            </div>
+
+            {/* Bottom HUD Bar: Typewriter Banner Title, Interactive Dots & Quick Explore */}
+            <div className="absolute bottom-2.5 sm:bottom-4 inset-x-2.5 sm:inset-x-4 z-30 flex flex-col sm:flex-row items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-black/80 backdrop-blur-md border border-cyan-500/30 shadow-2xl">
+              <div className="text-left hidden sm:block truncate max-w-[55%]">
+                <TypewriterText
+                  key={`hud-cat-${currentBanner.id}`}
+                  text={isRoman ? currentBanner.categoryRoman : currentBanner.category}
+                  speed={16}
+                  delay={40}
+                  className="text-[10px] font-mono font-semibold tracking-wider text-cyan-400 uppercase block"
+                />
+                <TypewriterText
+                  key={`hud-title-${currentBanner.id}`}
+                  text={isRoman ? currentBanner.titleRoman : currentBanner.title}
+                  speed={22}
+                  delay={140}
+                  className="text-xs sm:text-sm font-bold text-white truncate drop-shadow-sm block"
+                />
+              </div>
+
+              {/* Dot Indicators & Controls */}
+              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                {/* 3 Interactive Dots */}
+                <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 rounded-full border border-white/15">
+                  {HERO_BANNERS.map((banner, idx) => {
+                    const isActive = idx === currentIndex;
+                    return (
+                      <button
+                        key={banner.id}
+                        type="button"
+                        onClick={(e) => handleSelectBanner(idx, e)}
+                        className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                          isActive
+                            ? 'w-7 bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_12px_rgba(6,182,212,0.9)]'
+                            : 'w-2 bg-white/40 hover:bg-white/80'
+                        }`}
+                        title={`Banner ${idx + 1}: ${banner.title}`}
+                        aria-label={`Show banner ${idx + 1}`}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Mobile Stop/Play Toggle */}
+                <button
+                  type="button"
+                  onClick={handleTogglePlay}
+                  className={`sm:hidden px-2.5 py-1 rounded-full border text-[11px] font-mono flex items-center gap-1 cursor-pointer ${
+                    isPlaying
+                      ? 'bg-black/70 border-cyan-400/50 text-cyan-300'
+                      : 'bg-amber-500/30 border-amber-400 text-amber-200'
+                  }`}
+                >
+                  {isPlaying ? (
+                    <>
+                      <Pause className="w-3 h-3 fill-current" />
+                      <span>Stop</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3 h-3 fill-current" />
+                      <span>Play</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Explore Projects Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleScrollToProjects();
+                  }}
+                  className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-mono font-medium shadow-[0_0_15px_rgba(6,182,212,0.4)] transition flex items-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  <span>{t('heroExploreCta')}</span>
+                  <ArrowDown className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
           </div>
         </motion.div>
 

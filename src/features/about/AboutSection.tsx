@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Code, CheckCircle2, ChevronDown, ChevronUp, Mail, Layers } from 'lucide-react';
 import { Profile } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
-import { mosqueDoorVariants, mosqueDoorRightVariants, squidInkVariants, spinInVariants } from '../../lib/animations';
+import { mosqueDoorVariants, mosqueDoorRightVariants, squidInkVariants, spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
 
 interface AboutSectionProps {
   profile: Profile;
@@ -33,20 +33,32 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
   return (
     <section id="about" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative">
       <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title with Mosque Door Arched Reveal */}
+        {/* Eyebrow & Title with Mosque Door Arched Reveal & Spin In Typography */}
         <motion.div
           variants={mosqueDoorVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={safeViewport}
           className="mb-12"
         >
-          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
+          <motion.span
+            variants={spinInFontVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
+          >
             {t('aboutEyebrow')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
+          </motion.span>
+          <motion.h2
+            variants={spinInFontVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
+          >
             {t('aboutTitle')}
-          </h2>
+          </motion.h2>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -55,7 +67,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             variants={mosqueDoorVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={safeViewport}
             className="lg:col-span-7 flex flex-col gap-6"
           >
             <p className="text-base sm:text-lg text-[var(--text)] leading-relaxed font-normal">
@@ -125,19 +137,25 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             variants={mosqueDoorRightVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={safeViewport}
             className="lg:col-span-5 flex flex-col gap-3.5"
           >
-            <h3 className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-1">
+            <motion.h3
+              variants={spinInFontVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={safeViewport}
+              className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-1"
+            >
               {isRoman ? 'Mere Focus Points' : 'About Highlights'}
-            </h3>
+            </motion.h3>
             {highlights.map((h, idx) => (
               <motion.div
                 key={idx}
                 variants={squidInkVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={safeViewport}
                 custom={idx}
                 className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-50/70 dark:hover:bg-cyan-950/25 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex items-start gap-3.5 group cursor-default"
               >
@@ -145,16 +163,22 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                   variants={spinInVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true }}
+                  viewport={safeViewport}
                   custom={idx * 0.1}
                   className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/20 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 group-hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                 </motion.div>
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-400/90 font-bold block">
+                  <motion.span
+                    variants={spinInFontVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={safeViewport}
+                    className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-400/90 font-bold block"
+                  >
                     // {h.label}
-                  </span>
+                  </motion.span>
                   <p className="text-xs sm:text-sm text-[var(--text)] mt-0.5 font-medium leading-snug group-hover:text-cyan-800 dark:group-hover:text-cyan-200 transition-colors">
                     {h.text}
                   </p>

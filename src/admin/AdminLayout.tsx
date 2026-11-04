@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { spinInFontVariants, mosqueDoorVariants, collidingSparksPanelVariants } from '../lib/animations';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -139,15 +141,28 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 />
               </div>
               <div>
-                <h2 className="text-sm font-bold font-display text-[var(--text)] leading-tight">
+                <motion.h2
+                  variants={spinInFontVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="text-sm font-bold font-display text-[var(--text)] leading-tight"
+                >
                   Ramzan Studio
-                </h2>
-                <span className="text-[10px] font-mono text-cyan-500">Admin Engine</span>
+                </motion.h2>
+                <motion.span
+                  variants={spinInFontVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="text-[10px] font-mono text-cyan-500 block"
+                >
+                  Admin Engine
+                </motion.span>
               </div>
             </div>
 
-            <span className="hidden md:inline-flex text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-              Active
+            <span className="hidden md:inline-flex text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.25)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+              <span>Colliding Sparks Active</span>
             </span>
           </div>
 
@@ -235,10 +250,23 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </div>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Main Content Area with Fluid Page Transition */}
       <main className="flex-1 p-4 sm:p-8 lg:p-10 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-          {children}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentTab}
+              variants={collidingSparksPanelVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="relative"
+            >
+              {/* Colliding Sparks Kinetic Tab Glow */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/15 via-cyan-400/15 to-violet-500/15 blur-2xl pointer-events-none -z-10 opacity-70" />
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
     </div>

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ExternalLink, Github, Calendar, Tag, ArrowRight, Share2, Check, Sparkles } from 'lucide-react';
+import { X, ExternalLink, Github, Calendar, Tag, ArrowRight, Share2, Check, Sparkles, Wind } from 'lucide-react';
 import { Project } from '../../types/portfolio';
+import { collidingSparksVariants, collidingSparksBackdropVariants, spinInFontVariants } from '../../lib/animations';
+import { soundFx } from '../../lib/soundFx';
+import { CollidingSparksBurst } from '../../components/ui/CollidingSparksBurst';
 
 interface CaseStudyModalProps {
   project: Project | null;
@@ -34,6 +37,7 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
     if (project) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
+      soundFx.playSparkCollision();
     } else {
       document.body.style.overflow = '';
     }
@@ -45,7 +49,13 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
 
   if (!project) return null;
 
+  const handleClose = () => {
+    soundFx.playClose();
+    onClose();
+  };
+
   const handleShare = () => {
+    soundFx.playButtonClick();
     if (navigator.share) {
       navigator.share({
         title: project.title,
@@ -64,60 +74,71 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
     .slice(0, 2);
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-3 sm:p-6 lg:p-10">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md"
-          aria-hidden="true"
-        />
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-3 sm:p-6 lg:p-10">
+      {/* Colliding Sparks Backdrop */}
+      <motion.div
+        variants={collidingSparksBackdropVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        onClick={handleClose}
+        className="fixed inset-0 bg-black/85 backdrop-blur-xl"
+        aria-hidden="true"
+      />
 
-        {/* Modal Window Container with Mosque Door Arched 3D Unfold */}
-        <motion.article
-          initial={{ opacity: 0, scale: 0.92, rotateY: -45, transformOrigin: 'left center' }}
-          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-          exit={{ opacity: 0, scale: 0.92, rotateY: 45, transformOrigin: 'right center' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ perspective: 1200 }}
-          className="relative w-full max-w-4xl bg-[var(--surface)] border border-[var(--border)] rounded-[24px] shadow-2xl overflow-hidden z-10 my-8 text-[var(--text)]"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="case-study-title"
-        >
-          {/* Header Bar */}
-          <div className="sticky top-0 z-20 glass-panel border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-[var(--accent-text)] bg-[var(--accent)]/10 px-2.5 py-1 rounded-full border border-[var(--accent)]/20">
-                Case Study
-              </span>
-              <span className="text-xs text-[var(--text-muted)] font-mono hidden sm:inline">
-                {project.category_name}
-              </span>
-            </div>
+      {/* Modal Window Container with Colliding Sparks Burst & Dynamic Snap */}
+      <motion.article
+        variants={collidingSparksVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="relative w-full max-w-4xl bg-[var(--surface)] border border-amber-400/30 rounded-[26px] shadow-[0_0_55px_rgba(245,158,11,0.25)] overflow-hidden z-10 my-8 text-[var(--text)] group"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="case-study-title"
+      >
+        {/* Kinetic Spark Particles Collision Burst Effect */}
+        <CollidingSparksBurst count={36} />
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleShare}
-                className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
-                title="Share case study"
-                aria-label="Share case study"
-              >
-                {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-              </button>
+        {/* Colliding Sparks Chromatic Energy Glow */}
+        <div className="absolute -inset-1 rounded-[28px] bg-gradient-to-r from-amber-500/25 via-cyan-400/25 to-violet-500/25 blur-xl opacity-80 pointer-events-none animate-pulse" />
 
-              <button
-                onClick={onClose}
-                className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
-                aria-label="Close case study"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+        {/* Header Bar */}
+        <div className="sticky top-0 z-20 glass-panel border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <motion.span
+              variants={spinInFontVariants}
+              initial="hidden"
+              animate="visible"
+              className="text-xs font-mono uppercase tracking-wider text-amber-300 bg-amber-950/80 px-3 py-1 rounded-full border border-amber-400/40 flex items-center gap-2 shadow-[0_0_14px_rgba(245,158,11,0.35)]"
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+              <span className="font-bold">COLLIDING SPARKS // {project.category_name}</span>
+            </motion.span>
+            <span className="text-xs text-[var(--text-muted)] font-mono hidden sm:inline">
+              Case Study
+            </span>
           </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShare}
+              className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
+              title="Share case study"
+              aria-label="Share case study"
+            >
+              {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+            </button>
+
+            <button
+              onClick={handleClose}
+              className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
+              aria-label="Close case study"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
           {/* Hero Cover Banner */}
           <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] overflow-hidden bg-black/40">
@@ -131,14 +152,17 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
 
           {/* Content Body */}
           <div className="p-6 sm:p-10 space-y-10">
-            {/* Title & Summary */}
+            {/* Title & Summary with Spin-In Typography */}
             <div>
-              <h1
+              <motion.h1
                 id="case-study-title"
+                variants={spinInFontVariants}
+                initial="hidden"
+                animate="visible"
                 className="text-2xl sm:text-4xl font-bold font-display tracking-tight text-[var(--text)] mb-4"
               >
                 {project.title}
-              </h1>
+              </motion.h1>
               <p className="text-base sm:text-xl text-[var(--text-muted)] leading-relaxed font-normal">
                 {project.summary}
               </p>
@@ -343,6 +367,5 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
           </div>
         )}
       </div>
-    </AnimatePresence>
   );
 };

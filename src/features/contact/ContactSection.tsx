@@ -6,7 +6,7 @@ import { SiteSettings, Service } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
 import { useLanguage } from '../i18n/LanguageContext';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { mosqueDoorVariants, mosqueDoorRightVariants, spinInVariants, squidInkVariants } from '../../lib/animations';
+import { mosqueDoorVariants, mosqueDoorRightVariants, spinInVariants, spinInFontVariants, squidInkVariants, safeViewport } from '../../lib/animations';
 
 interface ContactSectionProps {
   settings: SiteSettings;
@@ -111,21 +111,33 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     <section id="contact" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/20">
       <div className="max-w-[1200px] w-full mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column (5 cols): Direct channels & Approach with Mosque Door Swing */}
+          {/* Left Column (5 cols): Direct channels & Approach with Mosque Door Swing & Spin In Typography */}
           <motion.div
             variants={mosqueDoorVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={safeViewport}
             className="lg:col-span-5 space-y-8"
           >
             <div>
-              <p className="text-xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2 font-mono">
+              <motion.p
+                variants={spinInFontVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={safeViewport}
+                className="text-xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2 font-mono"
+              >
                 {t('contactEyebrow')}
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight mb-4">
+              </motion.p>
+              <motion.h2
+                variants={spinInFontVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={safeViewport}
+                className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight mb-4"
+              >
                 {t('contactTitle')}
-              </h2>
+              </motion.h2>
               <p className="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
                 {t('contactSub')}
               </p>
@@ -140,7 +152,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     variants={spinInVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true }}
+                    viewport={safeViewport}
                     custom={0}
                     className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center"
                   >
@@ -182,7 +194,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     variants={spinInVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true }}
+                    viewport={safeViewport}
                     custom={1}
                     className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"
                   >
@@ -219,7 +231,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             variants={mosqueDoorRightVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={safeViewport}
             className="lg:col-span-7"
           >
             <FuturisticSpotlightCard

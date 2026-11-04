@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { dataProvider } from '../../data/dataProvider';
 import { AdminTab } from '../AdminLayout';
+import { motion } from 'motion/react';
+import { spinInFontVariants, mosqueDoorVariants } from '../../lib/animations';
 
 interface AdminDashboardProps {
   onNavigateTab: (tab: AdminTab) => void;
@@ -34,22 +36,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
       {/* Page Title & Environment Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-display text-[var(--text)] tracking-tight">
+          <motion.h1
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-2xl sm:text-3xl font-bold font-display text-[var(--text)] tracking-tight"
+          >
             Executive Studio Dashboard
-          </h1>
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
+          </motion.h1>
+          <motion.p
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            className="text-xs sm:text-sm text-[var(--text-muted)] mt-1"
+          >
             Realtime metrics, content lifecycle, and production launch readiness overview.
-          </p>
+          </motion.p>
         </div>
 
         <div className="flex items-center gap-3">
-          <button
+          <motion.button
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={2}
             onClick={() => onNavigateTab('sample-data')}
             className="px-4 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-semibold flex items-center gap-2 hover:bg-amber-500/25 transition cursor-pointer"
           >
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>Sample Items: {totalSamples}</span>
-          </button>
+          </motion.button>
 
           <a
             href="/"
@@ -63,57 +80,104 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab })
         </div>
       </div>
 
-      {/* 4 KPI Cards (AD-10) */}
+      {/* 4 KPI Cards (AD-10) with Mosque Door & Spin In Typography */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <motion.div
+          variants={mosqueDoorVariants}
+          initial="hidden"
+          animate="visible"
+          custom={0}
+          className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:border-cyan-400 transition-all"
+        >
           <div className="flex items-center justify-between mb-3 text-[var(--text-muted)]">
             <span className="text-xs font-mono uppercase tracking-wider">Project Views</span>
             <Eye className="w-4 h-4 text-[var(--accent-text)]" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]">
+          <motion.div
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]"
+          >
             {totalViews.toLocaleString()}
-          </div>
+          </motion.div>
           <p className="text-[11px] text-[var(--text-muted)] mt-1 font-mono">Telemetry across case studies</p>
-        </div>
+        </motion.div>
 
-        <div className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <motion.div
+          variants={mosqueDoorVariants}
+          initial="hidden"
+          animate="visible"
+          custom={1}
+          className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:border-cyan-400 transition-all"
+        >
           <div className="flex items-center justify-between mb-3 text-[var(--text-muted)]">
             <span className="text-xs font-mono uppercase tracking-wider">Published Projects</span>
             <FolderKanban className="w-4 h-4 text-cyan-400" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]">
+          <motion.div
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]"
+          >
             {publishedProjects.length}
-          </div>
+          </motion.div>
           <p className="text-[11px] text-[var(--text-muted)] mt-1 font-mono">
             {db.projects.length - publishedProjects.length} drafts / scheduled
           </p>
-        </div>
+        </motion.div>
 
-        <div className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <motion.div
+          variants={mosqueDoorVariants}
+          initial="hidden"
+          animate="visible"
+          custom={2}
+          className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:border-emerald-400 transition-all"
+        >
           <div className="flex items-center justify-between mb-3 text-[var(--text-muted)]">
             <span className="text-xs font-mono uppercase tracking-wider">Client Inquiries</span>
             <MessageSquare className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]">
+          <motion.div
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={2}
+            className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]"
+          >
             {db.inquiries.length}
-          </div>
+          </motion.div>
           <p className="text-[11px] text-[var(--text-muted)] mt-1 font-mono">
             {db.inquiries.filter((i) => i.status === 'new').length} unread new inquiries
           </p>
-        </div>
+        </motion.div>
 
-        <div className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <motion.div
+          variants={mosqueDoorVariants}
+          initial="hidden"
+          animate="visible"
+          custom={3}
+          className="p-5 sm:p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:border-[var(--accent)] transition-all"
+        >
           <div className="flex items-center justify-between mb-3 text-[var(--text-muted)]">
             <span className="text-xs font-mono uppercase tracking-wider">Launch Readiness</span>
             <CheckCircle className="w-4 h-4 text-[var(--accent)]" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]">
+          <motion.div
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={3}
+            className="text-2xl sm:text-3xl font-extrabold font-display text-[var(--text)]"
+          >
             {readiness.score}%
-          </div>
+          </motion.div>
           <p className="text-[11px] text-[var(--text-muted)] mt-1 font-mono">
             {readiness.isReady ? 'Ready for production!' : 'Pending checklist items'}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Launch Readiness Checklist (AD-11) */}

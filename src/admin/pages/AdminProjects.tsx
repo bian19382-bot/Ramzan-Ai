@@ -22,6 +22,10 @@ import {
 } from 'lucide-react';
 import { Project, ContentStatus } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
+import { motion, AnimatePresence } from 'motion/react';
+import { spinInFontVariants, collidingSparksVariants, collidingSparksBackdropVariants } from '../../lib/animations';
+import { soundFx } from '../../lib/soundFx';
+import { CollidingSparksBurst } from '../../components/ui/CollidingSparksBurst';
 
 export const AdminProjects: React.FC = () => {
   const db = dataProvider.getDatabase();
@@ -338,19 +342,34 @@ export const AdminProjects: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
+      {/* Top Header with Spin-In Typography */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
         <div>
-          <h1 className="text-2xl font-bold font-display text-[var(--text)]">
+          <motion.h1
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-2xl font-bold font-display text-[var(--text)]"
+          >
             Projects & Works Manager
-          </h1>
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
+          </motion.h1>
+          <motion.p
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            className="text-xs sm:text-sm text-[var(--text-muted)] mt-1"
+          >
             Add real web development projects with screenshots, descriptions, tools, and live links.
-          </p>
+          </motion.p>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <button
+          <motion.button
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={2}
             type="button"
             onClick={() => {
               const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(projects, null, 2));
@@ -366,15 +385,19 @@ export const AdminProjects: React.FC = () => {
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export JSON</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            custom={3}
             onClick={handleOpenCreate}
-            className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-2 cursor-pointer shadow-md"
+            className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-2 cursor-pointer shadow-md shadow-cyan-500/20"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Project</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -567,24 +590,52 @@ export const AdminProjects: React.FC = () => {
         )}
       </div>
 
-      {/* Create / Edit Project Modal */}
-      {(isCreating || editingProject) && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-3xl rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--border)] mb-6">
-              <h2 className="text-xl font-bold font-display text-[var(--text)]">
-                {editingProject ? 'Edit Project' : 'Add New Project'}
-              </h2>
-              <button
-                onClick={() => {
-                  setIsCreating(false);
-                  setEditingProject(null);
-                }}
-                className="p-1.5 rounded-lg hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* Create / Edit Project Modal with Colliding Sparks Animation & Spin In Font */}
+      <AnimatePresence>
+        {(isCreating || editingProject) && (
+          <motion.div
+            variants={collidingSparksBackdropVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+          >
+            <motion.div
+              variants={collidingSparksVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="relative w-full max-w-3xl rounded-[24px] bg-[var(--surface)] border border-amber-400/40 p-6 sm:p-8 shadow-[0_0_60px_rgba(245,158,11,0.25)] my-8 max-h-[90vh] overflow-y-auto group"
+            >
+              {/* Kinetic Spark Particles Collision Burst Effect */}
+              <CollidingSparksBurst count={32} />
+
+              {/* Colliding Sparks Plasma Glow Aura */}
+              <div className="absolute -inset-1 rounded-[26px] bg-gradient-to-r from-amber-500/25 via-cyan-400/25 to-violet-500/25 blur-xl opacity-80 pointer-events-none animate-pulse" />
+
+              <div className="relative flex items-center justify-between pb-4 border-b border-[var(--border)] mb-6 z-10">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+                  <motion.h2
+                    variants={spinInFontVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="text-xl font-bold font-display text-[var(--text)]"
+                  >
+                    {editingProject ? 'Edit Project // Colliding Sparks Editor' : 'Add New Project // Colliding Sparks Creator'}
+                  </motion.h2>
+                </div>
+                <button
+                  onClick={() => {
+                    soundFx.playClose();
+                    setIsCreating(false);
+                    setEditingProject(null);
+                  }}
+                  className="p-1.5 rounded-lg hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
             <form onSubmit={handleSave} className="space-y-6">
               {/* Picture Upload / URL Section */}
@@ -855,9 +906,10 @@ export const AdminProjects: React.FC = () => {
                 </div>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

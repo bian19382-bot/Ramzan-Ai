@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { ArrowLeft, ExternalLink, Github, Share2, Check, ArrowRight, X, Sparkles, FolderKanban } from 'lucide-react';
 import { dataProvider } from '../data/dataProvider';
 import { AiProjectConsultant } from '../features/ai/AiProjectConsultant';
+import { collidingSparksPanelVariants, spinInFontVariants } from '../lib/animations';
+import { soundFx } from '../lib/soundFx';
+import { CollidingSparksBurst } from '../components/ui/CollidingSparksBurst';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -76,9 +80,24 @@ export const ProjectDetailPage: React.FC = () => {
   const prevProject = currentIndex > 0 ? db.projects[currentIndex - 1] : null;
   const nextProject = currentIndex < db.projects.length - 1 ? db.projects[currentIndex + 1] : null;
 
+  useEffect(() => {
+    soundFx.playSparkCollision();
+  }, [slug]);
+
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] py-12 px-4 sm:px-8 lg:px-12">
-      <div className="max-w-4xl mx-auto space-y-10">
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] py-12 px-4 sm:px-8 lg:px-12 overflow-hidden">
+      {/* Colliding Sparks Plasma Atmosphere */}
+      <div className="fixed -inset-10 bg-gradient-to-tr from-amber-500/15 via-cyan-400/15 to-violet-500/15 blur-3xl pointer-events-none -z-10 animate-pulse" />
+
+      {/* Kinetic Particle Collision Burst on Page Open */}
+      <CollidingSparksBurst count={36} />
+
+      <motion.div
+        variants={collidingSparksPanelVariants}
+        initial="hidden"
+        animate="visible"
+        className="max-w-4xl mx-auto space-y-10 relative z-10"
+      >
         {/* Top Breadcrumb & Share */}
         <div className="flex items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
           <Link
@@ -100,24 +119,30 @@ export const ProjectDetailPage: React.FC = () => {
         </div>
 
         {/* Hero Cover */}
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-3xl overflow-hidden bg-black border border-[var(--border)] shadow-2xl">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-3xl overflow-hidden bg-black border border-amber-400/30 shadow-[0_0_40px_rgba(245,158,11,0.2)]">
           <img
             src={project.cover_image_url}
             alt={project.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute top-4 left-4">
-            <span className="px-3.5 py-1 rounded-full text-xs font-mono bg-black/70 backdrop-blur-md text-white border border-white/20">
-              {project.category_name}
+            <span className="px-3.5 py-1 rounded-full text-xs font-mono bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/40 flex items-center gap-1.5 shadow-[0_0_12px_rgba(245,158,11,0.3)]">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+              <span>COLLIDING SPARKS // {project.category_name}</span>
             </span>
           </div>
         </div>
 
         {/* Title, Summary & Meta */}
         <div>
-          <h1 className="text-3xl sm:text-5xl font-bold font-display tracking-tight text-[var(--text)] mb-4">
+          <motion.h1
+            variants={spinInFontVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-3xl sm:text-5xl font-bold font-display tracking-tight text-[var(--text)] mb-4"
+          >
             {project.title}
-          </h1>
+          </motion.h1>
           <p className="text-lg sm:text-xl text-[var(--text-muted)] leading-relaxed">
             {project.summary}
           </p>
@@ -275,7 +300,7 @@ export const ProjectDetailPage: React.FC = () => {
             </Link>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Lightbox Dialog */}
       {activeImageIndex !== null && project.gallery && project.gallery[activeImageIndex] && (

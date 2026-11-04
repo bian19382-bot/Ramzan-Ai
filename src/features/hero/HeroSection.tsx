@@ -367,21 +367,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </span>
             </div>
 
-            {/* Cyber Terminal Typewriter Overlay (Top Left below Counter) */}
-            <div className="absolute top-12 left-3 sm:top-14 sm:left-4 z-30 max-w-[85%] sm:max-w-[70%] flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-black/90 backdrop-blur-md border border-cyan-400/40 text-left shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-              <Terminal className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider shrink-0 hidden xs:inline">
-                SYS_ANIM //
-              </span>
-              <TypewriterText
-                key={`term-${currentBanner.id}`}
-                text={`${isRoman ? currentBanner.titleRoman : currentBanner.title} • [${currentBanner.animationLabel}]`}
-                speed={20}
-                delay={80}
-                className="text-[11px] sm:text-xs font-mono font-bold text-white tracking-wide truncate"
-              />
-            </div>
-
             {/* Top Right: Stop/Play Button & Verified Badge */}
             <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 flex items-center gap-2">
               {/* Stop / Play Toggle Button */}
@@ -462,22 +447,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </AnimatePresence>
             </div>
 
-            {/* Bottom HUD Bar: Typewriter Banner Title, Interactive Dots & Quick Explore */}
-            <div className="absolute bottom-2.5 sm:bottom-4 inset-x-2.5 sm:inset-x-4 z-30 flex flex-col sm:flex-row items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-black/80 backdrop-blur-md border border-cyan-500/30 shadow-2xl">
-              <div className="text-left hidden sm:block truncate max-w-[55%]">
+            {/* Bottom HUD Bar: Relocated Terminal Typewriter Bar, Interactive Dots & Quick Explore */}
+            <div className="absolute bottom-2.5 sm:bottom-4 inset-x-2.5 sm:inset-x-4 z-30 flex flex-col sm:flex-row items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-black/85 backdrop-blur-md border border-cyan-500/35 shadow-2xl">
+              {/* Typewriter Terminal Bar Relocated to Bottom so Banner Image is 100% Unobstructed */}
+              <div className="flex items-center gap-2 max-w-full sm:max-w-[55%] min-w-0">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-400/40 text-[10px] font-mono text-cyan-300 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.25)]">
+                  <Terminal className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <span className="font-bold uppercase tracking-wider hidden xs:inline">SYS_ANIM //</span>
+                  <span className="text-cyan-300 font-bold">{currentBanner.animationLabel}</span>
+                </div>
                 <TypewriterText
-                  key={`hud-cat-${currentBanner.id}`}
-                  text={isRoman ? currentBanner.categoryRoman : currentBanner.category}
-                  speed={16}
-                  delay={40}
-                  className="text-[10px] font-mono font-semibold tracking-wider text-cyan-400 uppercase block"
-                />
-                <TypewriterText
-                  key={`hud-title-${currentBanner.id}`}
+                  key={`hud-term-${currentBanner.id}`}
                   text={isRoman ? currentBanner.titleRoman : currentBanner.title}
-                  speed={22}
-                  delay={140}
-                  className="text-xs sm:text-sm font-bold text-white truncate drop-shadow-sm block"
+                  speed={20}
+                  delay={80}
+                  className="text-xs sm:text-sm font-mono font-bold text-white truncate drop-shadow-sm"
                 />
               </div>
 

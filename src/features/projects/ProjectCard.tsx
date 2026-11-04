@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { ArrowUpRight, Code2, ExternalLink, Github } from 'lucide-react';
 import { Project } from '../../types/portfolio';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { spinInVariants } from '../../lib/animations';
+import { spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
 
 interface ProjectCardProps {
   project: Project;
@@ -51,10 +51,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           {/* Futuristic Category Overlay with Spin-In Tag */}
           <div className="absolute top-3 left-3 z-20">
             <motion.span
-              variants={spinInVariants}
+              variants={spinInFontVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
+              viewport={safeViewport}
               custom={index * 0.1}
               className="text-[10px] font-mono uppercase tracking-wider bg-black/80 backdrop-blur-md text-cyan-300 px-3 py-1 rounded-md border border-cyan-500/30 flex items-center gap-1.5 shadow-md"
             >
@@ -77,9 +77,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Card Body */}
         <div className="p-5 sm:p-6">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="text-lg sm:text-xl font-bold font-display text-[var(--text)] group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-1">
+            <motion.h3
+              variants={spinInFontVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={safeViewport}
+              className="text-lg sm:text-xl font-bold font-display text-[var(--text)] group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-1"
+            >
               {project.title}
-            </h3>
+            </motion.h3>
             <ArrowUpRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-cyan-600 dark:group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
           </div>
 
@@ -96,7 +102,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 variants={spinInVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={safeViewport}
                 custom={idx}
                 className="inline-flex items-center"
               >

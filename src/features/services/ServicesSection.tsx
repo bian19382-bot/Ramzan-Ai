@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Service, FAQ } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { mosqueDoorVariants, squidInkVariants, spinInVariants } from '../../lib/animations';
+import { mosqueDoorVariants, squidInkVariants, spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
 
 interface ServicesSectionProps {
   services: Service[];
@@ -102,20 +102,32 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
     <section id="services" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/20">
       <div className="max-w-[1200px] w-full mx-auto">
         {/* Eyebrow & Title */}
-        {/* Eyebrow & Title with Mosque Door Arched Entrance */}
+        {/* Eyebrow & Title with Mosque Door Arched Entrance & Spin In Typography */}
         <motion.div
           variants={mosqueDoorVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={safeViewport}
           className="mb-14 text-left"
         >
-          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
+          <motion.span
+            variants={spinInFontVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
+          >
             {t('servicesEyebrow')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
+          </motion.span>
+          <motion.h2
+            variants={spinInFontVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
+          >
             {t('servicesTitle')}
-          </h2>
+          </motion.h2>
           <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-2xl mt-2 leading-relaxed">
             {t('servicesSub')}
           </p>
@@ -127,7 +139,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
           variants={squidInkVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={safeViewport}
           className="mb-16 p-6 sm:p-8 rounded-3xl bg-[var(--surface)]/90 dark:bg-[#0b0e14]/90 border border-[var(--border)] dark:border-cyan-500/25 relative overflow-hidden shadow-sm dark:shadow-[0_0_40px_rgba(6,182,212,0.1)] transition-colors duration-200"
         >
           {/* Subtle Cyber Grid Glow */}
@@ -150,7 +162,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                 variants={spinInVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={safeViewport}
                 custom={idx}
                 className="relative flex flex-col p-4 rounded-2xl bg-[var(--surface-2)]/70 dark:bg-[var(--surface)]/60 border border-[var(--border)] group hover:border-indigo-400/60 dark:hover:border-cyan-400/50 hover:bg-indigo-50/50 dark:hover:bg-cyan-950/15 transition-all duration-300"
               >
@@ -160,9 +172,15 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   </span>
                   <span className="w-2 h-2 rounded-full bg-indigo-500/40 dark:bg-cyan-400/30 group-hover:bg-indigo-500 dark:group-hover:bg-cyan-400 group-hover:shadow-[0_0_8px_rgba(99,102,241,0.6)] dark:group-hover:shadow-[0_0_8px_#22d3ee] transition-all" />
                 </div>
-                <h3 className="text-sm font-bold font-display text-[var(--text)] mb-1.5 group-hover:text-indigo-700 dark:group-hover:text-cyan-300 transition-colors">
+                <motion.h3
+                  variants={spinInFontVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={safeViewport}
+                  className="text-sm font-bold font-display text-[var(--text)] mb-1.5 group-hover:text-indigo-700 dark:group-hover:text-cyan-300 transition-colors"
+                >
                   {p.title}
-                </h3>
+                </motion.h3>
                 <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
                   {p.desc}
                 </p>
@@ -249,12 +267,24 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
         {faqs.length > 0 && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="text-center space-y-2 mb-8">
-              <span className="text-xs font-mono uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold">
+              <motion.span
+                variants={spinInFontVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={safeViewport}
+                className="text-xs font-mono uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold"
+              >
                 {isRoman ? 'Aam Sawalat' : 'Got Questions?'}
-              </span>
-              <h3 className="text-2xl font-bold font-display text-[var(--text)]">
+              </motion.span>
+              <motion.h3
+                variants={spinInFontVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={safeViewport}
+                className="text-2xl font-bold font-display text-[var(--text)]"
+              >
                 {isRoman ? 'Aksar Poochhe Jane Wale Sawalat' : 'Frequently Asked Questions'}
-              </h3>
+              </motion.h3>
             </div>
 
             <div className="space-y-3">

@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Search, X, FolderKanban, Plus, Sparkles } from 'lucide-react';
 import { Project, Category } from '../../types/portfolio';
 import { ProjectCard } from './ProjectCard';
 import { CaseStudyModal } from './CaseStudyModal';
 import { useLanguage } from '../i18n/LanguageContext';
-import { mosqueDoorVariants, spinInVariants, squidInkVariants } from '../../lib/animations';
+import { mosqueDoorVariants, spinInVariants, spinInFontVariants, squidInkVariants, safeViewport } from '../../lib/animations';
 
 interface FeaturedProjectsProps {
   projects: Project[];
@@ -70,16 +70,28 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
           variants={mosqueDoorVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={safeViewport}
           className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
         >
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
+            <motion.span
+              variants={spinInFontVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={safeViewport}
+              className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
+            >
               {t('projectsEyebrow')}
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
+            </motion.span>
+            <motion.h2
+              variants={spinInFontVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={safeViewport}
+              className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
+            >
               {t('projectsTitle')}
-            </h2>
+            </motion.h2>
             <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-xl mt-2">
               {t('projectsSub')}
             </p>
@@ -88,10 +100,10 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
           <div className="flex items-center gap-3 self-start md:self-auto">
             {projects.length > 0 && (
               <motion.div
-                variants={spinInVariants}
+                variants={spinInFontVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={safeViewport}
                 className="text-xs font-mono text-[var(--text-muted)] bg-[var(--surface-2)] px-3 py-1.5 rounded-full border border-[var(--border)]"
               >
                 Showing {displayedProjects.length} of {filteredProjects.length} projects
@@ -106,16 +118,16 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
             variants={squidInkVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={safeViewport}
             className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8"
           >
             {/* Category Filter with Spin In Tabs */}
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0">
               <motion.button
-                variants={spinInVariants}
+                variants={spinInFontVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={safeViewport}
                 custom={0}
                 onClick={() => setSelectedCategory('all')}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
@@ -129,10 +141,10 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
               {categories.map((cat, idx) => (
                 <motion.button
                   key={cat.id}
-                  variants={spinInVariants}
+                  variants={spinInFontVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true }}
+                  viewport={safeViewport}
                   custom={idx + 1}
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
@@ -190,7 +202,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                 key={project.id}
                 initial={{ opacity: 0, y: 32, scale: 0.97 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: '-40px' }}
+                viewport={safeViewport}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery ? 'lg:col-span-2' : ''}
               >
@@ -261,14 +273,19 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
         )}
       </div>
 
-      {/* Case Study Modal */}
-      <CaseStudyModal
-        project={activeCaseStudy}
-        onClose={() => setActiveCaseStudy(null)}
-        onSelectProject={(proj) => setActiveCaseStudy(proj)}
-        allProjects={projects}
-        onOpenConsultantForProject={onOpenConsultantForProject}
-      />
+      {/* Case Study Modal with Liquid Gas AnimatePresence */}
+      <AnimatePresence>
+        {activeCaseStudy && (
+          <CaseStudyModal
+            key={activeCaseStudy.id}
+            project={activeCaseStudy}
+            onClose={() => setActiveCaseStudy(null)}
+            onSelectProject={(proj) => setActiveCaseStudy(proj)}
+            allProjects={projects}
+            onOpenConsultantForProject={onOpenConsultantForProject}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

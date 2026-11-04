@@ -4,7 +4,7 @@ import { Sparkles, Server, Code, Zap, ShieldCheck, CheckCircle2 } from 'lucide-r
 import { Skill, SkillGroup } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
 import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { mosqueDoorVariants, squidInkVariants, spinInVariants } from '../../lib/animations';
+import { mosqueDoorVariants, squidInkVariants, spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
 import {
   GoogleAiStudioLogo,
   OpenAiLogo,
@@ -194,20 +194,32 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
   return (
     <section id="skills" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/30">
       <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title with Mosque Door Arched Reveal */}
+        {/* Eyebrow & Title with Mosque Door Arched Reveal & Spin In Typography */}
         <motion.div
           variants={mosqueDoorVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={safeViewport}
           className="mb-12"
         >
-          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono">
+          <motion.span
+            variants={spinInFontVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
+          >
             {t('skillsEyebrow')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight">
+          </motion.span>
+          <motion.h2
+            variants={spinInFontVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
+          >
             {t('skillsTitle')}
-          </h2>
+          </motion.h2>
           <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-2xl mt-2 leading-relaxed">
             {t('skillsSub')}
           </p>
@@ -218,7 +230,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
           variants={squidInkVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
+          viewport={safeViewport}
           role="tablist"
           aria-label="Tool categories"
           className="flex flex-wrap items-center gap-2 mb-10 p-1.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] max-w-3xl shadow-sm"
@@ -228,10 +240,10 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skill
             return (
               <motion.button
                 key={group.id}
-                variants={spinInVariants}
+                variants={spinInFontVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={safeViewport}
                 custom={gIdx}
                 role="tab"
                 aria-selected={isActive}

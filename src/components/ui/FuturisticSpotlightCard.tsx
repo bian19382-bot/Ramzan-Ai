@@ -73,7 +73,7 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       variants={selectedVariants}
       initial={selectedVariants ? 'hidden' : undefined}
       whileInView={selectedVariants ? 'visible' : undefined}
-      viewport={{ once: true, margin: '-40px' }}
+      viewport={{ once: false, amount: 0.15 }}
       custom={animationDelay}
       animate={
         !selectedVariants

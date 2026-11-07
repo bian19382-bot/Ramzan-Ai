@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "ramzan-portfolio",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
   "scripts": {
     "predev": "node scripts/clean-lockfiles.js",
     "dev": "tsx server.ts",
-    "start": "node server.ts",
+    "start": "tsx server.ts",
     "postinstall": "node scripts/clean-lockfiles.js",
     "prebuild": "node scripts/clean-lockfiles.js",
     "build": "vite build && node scripts/prepare-output.js",
@@ -32,6 +32,7 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-router-dom": "^7.18.4",
+    "tsx": "^4.21.0",
     "vite": "^8.3.0"
   },
   "devDependencies": {

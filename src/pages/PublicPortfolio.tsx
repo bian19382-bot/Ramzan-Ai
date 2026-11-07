@@ -21,6 +21,7 @@ import { Project } from '../types/portfolio';
 import { FuturisticCursor } from '../components/ui/FuturisticCursor';
 import { FuturisticMarquee } from '../components/ui/FuturisticMarquee';
 import { FuturisticHudDock } from '../components/ui/FuturisticHudDock';
+import { initGlobalSoundListeners } from '../lib/soundFx';
 
 const STORAGE_WELCOME_DISMISSED = 'portfolio_welcome_banner_dismissed';
 
@@ -59,6 +60,11 @@ export const PublicPortfolio: React.FC = () => {
     };
     window.addEventListener('keydown', handleAdminShortcut);
     return () => window.removeEventListener('keydown', handleAdminShortcut);
+  }, []);
+
+  // Initialize synthesized sound effects for fonts, boxes, cards, and buttons
+  useEffect(() => {
+    return initGlobalSoundListeners();
   }, []);
 
   const handleOpenWelcome = () => {

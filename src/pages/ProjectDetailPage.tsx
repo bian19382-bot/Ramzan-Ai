@@ -300,6 +300,12 @@ export const ProjectDetailPage: React.FC = () => {
             </Link>
           )}
         </div>
+
+        {/* GTS Footer Credit */}
+        <div className="pt-8 mt-12 border-t border-[var(--border)] text-center text-xs font-mono text-[var(--text-muted)] flex items-center justify-center gap-1.5 flex-wrap">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+          <span>Developed with <strong className="font-semibold text-[var(--text)]">GTS — GenTech Studio</strong> | Founder: <strong className="font-semibold text-[var(--text)]">Hamza Rizwan</strong></span>
+        </div>
       </motion.div>
 
       {/* Lightbox Dialog */}

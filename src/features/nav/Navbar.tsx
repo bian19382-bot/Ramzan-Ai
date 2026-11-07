@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Sun, Moon, Search, Sparkles, Shield, Globe, FileText } from 'lucide-react';
+import { Menu, Sun, Moon, Search, Sparkles, Shield, Globe, FileText, Volume2, VolumeX } from 'lucide-react';
 import { NavItem, SocialLink } from '../../types/portfolio';
 import { useTheme } from '../theme/ThemeContext';
 import { useLanguage, LanguageCode } from '../i18n/LanguageContext';
 import { MobileMenu } from './MobileMenu';
 import { MagneticWrapper } from '../../components/ui/MagneticWrapper';
 import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../../assets/brandLogo';
+import { soundFx } from '../../lib/soundFx';
 
 interface NavbarProps {
   siteName: string;
@@ -33,6 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => soundFx.isSoundMuted());
 
   useEffect(() => {
     const handleScroll = () => {
@@ -182,6 +184,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Shield className="w-3.5 h-3.5 text-cyan-400" />
               <span className="hidden sm:inline font-semibold">Admin</span>
             </Link>
+
+            {/* Audio Sound Toggle */}
+            <button
+              onClick={() => {
+                const next = soundFx.toggleMute();
+                setIsMuted(next);
+              }}
+              className="p-2 rounded-full hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 transition cursor-pointer relative"
+              title={isMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
+              aria-label={isMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
+            >
+              {isMuted ? (
+                <VolumeX className="w-4 h-4 text-gray-400" />
+              ) : (
+                <div className="relative flex items-center justify-center">
+                  <Volume2 className="w-4 h-4 text-cyan-500 dark:text-cyan-300" />
+                  <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                </div>
+              )}
+            </button>
 
             {/* Theme Toggle */}
             <button

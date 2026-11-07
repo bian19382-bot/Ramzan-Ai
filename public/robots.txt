@@ -1,0 +1,9 @@
+# Robots.txt for Ramzan Portfolio
+User-agent: *
+Allow: /
+Allow: /resume
+Allow: /projects/
+Disallow: /admin
+Disallow: /login
+
+Sitemap: https://ramzanportfolio.pages.dev/sitemap.xml

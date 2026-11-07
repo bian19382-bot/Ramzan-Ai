@@ -17,6 +17,7 @@ import { Profile, SocialLink, SiteSettings } from '../../types/portfolio';
 import { AmbientCanvas } from './AmbientCanvas';
 import { useLanguage } from '../i18n/LanguageContext';
 import { MagneticWrapper } from '../../components/ui/MagneticWrapper';
+import { soundFx } from '../../lib/soundFx';
 
 interface TypewriterTextProps {
   text: string;
@@ -258,6 +259,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   const handleTogglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
+    soundFx.playButtonClick();
     setIsPlaying((prev) => !prev);
   };
 
@@ -348,28 +350,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <span className="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 border-cyan-400 z-30 pointer-events-none" />
             <span className="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 border-cyan-400 z-30 pointer-events-none" />
 
-            {/* Top Left: Slide Counter & Status Pill with Dynamic Animation Indicator */}
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full bg-black/85 backdrop-blur-md border border-cyan-400/40 text-[10px] sm:text-xs font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
-                }`}
-              />
-              <span className="font-semibold tracking-wider">
-                {currentIndex + 1} / {HERO_BANNERS.length}
-              </span>
-              <span className="text-white/30 hidden xs:inline">•</span>
-              <span className="text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-400/40 text-[9px] uppercase tracking-wider font-bold hidden xs:inline shadow-[0_0_8px_rgba(6,182,212,0.3)]">
-                {isRoman ? currentBanner.animationLabelRoman : currentBanner.animationLabel}
-              </span>
-              <span className="text-white/70 hidden sm:inline text-[10px]">
-                {isPlaying ? (isRoman ? 'CHAL RAHA HAI' : 'AUTO-PLAY') : (isRoman ? 'ROKA HUA' : 'PAUSED')}
-              </span>
-            </div>
-
-            {/* Top Right: Stop/Play Button & Verified Badge */}
-            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 flex items-center gap-2">
-              {/* Stop / Play Toggle Button */}
+            {/* Top Right: Keep ONLY the Stop / Play Toggle Button on the banner */}
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30">
               <button
                 type="button"
                 onClick={handleTogglePlay}
@@ -401,34 +383,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </>
                 )}
               </button>
-
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-cyan-400/40 text-xs font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-                <span>{isRoman ? 'Asal Showcase' : 'Official Showcase'}</span>
-              </div>
             </div>
-
-            {/* Left Prev Arrow Button */}
-            <button
-              type="button"
-              onClick={handlePrevBanner}
-              className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/75 hover:bg-cyan-500/30 backdrop-blur-md border border-white/20 hover:border-cyan-400 text-white hover:text-cyan-300 flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-90"
-              title={isRoman ? 'Pichla banner dekhein' : 'Previous banner'}
-              aria-label="Previous banner"
-            >
-              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-
-            {/* Right Next Arrow Button */}
-            <button
-              type="button"
-              onClick={handleNextBanner}
-              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/75 hover:bg-cyan-500/30 backdrop-blur-md border border-white/20 hover:border-cyan-400 text-white hover:text-cyan-300 flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-90"
-              title={isRoman ? 'Agla banner dekhein' : 'Next banner'}
-              aria-label="Next banner"
-            >
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
 
             {/* Dynamic Per-Banner Animated Display (Banner 1: Fade In | Banner 2: Pop & Jump | Banner 3: Mosque Door 3D) */}
             <div className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center [perspective:1400px]">
@@ -445,85 +400,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   className="absolute inset-0 w-full h-full object-contain sm:object-cover drop-shadow-2xl"
                 />
               </AnimatePresence>
-            </div>
-
-            {/* Bottom HUD Bar: Relocated Terminal Typewriter Bar, Interactive Dots & Quick Explore */}
-            <div className="absolute bottom-2.5 sm:bottom-4 inset-x-2.5 sm:inset-x-4 z-30 flex flex-col sm:flex-row items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-black/85 backdrop-blur-md border border-cyan-500/35 shadow-2xl">
-              {/* Typewriter Terminal Bar Relocated to Bottom so Banner Image is 100% Unobstructed */}
-              <div className="flex items-center gap-2 max-w-full sm:max-w-[55%] min-w-0">
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-400/40 text-[10px] font-mono text-cyan-300 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.25)]">
-                  <Terminal className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                  <span className="font-bold uppercase tracking-wider hidden xs:inline">SYS_ANIM //</span>
-                  <span className="text-cyan-300 font-bold">{currentBanner.animationLabel}</span>
-                </div>
-                <TypewriterText
-                  key={`hud-term-${currentBanner.id}`}
-                  text={isRoman ? currentBanner.titleRoman : currentBanner.title}
-                  speed={20}
-                  delay={80}
-                  className="text-xs sm:text-sm font-mono font-bold text-white truncate drop-shadow-sm"
-                />
-              </div>
-
-              {/* Dot Indicators & Controls */}
-              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                {/* 3 Interactive Dots */}
-                <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 rounded-full border border-white/15">
-                  {HERO_BANNERS.map((banner, idx) => {
-                    const isActive = idx === currentIndex;
-                    return (
-                      <button
-                        key={banner.id}
-                        type="button"
-                        onClick={(e) => handleSelectBanner(idx, e)}
-                        className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                          isActive
-                            ? 'w-7 bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_12px_rgba(6,182,212,0.9)]'
-                            : 'w-2 bg-white/40 hover:bg-white/80'
-                        }`}
-                        title={`Banner ${idx + 1}: ${banner.title}`}
-                        aria-label={`Show banner ${idx + 1}`}
-                      />
-                    );
-                  })}
-                </div>
-
-                {/* Mobile Stop/Play Toggle */}
-                <button
-                  type="button"
-                  onClick={handleTogglePlay}
-                  className={`sm:hidden px-2.5 py-1 rounded-full border text-[11px] font-mono flex items-center gap-1 cursor-pointer ${
-                    isPlaying
-                      ? 'bg-black/70 border-cyan-400/50 text-cyan-300'
-                      : 'bg-amber-500/30 border-amber-400 text-amber-200'
-                  }`}
-                >
-                  {isPlaying ? (
-                    <>
-                      <Pause className="w-3 h-3 fill-current" />
-                      <span>Stop</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-3 h-3 fill-current" />
-                      <span>Play</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Explore Projects Button */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleScrollToProjects();
-                  }}
-                  className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-mono font-medium shadow-[0_0_15px_rgba(6,182,212,0.4)] transition flex items-center gap-1.5 cursor-pointer shrink-0"
-                >
-                  <span>{t('heroExploreCta')}</span>
-                  <ArrowDown className="w-3 h-3" />
-                </button>
-              </div>
             </div>
           </div>
         </motion.div>

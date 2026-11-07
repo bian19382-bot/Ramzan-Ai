@@ -63,6 +63,10 @@ export const Footer: React.FC<FooterProps> = ({
             <p className="max-w-sm leading-relaxed text-xs sm:text-sm text-[var(--text-muted)] font-medium">
               Building digital experiences with AI-assisted creativity.
             </p>
+            <div className="pt-2 text-[11px] font-mono text-[var(--text-muted)] flex items-center gap-1.5 flex-wrap">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-500" />
+              <span>Developed with <strong className="font-semibold text-[var(--text)]">GTS — GenTech Studio</strong> | Founder: <strong className="font-semibold text-[var(--text)]">Hamza Rizwan</strong></span>
+            </div>
             <div className="pt-2 flex flex-col gap-1.5 text-xs font-mono">
               <a href={`mailto:${settings.contact_email}`} className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />

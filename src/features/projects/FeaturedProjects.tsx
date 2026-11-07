@@ -273,7 +273,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
         )}
       </div>
 
-      {/* Case Study Modal with Liquid Gas AnimatePresence */}
+      {/* Case Study Modal with Colliding Sparks AnimatePresence */}
       <AnimatePresence>
         {activeCaseStudy && (
           <CaseStudyModal

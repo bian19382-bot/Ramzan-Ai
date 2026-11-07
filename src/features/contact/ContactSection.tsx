@@ -38,6 +38,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   React.useEffect(() => {
@@ -69,8 +70,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
 
     if (formData.honeypot) {
       setSubmitted(true);
@@ -81,27 +83,62 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
     setSubmitting(true);
 
-    setTimeout(() => {
-      const res = dataProvider.submitInquiry({
-        name: formData.name,
-        email: formData.email,
-        service: formData.service,
-        budget: formData.budget,
-        timeline: formData.timeline,
-        message: formData.message,
-        consent: formData.consent,
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          service: formData.service,
+          budget: formData.budget,
+          timeline: formData.timeline,
+          message: formData.message,
+          honeypot: formData.honeypot,
+        }),
       });
 
-      setSubmitting(false);
-      if (res.ok) {
+      const result = await response.json().catch(() => null);
+
+      if (response.ok && result?.ok) {
+        // Also sync local dataProvider store
+        dataProvider.submitInquiry({
+          name: formData.name,
+          email: formData.email,
+          service: formData.service,
+          budget: formData.budget,
+          timeline: formData.timeline,
+          message: formData.message,
+          consent: formData.consent,
+        });
+
         setSubmitted(true);
         confetti({
           particleCount: 50,
           spread: 60,
           origin: { y: 0.7 },
         });
+      } else {
+        const errorMsg =
+          result?.error ||
+          (response.status === 429
+            ? 'Rate limit reached. Thori der baad try karein.'
+            : isRoman
+            ? `Transmission error (${response.status}). Baraye meharbani direct email ya WhatsApp karein.`
+            : `Transmission error (${response.status}). Please contact directly via email or WhatsApp.`);
+        setSubmitError(errorMsg);
       }
-    }, 500);
+    } catch (err: any) {
+      setSubmitError(
+        isRoman
+          ? 'Network error. Server se raabta nahi ho saka. Baraye meharbani WhatsApp ya direct email use karein.'
+          : 'Network error. Could not connect to the server. Please reach out via WhatsApp or email directly.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const whatsappCleanNumber = settings.whatsapp_number.replace(/\D/g, '').replace(/^0/, '');
@@ -389,6 +426,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     />
                     {errors.message && <span className="text-[11px] text-red-400 mt-1 block">{errors.message}</span>}
                   </div>
+
+                  {submitError && (
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-mono">
+                      {submitError}
+                    </div>
+                  )}
 
                   <div className="pt-2">
                     <button

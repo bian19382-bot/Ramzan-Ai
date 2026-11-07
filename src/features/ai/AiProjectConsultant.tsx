@@ -20,6 +20,8 @@ export const AiProjectConsultant: React.FC<AiProjectConsultantProps> = ({
   );
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
+  const [isFallback, setIsFallback] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [thinkingOutput, setThinkingOutput] = useState<string | null>(null);
 
   const quickPrompts = [
@@ -35,23 +37,33 @@ export const AiProjectConsultant: React.FC<AiProjectConsultantProps> = ({
 
     setLoading(true);
     setResponse(null);
+    setIsFallback(false);
+    setErrorMessage(null);
     setThinkingOutput('Analyzing technical constraints, latency budgets, and full-stack architecture with Gemini AI...');
 
     try {
-      let res = await fetch('/api/generate', {
+      let res = await fetch('/api/ai/consult', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: textToSend }),
       });
 
       if (!res.ok && res.status === 404) {
-        // Fallback to legacy route if /api/generate is not mounted
-        res = await fetch('/api/ai/consult', {
+        // Fallback to /api/generate if /api/ai/consult is unavailable
+        res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: textToSend }),
         });
       }
+
+      if (res.status === 429) {
+        setErrorMessage('Rate limit reached. Thori der baad try karein.');
+        setThinkingOutput(null);
+        return;
+      }
+
+      const hasFallbackHeader = res.headers.get('x-fallback') === 'true' || res.headers.get('X-Fallback') === 'true';
 
       if (!res.ok) {
         throw new Error('Server returned ' + res.status);
@@ -59,17 +71,18 @@ export const AiProjectConsultant: React.FC<AiProjectConsultantProps> = ({
 
       const data = await res.json();
       setResponse(data.reply);
+      setIsFallback(hasFallbackHeader || Boolean(data?.fallback));
       setThinkingOutput(null);
-    } catch (e) {
-      // Fallback local architectural reasoning if server API is offline
+    } catch (e: any) {
       setThinkingOutput(null);
+      setIsFallback(true);
       setResponse(
         `### Architectural Scoping & Feasibility Assessment\n\n` +
         `**1. Recommended Technology Stack:**\n` +
         `- **Frontend:** React 19 + TypeScript + Tailwind CSS with strict design tokens for zero layout shifts.\n` +
         `- **State & Cache:** TanStack Query + lightweight reactive signals.\n` +
         `- **Backend:** Node.js / Express with modular domain routers and PostgreSQL via Drizzle ORM.\n` +
-        `- **AI Layer:** Google GenAI SDK (Gemini models) via server-side proxy routes with high thinking parameters.\n\n` +
+        `- **AI Layer:** Google GenAI SDK (Gemini models) via server-side proxy routes.\n\n` +
         `**2. Key Risk Mitigations:**\n` +
         `- Implement edge caching and client-side skeleton states to preserve sub-2.5s LCP.\n` +
         `- Establish WCAG 2.2 AA accessibility checks in CI pipelines.\n` +
@@ -192,6 +205,13 @@ export const AiProjectConsultant: React.FC<AiProjectConsultantProps> = ({
               </div>
             </div>
 
+            {/* Error Message Indicator */}
+            {errorMessage && (
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-300 text-xs font-mono">
+                {errorMessage}
+              </div>
+            )}
+
             {/* Thinking / Processing indicator */}
             {thinkingOutput && (
               <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--accent)]/30 flex items-center gap-3 animate-pulse">
@@ -203,9 +223,16 @@ export const AiProjectConsultant: React.FC<AiProjectConsultantProps> = ({
             {/* Response Area */}
             {response && (
               <div className="p-5 rounded-2xl bg-[var(--surface-2)]/60 border border-[var(--border)] space-y-4">
-                <div className="flex items-center gap-2 text-xs font-mono text-[var(--accent-text)]">
-                  <Bot className="w-4 h-4" />
-                  <span>Architecture Recommendation:</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-mono text-[var(--accent-text)]">
+                    <Bot className="w-4 h-4" />
+                    <span>Architecture Recommendation:</span>
+                  </div>
+                  {isFallback && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30">
+                      Demo Response
+                    </span>
+                  )}
                 </div>
 
                 <div className="prose prose-invert prose-sm max-w-none text-xs sm:text-sm leading-relaxed space-y-2 whitespace-pre-wrap">

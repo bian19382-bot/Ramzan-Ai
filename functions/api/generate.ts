@@ -63,6 +63,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     if (!apiKey || apiKey.trim() === '' || apiKey.includes('MY_GEMINI_API_KEY')) {
       return new Response(
         JSON.stringify({
+          fallback: true,
           reply:
             `### Architectural Scoping & Solution Assessment\n\n` +
             `**1. Suggested Technical Stack:**\n` +
@@ -74,7 +75,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
             `- Enforce WCAG 2.2 AA accessibility standards and sub-2s LCP budgets.\n` +
             `- Leverage edge caching for static assets while keeping dynamic inference server-side.`,
         }),
-        { status: 200, headers: corsHeaders }
+        { status: 200, headers: { ...corsHeaders, 'X-Fallback': 'true' } }
       );
     }
 
@@ -121,6 +122,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       // Return structured fallback rather than crashing client UI
       return new Response(
         JSON.stringify({
+          fallback: true,
           reply:
             `### Architectural Consultation Assessment\n\n` +
             `**1. Architecture Breakdown:**\n` +
@@ -130,7 +132,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
             `**2. Next Steps:**\n` +
             `- Contact directly via babajani543210@gmail.com or WhatsApp to schedule a detailed discovery discussion.`,
         }),
-        { status: 200, headers: corsHeaders }
+        { status: 200, headers: { ...corsHeaders, 'X-Fallback': 'true' } }
       );
     }
 

@@ -638,6 +638,47 @@ class DataProviderService {
     }
   }
 
+  // Categories & technology tags
+  public addCategory(category: Omit<Category, 'id'>): void {
+    const newCategory: Category = { ...category, id: 'cat-' + Date.now() };
+    this.db.categories.push(newCategory);
+    this.persist({
+      table: 'categories',
+      action: 'insert',
+      summary: `Added category: ${newCategory.name}`,
+    });
+  }
+
+  public deleteCategory(id: string): void {
+    const target = this.db.categories.find((category) => category.id === id);
+    this.db.categories = this.db.categories.filter((category) => category.id !== id);
+    this.persist({
+      table: 'categories',
+      action: 'delete',
+      summary: `Deleted category: ${target?.name || id}`,
+    });
+  }
+
+  public addTag(tag: Omit<Tag, 'id'>): void {
+    const newTag: Tag = { ...tag, id: 'tag-' + Date.now() };
+    this.db.tags.push(newTag);
+    this.persist({
+      table: 'tags',
+      action: 'insert',
+      summary: `Added technology tag: ${newTag.name}`,
+    });
+  }
+
+  public deleteTag(id: string): void {
+    const target = this.db.tags.find((tag) => tag.id === id);
+    this.db.tags = this.db.tags.filter((tag) => tag.id !== id);
+    this.persist({
+      table: 'tags',
+      action: 'delete',
+      summary: `Deleted technology tag: ${target?.name || id}`,
+    });
+  }
+
   // Skills
   public addSkill(skill: Omit<Skill, 'id'>): void {
     const newSkill: Skill = { ...skill, id: 'sk-' + Date.now() };

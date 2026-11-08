@@ -91,9 +91,6 @@ export const PublicPortfolio: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors duration-200">
-      {/* Cyber Reticle & Spring Inertia Custom Cursor */}
-      <FuturisticCursor />
-
       {/* Interactive Welcome Photo Banner with Quick Dismiss */}
       <WelcomePhotoBanner
         profile={db.profile}
@@ -117,8 +114,9 @@ export const PublicPortfolio: React.FC = () => {
         onOpenWelcome={handleOpenWelcome}
       />
 
-      {/* Main Content Sections */}
+      {/* Main Content Sections in Master Prompt Cinematic Flow */}
       <main id="main-content" tabIndex={-1}>
+        {/* 1. Hero Cinematic Intro */}
         <HeroSection
           profile={db.profile}
           settings={db.settings}
@@ -129,18 +127,18 @@ export const PublicPortfolio: React.FC = () => {
           }}
         />
 
-        {/* Futuristic Tech Marquee Stream */}
-        <FuturisticMarquee />
-
+        {/* 2. Origin Story (About) */}
         <AboutSection profile={db.profile} />
 
-        <SkillsSection skillGroups={db.skill_groups} skills={db.skills} />
-
+        {/* 3. Mission Files (3D Tunnel Project Showcase) */}
         <FeaturedProjects
           projects={db.projects}
           categories={db.categories}
           onOpenConsultantForProject={handleOpenAiForProject}
         />
+
+        {/* 4. Power Profile (Skills & Radar Interface) */}
+        <SkillsSection skillGroups={db.skill_groups} skills={db.skills} />
 
         <ServicesSection
           services={db.services}

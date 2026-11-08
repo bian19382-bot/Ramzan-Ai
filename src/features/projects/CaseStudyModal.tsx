@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ExternalLink, Github, Calendar, Tag, ArrowRight, Share2, Check, Sparkles, Wind } from 'lucide-react';
+import { X, ExternalLink, Github, Calendar, ArrowRight, Share2, Check, Sparkles, Terminal } from 'lucide-react';
 import { Project } from '../../types/portfolio';
-import { collidingSparksVariants, collidingSparksBackdropVariants, spinInFontVariants } from '../../lib/animations';
-import { soundFx } from '../../lib/soundFx';
-import { CollidingSparksBurst } from '../../components/ui/CollidingSparksBurst';
+import { HoloScanImage } from '../../components/ui/HoloScanImage';
 
 interface CaseStudyModalProps {
   project: Project | null;
   onClose: () => void;
-  onSelectProject: (proj: Project) => void;
-  allProjects: Project[];
+  onSelectProject?: (proj: Project) => void;
+  allProjects?: Project[];
+  onOpenConsultant?: (projectTitle: string) => void;
   onOpenConsultantForProject?: (projectTitle: string) => void;
 }
 
@@ -18,7 +17,8 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
   project,
   onClose,
   onSelectProject,
-  allProjects,
+  allProjects = [],
+  onOpenConsultant,
   onOpenConsultantForProject,
 }) => {
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
@@ -37,7 +37,6 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
     if (project) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
-      soundFx.playSparkCollision();
     } else {
       document.body.style.overflow = '';
     }
@@ -49,13 +48,7 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
 
   if (!project) return null;
 
-  const handleClose = () => {
-    soundFx.playClose();
-    onClose();
-  };
-
   const handleShare = () => {
-    soundFx.playButtonClick();
     if (navigator.share) {
       navigator.share({
         title: project.title,
@@ -73,57 +66,45 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
     .filter((p) => p.id !== project.id && (p.category_id === project.category_id || p.featured))
     .slice(0, 2);
 
+  const fallbackUrl = '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png';
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-3 sm:p-6 lg:p-10">
-      {/* Colliding Sparks Backdrop */}
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-3 sm:p-6 lg:p-10 select-none">
+      {/* Cinematic Backdrop */}
       <motion.div
-        variants={collidingSparksBackdropVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        onClick={handleClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={onClose}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
         aria-hidden="true"
       />
 
-      {/* Modal Window Container with Colliding Sparks Burst & Dynamic Snap */}
+      {/* Modal Container */}
       <motion.article
-        variants={collidingSparksVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        className="relative w-full max-w-4xl bg-[var(--surface)] border border-amber-400/30 rounded-[26px] shadow-[0_0_55px_rgba(245,158,11,0.25)] overflow-hidden z-10 my-8 text-[var(--text)] group"
+        initial={{ opacity: 0, scale: 0.94, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 24 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-4xl bg-[#0B0D13] border border-white/10 rounded-[28px] shadow-2xl overflow-hidden z-10 my-8 text-white group"
         role="dialog"
         aria-modal="true"
         aria-labelledby="case-study-title"
       >
-        {/* Kinetic Spark Particles Collision Burst Effect */}
-        <CollidingSparksBurst count={36} />
-
-        {/* Colliding Sparks Chromatic Energy Glow */}
-        <div className="absolute -inset-1 rounded-[28px] bg-gradient-to-r from-amber-500/25 via-cyan-400/25 to-violet-500/25 blur-xl opacity-80 pointer-events-none animate-pulse" />
-
         {/* Header Bar */}
-        <div className="sticky top-0 z-20 glass-panel border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 z-20 bg-[#0B0D13]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <motion.span
-              variants={spinInFontVariants}
-              initial="hidden"
-              animate="visible"
-              className="text-xs font-mono uppercase tracking-wider text-amber-300 bg-amber-950/80 px-3 py-1 rounded-full border border-amber-400/40 flex items-center gap-2 shadow-[0_0_14px_rgba(245,158,11,0.35)]"
-            >
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              <span className="font-bold">COLLIDING SPARKS // {project.category_name}</span>
-            </motion.span>
-            <span className="text-xs text-[var(--text-muted)] font-mono hidden sm:inline">
-              Case Study
+            <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-md border border-cyan-500/30 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span>MISSION // {project.category_name}</span>
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleShare}
-              className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
+              className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] text-[#A1A1AA] hover:text-white transition cursor-pointer"
               title="Share case study"
               aria-label="Share case study"
             >
@@ -131,8 +112,8 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             </button>
 
             <button
-              onClick={handleClose}
-              className="p-2 rounded-full hover:bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] transition cursor-pointer"
+              onClick={onClose}
+              className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] text-[#A1A1AA] hover:text-white transition cursor-pointer"
               aria-label="Close case study"
             >
               <X className="w-5 h-5" />
@@ -140,65 +121,85 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
           </div>
         </div>
 
-          {/* Hero Cover Banner */}
-          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] overflow-hidden bg-black/40">
-            <img
-              src={project.cover_image_url}
-              alt={project.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface)] via-transparent to-transparent" />
+        {/* Modal Content */}
+        <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-h-[80vh] overflow-y-auto">
+          {/* Title & Summary */}
+          <div>
+            <h1
+              id="case-study-title"
+              className="font-cinematic text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase mb-4"
+            >
+              {project.title}
+            </h1>
+            <p className="text-sm sm:text-base text-[#A1A1AA] font-sans leading-relaxed">
+              {project.summary}
+            </p>
           </div>
 
-          {/* Content Body */}
-          <div className="p-6 sm:p-10 space-y-10">
-            {/* Title & Summary with Spin-In Typography */}
-            <div>
-              <motion.h1
-                id="case-study-title"
-                variants={spinInFontVariants}
-                initial="hidden"
-                animate="visible"
-                className="text-2xl sm:text-4xl font-bold font-display tracking-tight text-[var(--text)] mb-4"
-              >
-                {project.title}
-              </motion.h1>
-              <p className="text-base sm:text-xl text-[var(--text-muted)] leading-relaxed font-normal">
-                {project.summary}
-              </p>
-            </div>
+          {/* HoloScan Cover Image */}
+          <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <HoloScanImage
+              src={project.cover_image_url || fallbackUrl}
+              alt={project.title}
+              aspectRatio="aspect-[16/9]"
+              telemetryLabel="SPEC // MISSION_VISUAL"
+            />
+          </div>
 
-            {/* Metadata Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-[var(--surface-2)]/60 border border-[var(--border)]">
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Role</span>
-                <p className="text-xs sm:text-sm font-semibold text-[var(--text)] mt-1">{project.role}</p>
+          {/* Problem & Approach */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {project.problem && (
+              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                <span className="font-mono text-[10px] text-cyan-400 tracking-widest uppercase">
+                  OBJECTIVE // CHALLENGE
+                </span>
+                <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed">
+                  {project.problem}
+                </p>
               </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Completed</span>
-                <p className="text-xs sm:text-sm font-semibold text-[var(--text)] mt-1">{project.project_date}</p>
-              </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Category</span>
-                <p className="text-xs sm:text-sm font-semibold text-[var(--text)] mt-1">{project.category_name}</p>
-              </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Deliverables</span>
-                <p className="text-xs sm:text-sm font-semibold text-[var(--accent-text)] mt-1">Live System</p>
-              </div>
-            </div>
+            )}
 
-            {/* Action Buttons (Live Demo & Source only if provided) */}
-            <div className="flex flex-wrap items-center gap-3">
+            {project.approach && (
+              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                <span className="font-mono text-[10px] text-cyan-400 tracking-widest uppercase">
+                  EXECUTION // ARCHITECTURE
+                </span>
+                <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed">
+                  {project.approach}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Tools & Specifications */}
+          <div className="p-6 rounded-2xl bg-[#10131B] border border-white/10 space-y-4">
+            <span className="font-mono text-[10px] text-cyan-400 tracking-widest uppercase">
+              TECHNICAL STACK & WORKFLOW
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {project.tools.map((tool, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-xs font-mono text-[#CBD5E1]"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions Bar */}
+          <div className="pt-4 flex flex-wrap items-center justify-between gap-4 border-t border-white/10">
+            <div className="flex items-center gap-3">
               {project.live_url && (
                 <a
                   href={project.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-full bg-[var(--accent)] hover:brightness-110 text-white font-medium text-xs sm:text-sm transition flex items-center gap-2 shadow-md"
+                  className="px-6 py-3 rounded-xl bg-white text-black font-semibold text-xs tracking-wider uppercase hover:bg-cyan-300 transition flex items-center gap-2"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Launch Live Demo</span>
+                  <span>LAUNCH LIVE DEPLOYMENT</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
 
@@ -207,165 +208,23 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                   href={project.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-full bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text)] font-medium text-xs sm:text-sm transition flex items-center gap-2"
+                  className="px-5 py-3 rounded-xl bg-white/[0.05] border border-white/15 text-white font-semibold text-xs tracking-wider uppercase hover:border-cyan-400 hover:bg-cyan-500/10 transition flex items-center gap-2"
                 >
                   <Github className="w-4 h-4" />
-                  <span>View Source Code</span>
+                  <span>REPOSITORY</span>
                 </a>
               )}
-
-              {onOpenConsultantForProject && (
-                <button
-                  onClick={() => {
-                    onClose();
-                    onOpenConsultantForProject(project.title);
-                  }}
-                  className="px-5 py-2.5 rounded-full bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent-text)] border border-[var(--accent)]/30 font-medium text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4 text-[var(--accent)]" />
-                  <span>AI Scoping: Build Similar System</span>
-                </button>
-              )}
             </div>
 
-            {/* Detailed Case Study Sections */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-              <div className="space-y-3">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] font-mono">
-                  The Problem
-                </h2>
-                <p className="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
-                  {project.problem}
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] font-mono">
-                  The Architecture & Approach
-                </h2>
-                <p className="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
-                  {project.approach}
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] font-mono">
-                Key Technical Challenges & Solutions
-              </h2>
-              <div className="p-5 rounded-2xl bg-[var(--surface-2)]/40 border border-[var(--border)] text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
-                {project.challenges}
-              </div>
-            </div>
-
-            {project.results && (
-              <div className="p-6 rounded-2xl bg-[var(--accent)]/5 border border-[var(--accent)]/25 space-y-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] font-mono">
-                  Measurable Impact & Results
-                </h2>
-                <p className="text-base text-[var(--text)] font-medium leading-relaxed">
-                  {project.results}
-                </p>
-              </div>
-            )}
-
-            {/* Tools & Technologies */}
-            <div className="space-y-3">
-              <h2 className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)]">
-                Tech Stack Utilized
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {project.tools.map((tool, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-lg text-xs font-mono bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text)]"
-                  >
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Gallery Lightbox Preview */}
-            {project.gallery && project.gallery.length > 0 && (
-              <div className="space-y-4 pt-4 border-t border-[var(--border)]">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] font-mono">
-                  Project Gallery
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {project.gallery.map((img, idx) => (
-                    <div
-                      key={img.id || idx}
-                      onClick={() => setActiveImageIndex(idx)}
-                      className="group relative aspect-[16/10] rounded-xl overflow-hidden bg-black/40 border border-[var(--border)] cursor-pointer hover:border-[var(--accent)] transition"
-                    >
-                      <img
-                        src={img.url}
-                        alt={img.alt_text || img.caption}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-3">
-                        <span className="text-xs text-white font-medium">{img.caption}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Next / Related Projects Navigation */}
-            {related.length > 0 && (
-              <div className="pt-8 border-t border-[var(--border)]">
-                <h2 className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-4">
-                  Explore Related Work
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {related.map((rel) => (
-                    <div
-                      key={rel.id}
-                      onClick={() => onSelectProject(rel)}
-                      className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:border-[var(--accent)]/50 transition cursor-pointer flex items-center justify-between group"
-                    >
-                      <div className="pr-4">
-                        <span className="text-[10px] font-mono text-[var(--text-muted)]">{rel.category_name}</span>
-                        <h3 className="text-xs sm:text-sm font-semibold text-[var(--text)] group-hover:text-[var(--accent-text)] transition line-clamp-1">
-                          {rel.title}
-                        </h3>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--accent-text)] group-hover:translate-x-1 transition shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </motion.article>
-
-        {/* Accessible Lightbox Modal */}
-        {activeImageIndex !== null && project.gallery && project.gallery[activeImageIndex] && (
-          <div
-            className="fixed inset-0 z-60 bg-black/95 flex items-center justify-center p-4"
-            onClick={() => setActiveImageIndex(null)}
-          >
             <button
-              onClick={() => setActiveImageIndex(null)}
-              className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-              aria-label="Close image preview"
+              onClick={onClose}
+              className="text-xs font-mono text-[#71717A] hover:text-white uppercase tracking-wider cursor-pointer"
             >
-              <X className="w-6 h-6" />
+              CLOSE MISSION FILE [ESC]
             </button>
-            <div className="max-w-4xl max-h-[85vh] flex flex-col items-center">
-              <img
-                src={project.gallery[activeImageIndex].url}
-                alt={project.gallery[activeImageIndex].alt_text || 'Preview'}
-                className="max-w-full max-h-[75vh] object-contain rounded-lg"
-              />
-              <p className="text-sm text-white/80 mt-4 text-center">
-                {project.gallery[activeImageIndex].caption}
-              </p>
-            </div>
           </div>
-        )}
-      </div>
+        </div>
+      </motion.article>
+    </div>
   );
 };

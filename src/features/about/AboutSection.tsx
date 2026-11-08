@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Code, CheckCircle2, ChevronDown, ChevronUp, Mail, Layers } from 'lucide-react';
+import { Compass, Hammer, Sparkles, ChevronDown, ChevronUp, Layers, Terminal } from 'lucide-react';
 import { Profile } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
-import { mosqueDoorVariants, mosqueDoorRightVariants, squidInkVariants, spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
+import { cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 
 interface AboutSectionProps {
   profile: Profile;
@@ -11,181 +11,185 @@ interface AboutSectionProps {
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
   const [expanded, setExpanded] = useState(false);
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const isRoman = language === 'ur-roman';
 
-  const highlights = isRoman
-    ? [
-        { label: 'Main Focus', text: 'Web development' },
-        { label: 'Workflow', text: 'AI-assisted tools aur practical project building' },
-        { label: 'Maqsad', text: 'Apni skills improve karna aur practical websites banana' },
-        { label: 'Tareeqa', text: 'Clear communication aur realistic expectations' },
-        { label: 'Availability', text: 'Munasib opportunities ke liye available' },
-      ]
-    : [
-        { label: 'Main Focus', text: 'Web development' },
-        { label: 'Workflow', text: 'AI-assisted tools and hands-on project building' },
-        { label: 'Current Goal', text: 'Improve my skills and build practical web projects' },
-        { label: 'Approach', text: 'Clear communication and realistic expectations' },
-        { label: 'Availability', text: 'Open to suitable opportunities' },
-      ];
+  const stages = [
+    {
+      num: '01',
+      title: isRoman ? 'EXPLORE' : 'EXPLORE',
+      sub: isRoman ? 'Tools, Workflows aur Ideas' : 'Discover tools, workflows and ideas',
+      desc: isRoman
+        ? 'Google AI Studio, Claude AI, aur ChatGPT jaise cutting-edge models ki madad se creative system architecture aur UI/UX concepts ko explore karta hoon.'
+        : 'Exploring cutting-edge models like Google AI Studio, Claude AI, and ChatGPT to plan clean architectures and user experience concepts.',
+      icon: Compass,
+      tag: 'RESEARCH & IDEATION',
+    },
+    {
+      num: '02',
+      title: isRoman ? 'BUILD' : 'BUILD',
+      sub: isRoman ? 'Digital Experiences aur Websites' : 'Create digital experiences and websites',
+      desc: isRoman
+        ? 'React 19, TypeScript, aur modern Tailwind CSS ke sath zero-layout-shift responsive web applications aur full-stack interfaces develop karta hoon.'
+        : 'Developing responsive web applications, modular components, and accessible interfaces with React 19, TypeScript, and modern Tailwind CSS.',
+      icon: Hammer,
+      tag: 'ENGINEERING & PROTOTYPING',
+    },
+    {
+      num: '03',
+      title: isRoman ? 'IMPROVE' : 'IMPROVE',
+      sub: isRoman ? 'Seekhna, Test karna aur Polish' : 'Learn, experiment and improve projects',
+      desc: isRoman
+        ? 'Cloudflare Pages, Supabase edge database, aur GitHub continuous deployment ke zariye projects ko iterate, test aur publish karta hoon.'
+        : 'Iterating, testing, and hardening digital experiences via Cloudflare Pages, Supabase edge databases, and automated GitHub workflows.',
+      icon: Sparkles,
+      tag: 'OPTIMIZATION & ITERATION',
+    },
+  ];
 
   return (
-    <section id="about" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative">
-      <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title with Mosque Door Arched Reveal & Spin In Typography */}
+    <section id="about" className="py-28 px-5 sm:px-8 lg:px-12 bg-[#0A0B10] border-t border-white/5 relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1320px] w-full mx-auto relative z-10">
+        {/* Section Header */}
         <motion.div
-          variants={mosqueDoorVariants}
+          variants={cinematicFadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={safeViewport}
-          className="mb-12"
+          className="mb-16 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
-          <motion.span
-            variants={spinInFontVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
-          >
-            {t('aboutEyebrow')}
-          </motion.span>
-          <motion.h2
-            variants={spinInFontVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
-          >
-            {t('aboutTitle')}
-          </motion.h2>
+          <div>
+            <div className="flex items-center gap-2 font-mono text-[11px] text-cyan-400 uppercase tracking-widest mb-3">
+              <Terminal className="w-3.5 h-3.5" />
+              <span>CHAPTER 01 // NARRATIVE ARCHIVE</span>
+            </div>
+            <h2 className="font-cinematic text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase">
+              ORIGIN STORY
+            </h2>
+            <p className="text-sm sm:text-base text-[#A1A1AA] font-sans mt-2 max-w-xl">
+              {isRoman
+                ? 'Ek self-driven digital creator aur web developer ka seekhne aur practical projects banane ka safar.'
+                : "The journey of a self-driven digital creator and web developer who is continuously learning, testing, and building."}
+            </p>
+          </div>
+
+          <div className="text-right hidden md:block font-mono text-[11px] text-[#71717A]">
+            <span>FILE // ORIGIN_DATA_01</span>
+            <div className="text-cyan-400/80 font-semibold mt-0.5">LOCATION: PUNJAB, PAKISTAN</div>
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column (7 cols): Bio Narrative with Mosque Door Swing */}
-          <motion.div
-            variants={mosqueDoorVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="lg:col-span-7 flex flex-col gap-6"
-          >
-            <p className="text-base sm:text-lg text-[var(--text)] leading-relaxed font-normal">
-              {isRoman
-                ? 'Mera naam Ramzan hai. Main AI Creator & Digital Professional hoon aur filhal mera main focus web development seekhna aur practical website projects banana hai. Main AI-assisted tools ki madad se ideas explore karta hoon, apna workflow behtar banata hoon aur seekhta hoon ke websites ko plan, build, test aur publish kaise kiya jata hai.'
-                : "I'm Ramzan, an AI Creator & Digital Professional with a current focus on web development. I'm building my skills by working on practical website projects and using AI-assisted tools to explore ideas, improve workflows, and learn how websites are planned, built, tested, and published."}
-            </p>
+        {/* Narrative Lead */}
+        <motion.div
+          variants={cinematicFadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={safeViewport}
+          className="mb-16 max-w-4xl"
+        >
+          <p className="text-base sm:text-xl text-[#F3F4F6] font-display leading-relaxed">
+            {isRoman
+              ? 'Mera naam Ramzan hai. Main AI Creator & Digital Professional hoon aur mera main focus modern web development seekhna aur practical websites banana hai. Main AI-assisted tools ki madad se workflows ko accelerate karta hoon aur explore karta hoon ke digital ideas ko code aur functioning reality me kaise dhalte hain.'
+              : "I'm Ramzan, an AI Creator & Digital Professional with a focused dedication to modern web development. I build my capabilities by creating real website projects, leveraging AI-assisted workflows to explore ideas, and mastering how modern web experiences are planned, engineered, tested, and published."}
+          </p>
 
-            <AnimatePresence>
-              {expanded && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="overflow-hidden space-y-4"
-                >
-                  <div className="p-5 rounded-2xl bg-[var(--surface-2)]/60 border border-[var(--border)] text-sm sm:text-base text-[var(--text-muted)] leading-relaxed space-y-3">
-                    <p>
-                      {isRoman
-                        ? 'Mere current toolkit mein Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel aur Netlify shamil hain. Main practical projects aur experimentation ke zariye apni skills improve kar raha hoon. Har project ke scope aur deliverables ko clear rakhna mere liye important hai.'
-                        : 'My current toolkit includes Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel, and Netlify. I continue to learn through experimentation and hands-on projects, and I aim to communicate clearly about each project’s scope and what I can deliver.'}
-                    </p>
-                    <p>
-                      {isRoman
-                        ? 'Main un munasib opportunities ke liye available hoon jahan project ki requirements meri current abilities ke mutabiq hon aur mujhe practical kaam ke zariye mazeed seekhne ka mauqa mile.'
-                        : "I'm open to suitable opportunities with individuals and businesses where the project requirements fit my current abilities and allow me to keep learning through practical work."}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div>
-              <button
-                type="button"
-                onClick={() => setExpanded(!expanded)}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer"
-              >
-                <span>{expanded ? t('aboutShowLess') : t('aboutReadMore')}</span>
-                {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </button>
-            </div>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a
-                href="#contact"
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white font-semibold text-xs sm:text-sm shadow-md transition flex items-center gap-2"
-              >
-                <Mail className="w-4 h-4" />
-                <span>{isRoman ? 'Rabta Karein' : "Let's Talk"}</span>
-              </a>
-
-              <a
-                href="#projects"
-                className="px-6 py-3 rounded-full bg-[var(--surface-2)] hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 border border-[var(--border)] hover:border-cyan-400 text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shadow-xs hover:shadow-[0_0_15px_rgba(6,182,212,0.25)]"
-              >
-                <Layers className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                <span>{t('heroExploreCta')}</span>
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Right Column (5 cols): Verified Highlights Cards with Mosque Door Right Swing */}
-          <motion.div
-            variants={mosqueDoorRightVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="lg:col-span-5 flex flex-col gap-3.5"
-          >
-            <motion.h3
-              variants={spinInFontVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={safeViewport}
-              className="text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-1"
+          <div className="mt-6">
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider cursor-pointer"
             >
-              {isRoman ? 'Mere Focus Points' : 'About Highlights'}
-            </motion.h3>
-            {highlights.map((h, idx) => (
+              <span>{expanded ? (isRoman ? 'Tafseel Band Karein [-]' : 'Collapse Detailed Narrative [-]') : (isRoman ? 'Mazeed Safar Parhein [+]' : 'Read Full Narrative [+]')}</span>
+              {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {expanded && (
               <motion.div
-                key={idx}
-                variants={squidInkVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                custom={idx}
-                className="p-4 rounded-xl bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-sm hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-cyan-50/70 dark:hover:bg-cyan-950/25 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex items-start gap-3.5 group cursor-default"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden mt-6"
               >
-                <motion.div
-                  variants={spinInVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={safeViewport}
-                  custom={idx * 0.1}
-                  className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/20 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 group-hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                </motion.div>
-                <div>
-                  <motion.span
-                    variants={spinInFontVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={safeViewport}
-                    className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-400/90 font-bold block"
-                  >
-                    // {h.label}
-                  </motion.span>
-                  <p className="text-xs sm:text-sm text-[var(--text)] mt-0.5 font-medium leading-snug group-hover:text-cyan-800 dark:group-hover:text-cyan-200 transition-colors">
-                    {h.text}
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 text-sm text-[#A1A1AA] leading-relaxed space-y-4 font-sans">
+                  <p>
+                    {isRoman
+                      ? 'Mere daily practical toolkit mein Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel aur Netlify shamil hain. Main continuous experimentation aur hands-on testing ke zariye apni skills enhance kar raha hoon.'
+                      : 'My daily technical toolkit includes Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel, and Netlify. I continue to sharpen my craft through hands-on testing, honest scoping, and modular component architecture.'}
+                  </p>
+                  <p>
+                    {isRoman
+                      ? 'Main un munasib opportunities ke liye hamesha open hoon jahan requirements meri current abilities ke mutabiq hon aur mujhe practical web projects ke zariye naye standards sikhne ka moqa mile.'
+                      : "I remain actively open to suitable collaborative opportunities and client projects where requirements align with my abilities and allow me to deliver genuine value while learning through real-world execution."}
                   </p>
                 </div>
               </motion.div>
-            ))}
-          </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* The 3 Alter Ego Visual Stages: 01 EXPLORE, 02 BUILD, 03 IMPROVE */}
+        <div className="relative">
+          {/* Subtle Horizontal Connecting Beam (Desktop) */}
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent -translate-y-12 pointer-events-none" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {stages.map((stg, idx) => {
+              const IconComp = stg.icon;
+              return (
+                <motion.div
+                  key={stg.num}
+                  variants={cinematicFadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={safeViewport}
+                  custom={idx}
+                  className="group relative p-6 sm:p-8 rounded-2xl bg-[#0D0F14] border border-white/10 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.12)] flex flex-col justify-between"
+                >
+                  {/* Corner Accent reticle */}
+                  <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-cyan-400/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  <div>
+                    {/* Header: Stage Number & Tag */}
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5 font-mono text-[10px] text-[#71717A]">
+                      <span className="text-cyan-400 font-bold tracking-widest text-xs">
+                        STAGE // {stg.num}
+                      </span>
+                      <span className="uppercase tracking-wider">{stg.tag}</span>
+                    </div>
+
+                    {/* Icon & Title */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 text-cyan-400 flex items-center justify-center group-hover:scale-105 group-hover:border-cyan-400/40 transition-all">
+                        <IconComp className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-cinematic text-3xl font-black text-white tracking-wide uppercase">
+                        {stg.num} — {stg.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-xs font-mono text-cyan-400/80 mb-3 tracking-wide">
+                      {stg.sub}
+                    </p>
+
+                    <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed font-sans">
+                      {stg.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-[#71717A]">
+                    <span>STATUS: ACTIVE DISCOVERY</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60" />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

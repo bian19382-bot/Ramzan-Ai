@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Layout, Sparkles, Zap, CheckCircle2, ArrowRight, ChevronDown, HelpCircle, Check, Compass, Cpu } from 'lucide-react';
+import { Layout, Sparkles, Zap, CheckCircle2, ArrowRight, ChevronDown, Cpu } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Service, FAQ } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
-import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { mosqueDoorVariants, squidInkVariants, spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
+import { cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 
 interface ServicesSectionProps {
   services: Service[];
@@ -24,241 +23,235 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
 
   const getServiceIcon = (name: string) => {
     const n = name.toLowerCase();
-    if (n.includes('prototype')) return <Sparkles className="w-5 h-5 text-indigo-600 dark:text-cyan-400" />;
-    if (n.includes('update')) return <Zap className="w-5 h-5 text-amber-600 dark:text-amber-400" />;
-    return <Layout className="w-5 h-5 text-sky-600 dark:text-indigo-400" />;
+    if (n.includes('prototype')) return <Sparkles className="w-5 h-5 text-[#38bdf8]" />;
+    if (n.includes('update')) return <Zap className="w-5 h-5 text-[#818cf8]" />;
+    return <Layout className="w-5 h-5 text-[#38bdf8]" />;
   };
 
   const getServiceCta = (name: string) => {
     const n = name.toLowerCase();
     if (n.includes('prototype')) {
-      return isRoman ? 'Prototype Par Baat Karein' : 'Discuss a Prototype';
+      return isRoman ? 'PROTOTYPE PAR BAAT KAREIN' : 'DISCUSS A PROTOTYPE';
     }
     if (n.includes('update')) {
-      return isRoman ? 'Apni Update Batayein' : 'Describe Your Update';
+      return isRoman ? 'APNI UPDATE BATAYEIN' : 'DESCRIBE YOUR UPDATE';
     }
-    return isRoman ? 'Website Idea Par Baat Karein' : 'Discuss a Website Idea';
+    return isRoman ? 'WEBSITE IDEA PAR BAAT KAREIN' : 'DISCUSS A WEBSITE IDEA';
   };
 
   const processSteps = isRoman
     ? [
         {
           step: '01',
+          code: 'PHASE // RECON',
           title: 'Idea Samajhna',
-          desc: 'Goal, audience aur requirements par baat karna.',
+          desc: 'Goal, audience aur core requirements par tafseeli baat cheet.',
         },
         {
           step: '02',
+          code: 'PHASE // ARCHITECTURE',
           title: 'Structure Plan Karna',
-          desc: 'Website ko pages aur clear sections mein divide karna.',
+          desc: 'Website ko modern pages aur telemetry sections mein organize karna.',
         },
         {
           step: '03',
-          title: 'Soch Samajh Kar Build Karna',
-          desc: 'Munasib tools aur AI-assisted workflow use karna.',
+          code: 'PHASE // SYNTHESIS',
+          title: 'Careful Building',
+          desc: 'Modern AI-assisted workflows aur clean TypeScript/React code.',
         },
         {
           step: '04',
+          code: 'PHASE // VALIDATION',
           title: 'Review Aur Testing',
-          desc: 'Navigation, links, layout, forms aur responsive behaviour check karna.',
+          desc: 'Cross-browser check, responsiveness aur forms validation.',
         },
         {
           step: '05',
+          code: 'PHASE // HANDOFF',
           title: 'Clear Communication',
-          desc: 'Completed kaam, baqi tasks aur known limitations batana.',
+          desc: 'Deployment, live status aur documentation share karna.',
         },
       ]
     : [
         {
           step: '01',
+          code: 'PHASE // RECON',
           title: 'Understand the Idea',
-          desc: 'Discuss the goal, audience, and key requirements.',
+          desc: 'Clarify objectives, target audience, and key technical scope.',
         },
         {
           step: '02',
+          code: 'PHASE // ARCHITECTURE',
           title: 'Plan the Structure',
-          desc: 'Break the website into pages and clear sections.',
+          desc: 'Design content hierarchy, modular components, and wireframe flow.',
         },
         {
           step: '03',
-          title: 'Build with Care',
-          desc: 'Use appropriate tools and AI-assisted workflows where useful.',
+          code: 'PHASE // SYNTHESIS',
+          title: 'Build with Precision',
+          desc: 'Leverage AI-assisted tooling with clean, reliable React & TypeScript.',
         },
         {
           step: '04',
+          code: 'PHASE // VALIDATION',
           title: 'Review and Test',
-          desc: 'Check navigation, links, layout, forms, and responsive behaviour.',
+          desc: 'Verify responsiveness, accessibility, fast loading, and link integrity.',
         },
         {
           step: '05',
-          title: 'Communicate Clearly',
-          desc: 'Explain what is completed, what needs follow-up, and any known limitations.',
+          code: 'PHASE // HANDOFF',
+          title: 'Transparent Delivery',
+          desc: 'Provide live deployment, operational walkthrough, and ongoing support.',
         },
       ];
 
   const visibleServices = services.filter((s) => s.visible);
 
   return (
-    <section id="services" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/20">
-      <div className="max-w-[1200px] w-full mx-auto">
+    <section id="services" className="py-28 px-5 sm:px-8 lg:px-12 border-t border-white/5 relative bg-[#070709] overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#38bdf8]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#818cf8]/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1240px] w-full mx-auto relative z-10">
         {/* Eyebrow & Title */}
-        {/* Eyebrow & Title with Mosque Door Arched Entrance & Spin In Typography */}
         <motion.div
-          variants={mosqueDoorVariants}
+          variants={cinematicFadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={safeViewport}
-          className="mb-14 text-left"
+          className="mb-14"
         >
-          <motion.span
-            variants={spinInFontVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
-          >
-            {t('servicesEyebrow')}
-          </motion.span>
-          <motion.h2
-            variants={spinInFontVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
-          >
+          <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-[#38bdf8] mb-3">
+            <span className="inline-block w-2 h-2 bg-[#38bdf8] rounded-full animate-ping" />
+            <span>// CAPABILITY MATRIX</span>
+          </div>
+          <h2 className="text-4xl sm:text-6xl font-cinematic uppercase tracking-tight text-white mb-4">
             {t('servicesTitle')}
-          </motion.h2>
-          <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-2xl mt-2 leading-relaxed">
+          </h2>
+          <p className="text-sm sm:text-base text-zinc-400 max-w-2xl leading-relaxed">
             {t('servicesSub')}
           </p>
         </motion.div>
 
-        {/* 5-Step Process: Futuristic Pipeline Workflow with Squid Ink In Reveal */}
+        {/* 5-Step Process Pipeline */}
         <motion.div
           id="approach"
-          variants={squidInkVariants}
+          variants={cinematicFadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={safeViewport}
-          className="mb-16 p-6 sm:p-8 rounded-3xl bg-[var(--surface)]/90 dark:bg-[#0b0e14]/90 border border-[var(--border)] dark:border-cyan-500/25 relative overflow-hidden shadow-sm dark:shadow-[0_0_40px_rgba(6,182,212,0.1)] transition-colors duration-200"
+          className="mb-16 p-6 sm:p-8 rounded-2xl bg-[#0A0B10] border border-white/10 relative overflow-hidden"
         >
-          {/* Subtle Cyber Grid Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 blur-3xl pointer-events-none" />
-
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--border)]">
-            <p className="text-xs font-mono uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-              <span>{isRoman ? 'Mera Tareeqa // 5-Step Workflow Pipeline' : 'System Approach // 5-Step Workflow Pipeline'}</span>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-white/10">
+            <p className="text-xs font-mono uppercase tracking-widest text-zinc-300 flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-[#38bdf8]" />
+              <span>{isRoman ? 'WORKFLOW PIPELINE // 5-STAGE PROTOCOL' : 'WORKFLOW PIPELINE // 5-STAGE PROTOCOL'}</span>
             </p>
-            <span className="hidden sm:inline-flex text-[10px] font-mono text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-semibold">
-              ● REAL-TIME EXECUTION
+            <span className="text-[10px] font-mono text-[#38bdf8] px-2.5 py-0.5 rounded-full bg-[#38bdf8]/10 border border-[#38bdf8]/30 font-semibold tracking-wider">
+              ● STANDARDIZED EXECUTION
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 relative">
             {processSteps.map((p, idx) => (
               <motion.div
                 key={idx}
-                variants={spinInVariants}
+                variants={cinematicFadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={safeViewport}
                 custom={idx}
-                className="relative flex flex-col p-4 rounded-2xl bg-[var(--surface-2)]/70 dark:bg-[var(--surface)]/60 border border-[var(--border)] group hover:border-indigo-400/60 dark:hover:border-cyan-400/50 hover:bg-indigo-50/50 dark:hover:bg-cyan-950/15 transition-all duration-300"
+                className="relative flex flex-col justify-between p-5 rounded-xl bg-black/40 border border-white/5 hover:border-[#38bdf8]/40 transition-colors duration-300 group"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xl font-mono font-extrabold text-indigo-600 dark:text-cyan-400/80 group-hover:text-indigo-700 dark:group-hover:text-cyan-300 transition-colors">
-                    {p.step}
-                  </span>
-                  <span className="w-2 h-2 rounded-full bg-indigo-500/40 dark:bg-cyan-400/30 group-hover:bg-indigo-500 dark:group-hover:bg-cyan-400 group-hover:shadow-[0_0_8px_rgba(99,102,241,0.6)] dark:group-hover:shadow-[0_0_8px_#22d3ee] transition-all" />
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl font-cinematic font-bold text-[#38bdf8] tracking-wider">
+                      {p.step}
+                    </span>
+                    <span className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">
+                      {p.code}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold text-white mb-1.5 group-hover:text-[#38bdf8] transition-colors">
+                    {p.title}
+                  </h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    {p.desc}
+                  </p>
                 </div>
-                <motion.h3
-                  variants={spinInFontVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={safeViewport}
-                  className="text-sm font-bold font-display text-[var(--text)] mb-1.5 group-hover:text-indigo-700 dark:group-hover:text-cyan-300 transition-colors"
-                >
-                  {p.title}
-                </motion.h3>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">
-                  {p.desc}
-                </p>
+                <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-[#38bdf8] transition-colors" />
+                  <span className="text-[9px] font-mono text-zinc-600 group-hover:text-zinc-400">STAGE READY</span>
+                </div>
               </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* Services Cards Grid with Mosque Door & Spin In Icons */}
+        {/* Services Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
           {visibleServices.map((service, idx) => (
             <motion.div
               key={service.id}
-              variants={squidInkVariants}
+              variants={cinematicFadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
               custom={idx}
+              className="group relative p-6 sm:p-7 rounded-2xl bg-[#0A0B10] border border-white/10 hover:border-[#38bdf8]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
-              <FuturisticSpotlightCard
-                glowColor={idx === 1 ? 'purple' : idx === 2 ? 'emerald' : 'cyan'}
-                animationType="mosque-door"
-                animationDelay={idx}
-                className="p-6 sm:p-7 flex flex-col justify-between h-full"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <motion.div
-                      variants={spinInVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
-                      custom={idx}
-                      className="w-11 h-11 rounded-xl bg-indigo-50/80 dark:bg-[var(--surface-2)] flex items-center justify-center border border-indigo-100 dark:border-[var(--border)] group-hover:border-indigo-400 dark:group-hover:border-cyan-400/50 group-hover:shadow-[0_0_15px_rgba(99,102,241,0.2)] dark:group-hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all"
-                    >
-                      {getServiceIcon(service.name)}
-                    </motion.div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-indigo-700 dark:text-cyan-300 px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-cyan-500/10 border border-indigo-200/80 dark:border-cyan-500/20 font-semibold">
-                      MODULE // 0{idx + 1}
-                    </span>
+              {/* Corner reticle brackets */}
+              <span className="absolute top-2 left-2 text-[10px] font-mono text-white/20 pointer-events-none group-hover:text-[#38bdf8]/60 transition-colors">⌜</span>
+              <span className="absolute top-2 right-2 text-[10px] font-mono text-white/20 pointer-events-none group-hover:text-[#38bdf8]/60 transition-colors">⌝</span>
+              <span className="absolute bottom-2 left-2 text-[10px] font-mono text-white/20 pointer-events-none group-hover:text-[#38bdf8]/60 transition-colors">⌞</span>
+              <span className="absolute bottom-2 right-2 text-[10px] font-mono text-white/20 pointer-events-none group-hover:text-[#38bdf8]/60 transition-colors">⌟</span>
+
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#38bdf8]/40 transition-colors">
+                    {getServiceIcon(service.name)}
                   </div>
-
-                  <h3 className="text-lg font-bold font-display text-[var(--text)] mb-2 group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors">
-                    {service.name}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-6 font-medium">
-                    {service.description}
-                  </p>
-
-                  {service.deliverables && service.deliverables.length > 0 && (
-                    <div className="space-y-2 mb-6 p-3 rounded-xl bg-slate-50/90 dark:bg-[var(--surface-2)]/50 border border-slate-200/80 dark:border-[var(--border)]/70">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-indigo-800 dark:text-cyan-400 font-bold block">
-                        {isRoman ? 'Kaam Mein Shamil // Deliverables:' : 'Key Deliverables // Scope:'}
-                      </span>
-                      <ul className="space-y-1.5 text-xs text-[var(--text-muted)] font-medium">
-                        {service.deliverables.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-cyan-400 shrink-0 mt-0.5" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#38bdf8] px-2.5 py-0.5 rounded-full bg-[#38bdf8]/10 border border-[#38bdf8]/20">
+                    SPEC // 0{idx + 1}
+                  </span>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--border)]/60">
-                  <button
-                    type="button"
-                    onClick={() => onSelectServiceForContact(service.name)}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white shadow-sm hover:shadow-md hover:shadow-indigo-500/20 dark:from-cyan-500/20 dark:hover:from-cyan-500 dark:to-blue-600/20 dark:hover:to-blue-600 dark:border dark:border-cyan-400/50 dark:hover:border-cyan-300 dark:text-cyan-300 dark:hover:text-white text-xs font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-                  >
-                    <span>{getServiceCta(service.name)}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </FuturisticSpotlightCard>
+                <h3 className="text-xl font-cinematic uppercase tracking-wide text-white mb-2 group-hover:text-[#38bdf8] transition-colors">
+                  {service.name}
+                </h3>
+
+                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
+                  {service.description}
+                </p>
+
+                {service.deliverables && service.deliverables.length > 0 && (
+                  <div className="space-y-2 mb-6 p-3 rounded-lg bg-black/40 border border-white/5">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#38bdf8] font-semibold block">
+                      {isRoman ? 'SCOPE // DELIVERABLES:' : 'SCOPE // DELIVERABLES:'}
+                    </span>
+                    <ul className="space-y-1.5 text-xs text-zinc-300 font-medium">
+                      {service.deliverables.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#38bdf8] shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => onSelectServiceForContact(service.name)}
+                  className="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-[#38bdf8] text-zinc-200 hover:text-black border border-white/10 hover:border-[#38bdf8] text-xs font-mono font-bold tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer group/btn"
+                >
+                  <span>{getServiceCta(service.name)}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -267,24 +260,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
         {faqs.length > 0 && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="text-center space-y-2 mb-8">
-              <motion.span
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                className="text-xs font-mono uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold"
-              >
-                {isRoman ? 'Aam Sawalat' : 'Got Questions?'}
-              </motion.span>
-              <motion.h3
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                className="text-2xl font-bold font-display text-[var(--text)]"
-              >
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#38bdf8] font-semibold">
+                // SYSTEM QUERIES
+              </span>
+              <h3 className="text-3xl sm:text-4xl font-cinematic uppercase tracking-tight text-white">
                 {isRoman ? 'Aksar Poochhe Jane Wale Sawalat' : 'Frequently Asked Questions'}
-              </motion.h3>
+              </h3>
             </div>
 
             <div className="space-y-3">
@@ -295,25 +276,25 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   return (
                     <div
                       key={faq.id}
-                      className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-cyan-400 dark:hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.18)] transition-all overflow-hidden"
+                      className="rounded-xl bg-[#0A0B10] border border-white/10 hover:border-[#38bdf8]/40 transition-all overflow-hidden"
                     >
                       <button
                         type="button"
                         onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
-                        className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 transition-all group"
+                        className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-white/[0.02] transition-colors group"
                       >
-                        <span className="text-sm font-semibold text-[var(--text)] group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors font-display">
+                        <span className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">
                           {faq.question}
                         </span>
                         <ChevronDown
-                          className={`w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 transition-transform duration-200 ${
+                          className={`w-4 h-4 text-[#38bdf8] shrink-0 transition-transform duration-200 ${
                             isOpen ? 'rotate-180' : ''
                           }`}
                         />
                       </button>
 
                       {isOpen && (
-                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed border-t border-[var(--border)]/40 font-medium">
+                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-zinc-400 leading-relaxed border-t border-white/5">
                           {faq.answer}
                         </div>
                       )}

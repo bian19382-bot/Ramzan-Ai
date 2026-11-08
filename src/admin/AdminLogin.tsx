@@ -4,9 +4,7 @@ import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowLeft, CheckCircle2, 
 import { adminAuth } from './auth/adminAuth';
 import { BRAND_LOGO_URL, BRAND_LOGO_FALLBACK } from '../assets/brandLogo';
 import { useAuth } from '../features/auth/AuthProvider';
-import { collidingSparksVariants, spinInFontVariants } from '../lib/animations';
-import { soundFx } from '../lib/soundFx';
-import { CollidingSparksBurst } from '../components/ui/CollidingSparksBurst';
+import { cinematicFadeUp } from '../lib/cinematicMotion';
 
 interface AdminLoginProps {
   onSuccess: () => void;
@@ -36,27 +34,17 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
     }
   };
 
-  useEffect(() => {
-    soundFx.playSparkCollision();
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#07090e] text-[#f0f4f8] flex items-center justify-center p-4 relative overflow-hidden font-sans select-none">
+    <div className="min-h-screen bg-[#070709] text-[#f0f4f8] flex items-center justify-center p-4 relative overflow-hidden font-sans select-none">
       {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-amber-500/15 via-cyan-600/15 to-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#38bdf8]/10 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
-        variants={collidingSparksVariants}
+        variants={cinematicFadeUp}
         initial="hidden"
         animate="visible"
-        className="relative w-full max-w-md bg-[#0e121a]/95 backdrop-blur-xl border border-amber-400/40 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_0_60px_rgba(245,158,11,0.25)] z-10 overflow-hidden"
+        className="relative w-full max-w-md bg-[#0A0B10] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl z-10 overflow-hidden"
       >
-        {/* Kinetic Spark Particles Collision Burst Effect */}
-        <CollidingSparksBurst count={28} />
-
-        {/* Colliding Sparks Kinetic Glow Aura */}
-        <div className="absolute -inset-1 rounded-[26px] bg-gradient-to-r from-amber-500/25 via-cyan-400/25 to-violet-500/25 blur-xl opacity-80 pointer-events-none animate-pulse" />
 
         {/* Top Header Badge */}
         <div className="relative flex items-center justify-between mb-6 z-10">

@@ -325,20 +325,20 @@ export const AdminSettings: React.FC = () => {
                 onClick={() => {
                   setProfile({
                     ...profile,
-                    welcome_banner_url: '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png',
+                    welcome_banner_url: '/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png',
                   });
                 }}
                 className="text-xs text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset to Neon Banner</span>
+                <span>Reset to Workstation Portrait</span>
               </button>
             </div>
 
             <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] space-y-3">
-              <div className="relative rounded-xl overflow-hidden border border-cyan-500/30 aspect-[16/9] max-h-56 bg-black flex items-center justify-center">
+              <div className="relative rounded-xl overflow-hidden border border-cyan-500/30 aspect-[4/3] max-h-64 bg-black flex items-center justify-center">
                 <img
-                  src={profile.welcome_banner_url || '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png'}
+                  src={profile.welcome_banner_url || '/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png'}
                   alt="Welcome Banner Preview"
                   className="w-full h-full object-cover"
                 />
@@ -353,7 +353,7 @@ export const AdminSettings: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png"
+                  placeholder="/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png"
                   value={profile.welcome_banner_url ?? ''}
                   onChange={(e) => setProfile({ ...profile, welcome_banner_url: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-mono text-xs"

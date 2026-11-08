@@ -4,9 +4,8 @@ import { motion } from 'motion/react';
 import { ArrowLeft, ExternalLink, Github, Share2, Check, ArrowRight, X, Sparkles, FolderKanban } from 'lucide-react';
 import { dataProvider } from '../data/dataProvider';
 import { AiProjectConsultant } from '../features/ai/AiProjectConsultant';
-import { collidingSparksPanelVariants, spinInFontVariants } from '../lib/animations';
-import { soundFx } from '../lib/soundFx';
-import { CollidingSparksBurst } from '../components/ui/CollidingSparksBurst';
+import { cinematicFadeUp } from '../lib/cinematicMotion';
+import { HoloScanImage } from '../components/ui/HoloScanImage';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -36,27 +35,27 @@ export const ProjectDetailPage: React.FC = () => {
 
   if (!project && isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center p-6">
-        <p className="text-sm text-[var(--text-muted)]">Loading project...</p>
+      <div className="min-h-screen bg-[#070709] text-white flex items-center justify-center p-6">
+        <p className="text-sm font-mono text-[#A1A1AA]">Retrieving mission telemetry...</p>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-[var(--surface-2)] flex items-center justify-center text-[var(--accent-text)] mb-4 border border-[var(--border)]">
+      <div className="min-h-screen bg-[#070709] text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center text-cyan-400 mb-4 border border-white/10">
           <FolderKanban className="w-8 h-8" />
         </div>
-        <h1 className="text-4xl font-extrabold font-display mb-2">404 — Case Study Not Found</h1>
-        <p className="text-sm text-[var(--text-muted)] max-w-md mb-8">
-          The requested case study "{slug}" does not exist or has not been published yet.
+        <h1 className="text-4xl font-extrabold font-cinematic mb-2 uppercase">404 — Mission File Not Found</h1>
+        <p className="text-sm text-[#A1A1AA] max-w-md mb-8 font-sans">
+          The requested mission "{slug}" does not exist in the active telemetry registry.
         </p>
         <Link
           to="/"
-          className="px-6 py-3 rounded-full bg-[var(--accent)] text-white text-xs font-semibold hover:brightness-110 transition shadow-md"
+          className="px-6 py-3 rounded-full bg-white text-black text-xs font-semibold uppercase tracking-wider hover:bg-cyan-300 transition shadow-md font-mono"
         >
-          Return to Portfolio Home
+          Return to Mission Files
         </Link>
       </div>
     );
@@ -80,20 +79,13 @@ export const ProjectDetailPage: React.FC = () => {
   const prevProject = currentIndex > 0 ? db.projects[currentIndex - 1] : null;
   const nextProject = currentIndex < db.projects.length - 1 ? db.projects[currentIndex + 1] : null;
 
-  useEffect(() => {
-    soundFx.playSparkCollision();
-  }, [slug]);
-
   return (
-    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] py-12 px-4 sm:px-8 lg:px-12 overflow-hidden">
-      {/* Colliding Sparks Plasma Atmosphere */}
-      <div className="fixed -inset-10 bg-gradient-to-tr from-amber-500/15 via-cyan-400/15 to-violet-500/15 blur-3xl pointer-events-none -z-10 animate-pulse" />
-
-      {/* Kinetic Particle Collision Burst on Page Open */}
-      <CollidingSparksBurst count={36} />
+    <div className="relative min-h-screen bg-[#070709] text-[#F3F4F6] py-16 px-4 sm:px-8 lg:px-12 overflow-hidden select-none">
+      {/* Background ambient lighting */}
+      <div className="fixed -inset-10 bg-gradient-to-tr from-cyan-500/10 via-violet-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
       <motion.div
-        variants={collidingSparksPanelVariants}
+        variants={cinematicFadeUp}
         initial="hidden"
         animate="visible"
         className="max-w-4xl mx-auto space-y-10 relative z-10"
@@ -136,14 +128,14 @@ export const ProjectDetailPage: React.FC = () => {
         {/* Title, Summary & Meta */}
         <div>
           <motion.h1
-            variants={spinInFontVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             animate="visible"
-            className="text-3xl sm:text-5xl font-bold font-display tracking-tight text-[var(--text)] mb-4"
+            className="text-4xl sm:text-5xl md:text-6xl font-black font-cinematic tracking-tight text-white uppercase mb-4"
           >
             {project.title}
           </motion.h1>
-          <p className="text-lg sm:text-xl text-[var(--text-muted)] leading-relaxed">
+          <p className="text-base sm:text-lg text-[#A1A1AA] font-sans leading-relaxed">
             {project.summary}
           </p>
 

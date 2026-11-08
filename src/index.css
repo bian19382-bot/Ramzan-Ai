@@ -76,6 +76,12 @@
     font-family: 'Space Grotesk', system-ui, sans-serif;
   }
 
+  .font-cinematic {
+    font-family: 'Big Shoulders Display', 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
@@ -83,9 +89,9 @@
 
 /* Glassmorphism utility */
 .glass-panel {
-  background: rgba(17, 19, 26, 0.7);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  background: rgba(13, 15, 20, 0.75);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid var(--border);
 }
 
@@ -93,31 +99,45 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
+/* 3D Perspective & Tunnel Presets */
+.perspective-stage {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
 /* Focus visible styling */
 :focus-visible {
-  outline: 2px solid #06b6d4;
+  outline: 2px solid #38bdf8;
   outline-offset: 2px;
 }
 
 ::selection {
-  background: rgba(6, 182, 212, 0.3);
-  color: var(--text);
+  background: rgba(56, 189, 248, 0.3);
+  color: #ffffff;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
+  background: #1f2430;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #38bdf8;
 }
 
 /* Print CSS */
@@ -134,50 +154,82 @@
   }
 }
 
-/* Futuristic Cyber Effects & Animations */
-@keyframes cyber-scan {
+/* Alter Ego Holographic Scanline */
+@keyframes holo-scan-loop {
   0% {
-    transform: translateY(-50%);
+    top: -5%;
     opacity: 0;
   }
-  20% {
-    opacity: 0.85;
+  15% {
+    opacity: 1;
   }
-  80% {
-    opacity: 0.85;
+  85% {
+    opacity: 1;
   }
   100% {
-    transform: translateY(600%);
+    top: 105%;
     opacity: 0;
   }
 }
 
-@keyframes holographic-pulse {
-  0%, 100% {
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.25), inset 0 0 15px rgba(6, 182, 212, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 50px rgba(6, 182, 212, 0.45), inset 0 0 25px rgba(6, 182, 212, 0.25);
-  }
-}
-
-.cyber-scanline {
-  position: relative;
-  overflow: hidden;
-}
-
-.cyber-scanline::after {
-  content: '';
+.holo-scanline {
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.8), rgba(168, 85, 247, 0.8), transparent);
-  box-shadow: 0 0 14px rgba(6, 182, 212, 0.9);
-  animation: cyber-scan 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.9) 35%, rgba(168, 85, 247, 0.9) 70%, transparent 100%);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.9), 0 0 32px rgba(168, 85, 247, 0.5);
+  animation: holo-scan-loop 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   pointer-events: none;
-  z-index: 25;
+  z-index: 20;
+}
+
+/* Radar Sweep Keyframe for Power Profile */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-sweep-beam {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg at 50% 50%, rgba(56, 189, 248, 0.25) 0deg, rgba(56, 189, 248, 0.05) 45deg, transparent 90deg, transparent 360deg);
+  animation: radar-sweep 6s linear infinite;
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+/* Signal Pulse Wave for Footer */
+@keyframes signal-pulse-wave {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  65% {
+    transform: scale(1.6);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.signal-wave {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  animation: signal-pulse-wave 3.5s cubic-bezier(0.1, 0.7, 0.3, 1) infinite;
+  pointer-events: none;
+}
+
+/* Glitch text effect on hover */
+.glitch-hover:hover {
+  text-shadow: 2px 0 rgba(56, 189, 248, 0.75), -2px 0 rgba(236, 72, 153, 0.75);
 }
 
 @keyframes marquee {
@@ -199,101 +251,5 @@
   animation-play-state: paused;
 }
 
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.85;
-  }
-  60% {
-    transform: scale(1.4);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-}
-
-.radar-wave {
-  position: relative;
-}
-
-.radar-wave::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: inherit;
-  border: 1.5px solid #22d3ee;
-  animation: pulse-ring 2s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
-  pointer-events: none;
-}
-
-/* 1. Mosque Door Opening Animation */
-@keyframes mosque-door-open {
-  0% {
-    transform: perspective(1200px) rotateY(-75deg);
-    opacity: 0;
-    transform-origin: left center;
-  }
-  70% {
-    transform: perspective(1200px) rotateY(6deg);
-    opacity: 0.95;
-  }
-  100% {
-    transform: perspective(1200px) rotateY(0deg);
-    opacity: 1;
-    transform-origin: left center;
-  }
-}
-
-.anim-mosque-door {
-  animation: mosque-door-open 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* 2. Squid Ink In Fluid Expansion Animation */
-@keyframes squid-ink-in {
-  0% {
-    clip-path: circle(0% at 50% 50%);
-    opacity: 0;
-    filter: blur(12px) brightness(1.7);
-    transform: scale(0.92);
-  }
-  45% {
-    opacity: 1;
-    filter: blur(4px) brightness(1.3);
-  }
-  100% {
-    clip-path: circle(145% at 50% 50%);
-    opacity: 1;
-    filter: blur(0px) brightness(1);
-    transform: scale(1);
-  }
-}
-
-.anim-squid-ink {
-  animation: squid-ink-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* 3. Spin In Spring Whirl Animation */
-@keyframes spin-in {
-  0% {
-    transform: rotate(-220deg) scale(0.25);
-    opacity: 0;
-    filter: blur(6px);
-  }
-  70% {
-    transform: rotate(14deg) scale(1.08);
-    opacity: 1;
-    filter: blur(0px);
-  }
-  100% {
-    transform: rotate(0deg) scale(1);
-    opacity: 1;
-  }
-}
-
-.anim-spin-in {
-  animation: spin-in 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
 
 

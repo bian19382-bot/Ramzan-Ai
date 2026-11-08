@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Mail, MessageCircle, Send, CheckCircle2, Copy, Check, Sparkles } from 'lucide-react';
+import { Mail, MessageCircle, Send, CheckCircle2, Copy, Check, Radio, Terminal } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SiteSettings, Service } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
 import { useLanguage } from '../i18n/LanguageContext';
-import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { mosqueDoorVariants, mosqueDoorRightVariants, spinInVariants, spinInFontVariants, squidInkVariants, safeViewport } from '../../lib/animations';
+import { cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 
 interface ContactSectionProps {
   settings: SiteSettings;
@@ -16,13 +15,12 @@ interface ContactSectionProps {
 
 export const ContactSection: React.FC<ContactSectionProps> = ({
   settings,
-  services,
   preselectedService = '',
 }) => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const isRoman = language === 'ur-roman';
 
-  const defaultRequestType = isRoman ? 'Simple Website / Landing Page' : 'Simple Website / Landing Page';
+  const defaultRequestType = 'Simple Website / Landing Page';
 
   const [formData, setFormData] = useState({
     name: '',
@@ -103,7 +101,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       const result = await response.json().catch(() => null);
 
       if (response.ok && result?.ok) {
-        // Also sync local dataProvider store
         dataProvider.submitInquiry({
           name: formData.name,
           email: formData.email,
@@ -130,7 +127,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             : `Transmission error (${response.status}). Please contact directly via email or WhatsApp.`);
         setSubmitError(errorMsg);
       }
-    } catch (err: any) {
+    } catch {
       setSubmitError(
         isRoman
           ? 'Network error. Server se raabta nahi ho saka. Baraye meharbani WhatsApp ya direct email use karein.'
@@ -145,165 +142,166 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const whatsappUrl = `https://wa.me/92${whatsappCleanNumber}`;
 
   return (
-    <section id="contact" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/20">
-      <div className="max-w-[1200px] w-full mx-auto">
+    <section id="contact" className="py-28 px-5 sm:px-8 lg:px-12 bg-[#070709] border-t border-white/5 relative overflow-hidden">
+      {/* Background Signal Waves */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] flex items-center justify-center pointer-events-none opacity-40">
+        <div className="signal-wave w-64 h-64" />
+        <div className="signal-wave w-96 h-96 [animation-delay:1.2s]" />
+        <div className="signal-wave w-[520px] h-[520px] [animation-delay:2.4s]" />
+      </div>
+
+      <div className="max-w-[1320px] w-full mx-auto relative z-10">
+        {/* Section Header */}
+        <motion.div
+          variants={cinematicFadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={safeViewport}
+          className="mb-16 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
+        >
+          <div>
+            <div className="flex items-center gap-2 font-mono text-[11px] text-cyan-400 uppercase tracking-widest mb-3">
+              <Terminal className="w-3.5 h-3.5" />
+              <span>CHAPTER 04 // TRANSMISSION CHANNELS</span>
+            </div>
+            <h2 className="font-cinematic text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase glitch-hover transition-all">
+              SEND THE SIGNAL
+            </h2>
+            <p className="text-sm sm:text-base text-[#A1A1AA] font-sans mt-2 max-w-xl">
+              {isRoman
+                ? 'Koi project ya collaborative opportunity hai? Aayein mil kar kuch behtareen banayein.'
+                : "Have a project or opportunity? Let's create something meaningful."}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 font-mono text-xs text-[#71717A]">
+            <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+            <span>TRANSMISSION: READY</span>
+          </div>
+        </motion.div>
+
+        {/* Content Grid: Left Contact Channels, Right Direct Transmission Terminal */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column (5 cols): Direct channels & Approach with Mosque Door Swing & Spin In Typography */}
+          {/* Left Column (5 cols): Direct Channels & Availability */}
           <motion.div
-            variants={mosqueDoorVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={safeViewport}
-            className="lg:col-span-5 space-y-8"
+            className="lg:col-span-5 space-y-6"
           >
-            <div>
-              <motion.p
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                className="text-xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2 font-mono"
-              >
-                {t('contactEyebrow')}
-              </motion.p>
-              <motion.h2
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight mb-4"
-              >
-                {t('contactTitle')}
-              </motion.h2>
-              <p className="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
-                {t('contactSub')}
-              </p>
-            </div>
-
-            {/* Direct Contact Channels */}
-            <div className="space-y-3.5">
-              {/* Email */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/5 dark:hover:bg-cyan-500/10 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-center justify-between shadow-sm transition-all">
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    variants={spinInVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={safeViewport}
-                    custom={0}
-                    className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center"
-                  >
+            <div className="space-y-4">
+              {/* Email Transmission Channel */}
+              <div className="p-6 rounded-2xl bg-[#0D0F14] border border-white/10 hover:border-cyan-400/40 transition-all flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
                     <Mail className="w-5 h-5" />
-                  </motion.div>
+                  </div>
                   <div>
-                    <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase block">
-                      {isRoman ? 'Email Raabta' : 'Direct Email'}
+                    <span className="text-[10px] font-mono text-[#71717A] uppercase block">
+                      DIRECT TRANSMISSION
                     </span>
                     <a
                       href={`mailto:${settings.contact_email}`}
-                      className="text-xs sm:text-sm font-semibold text-[var(--text)] hover:text-cyan-600 dark:hover:text-cyan-400 hover:underline"
+                      className="text-sm font-semibold text-white hover:text-cyan-400 hover:underline transition-colors font-mono"
                     >
                       {settings.contact_email}
                     </a>
                   </div>
                 </div>
+
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-xs text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                  className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 text-xs text-[#CBD5E1] transition cursor-pointer flex items-center gap-1.5 font-mono"
                   title="Copy email address"
                   aria-label="Copy email address"
                 >
-                  {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
+                  {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-400" />}
                   <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
 
-              {/* WhatsApp */}
+              {/* WhatsApp Direct Transmission Channel */}
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-emerald-500 hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between shadow-sm transition-all group"
+                className="p-6 rounded-2xl bg-[#0D0F14] border border-white/10 hover:border-emerald-500/40 transition-all flex items-center justify-between group"
               >
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    variants={spinInVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={safeViewport}
-                    custom={1}
-                    className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"
-                  >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
                     <MessageCircle className="w-5 h-5" />
-                  </motion.div>
+                  </div>
                   <div>
-                    <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase block">
-                      {isRoman ? 'WhatsApp Chat' : 'WhatsApp'}
+                    <span className="text-[10px] font-mono text-[#71717A] uppercase block">
+                      REAL-TIME DISPATCH
                     </span>
-                    <p className="text-xs sm:text-sm font-semibold text-[var(--text)] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                    <p className="text-sm font-semibold text-white group-hover:text-emerald-400 transition font-mono">
                       {settings.whatsapp_number}
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition font-semibold">
+
+                <span className="text-xs font-mono text-emerald-400 group-hover:translate-x-1 transition font-semibold">
                   {isRoman ? 'Chat Karein →' : 'Chat Now →'}
                 </span>
               </a>
             </div>
 
-            {/* Availability Note */}
-            <div className="p-4 rounded-xl bg-[var(--surface-2)]/60 border border-[var(--border)] hover:border-cyan-400/40 text-xs text-[var(--text-muted)] flex items-start gap-2.5 transition-colors">
-              <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 mt-1 shrink-0 animate-pulse" />
-              <span>
-                {isRoman
-                  ? 'Main un munasib opportunities ke liye available hoon jo meri current abilities ke mutabiq hon.'
-                  : 'Open to suitable opportunities with individuals and businesses where requirements fit my current abilities.'}
-              </span>
+            {/* Availability Protocol Card */}
+            <div className="p-5 rounded-2xl bg-[#0D0F14] border border-white/10 text-xs text-[#A1A1AA] flex items-start gap-3 font-mono">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 mt-1 shrink-0 animate-pulse" />
+              <div className="space-y-1">
+                <span className="text-white font-semibold uppercase text-[11px] block">
+                  AVAILABILITY PROTOCOL
+                </span>
+                <p className="leading-relaxed font-sans text-xs text-[#A1A1AA]">
+                  {isRoman
+                    ? 'Main un munasib opportunities aur client projects ke liye available hoon jo meri current abilities ke mutabiq hon.'
+                    : 'Open to suitable client and collaborative opportunities where requirements align with current technical skills.'}
+                </p>
+              </div>
             </div>
           </motion.div>
 
-          {/* Right Column (7 cols): Contact Form with Mosque Door Right Swing */}
+          {/* Right Column (7 cols): Transmission Terminal */}
           <motion.div
-            variants={mosqueDoorRightVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={safeViewport}
             className="lg:col-span-7"
           >
-            <FuturisticSpotlightCard
-              glowColor="cyan"
-              animationType="squid-ink"
-              className="p-6 sm:p-8"
-            >
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#0D0F14] border border-white/10 shadow-2xl">
               {/* Terminal Title Bar */}
-              <div className="flex items-center justify-between pb-4 mb-6 border-b border-[var(--border)]">
+              <div className="flex items-center justify-between pb-4 mb-6 border-b border-white/10 font-mono">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                  <span className="ml-2 text-[11px] font-mono text-cyan-600 dark:text-cyan-400 font-semibold tracking-wider">
+                  <span className="ml-2 text-[11px] text-cyan-400 font-semibold tracking-wider">
                     TRANSMISSION // TERMINAL
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5">
+                <span className="text-[10px] text-emerald-400 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>ONLINE</span>
+                  <span>SIGNAL READY</span>
                 </span>
               </div>
 
               {submitted ? (
                 <div className="py-12 text-center space-y-4">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-bold font-display text-[var(--text)]">
-                    {isRoman ? 'Shukriya!' : 'Inquiry Submitted'}
+                  <h3 className="text-2xl font-bold font-display text-white">
+                    {isRoman ? 'Signal Receive Ho Gaya!' : 'Signal Received Successfully'}
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">
+                  <p className="text-sm text-[#A1A1AA] max-w-md mx-auto leading-relaxed">
                     {isRoman
-                      ? 'Rabta karne ka shukriya. Aap ka message kamyabi se submit ho gaya hai.'
-                      : 'Thanks for reaching out. Your message has been submitted successfully.'}
+                      ? 'Rabta karne ka shukriya. Aap ka message database me transmit ho chuka hai. Main jald jawab doonga.'
+                      : 'Thanks for reaching out. Your transmission has been recorded. I will review and reply promptly.'}
                   </p>
                   <button
                     type="button"
@@ -320,18 +318,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         honeypot: '',
                       });
                     }}
-                    className="px-6 py-2.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/15 text-xs font-semibold text-[var(--text)] hover:text-cyan-700 dark:hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-white/[0.05] border border-white/15 text-xs font-semibold text-white hover:border-cyan-400 hover:bg-cyan-500/10 transition cursor-pointer font-mono"
                   >
-                    {isRoman ? 'Naya Message Bhejein' : 'Send Another Message'}
+                    {isRoman ? 'Naya Message Bhejein' : 'Send Another Transmission'}
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                  {/* Bot trap */}
+                <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs" noValidate>
+                  {/* Honeypot Bot Trap */}
                   <div className="hidden" aria-hidden="true">
                     <input
                       type="text"
-                      name="website_url"
+                      name="honeypot"
                       tabIndex={-1}
                       value={formData.honeypot}
                       onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
@@ -341,49 +339,49 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1 font-mono">
-                        {t('nameLabel')}
+                      <label className="block text-[11px] uppercase tracking-wider text-[#A1A1AA] mb-1.5">
+                        NAME // IDENTIFIER *
                       </label>
                       <input
                         type="text"
                         required
-                        value={formData.name ?? ''}
+                        value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="e.g. Ali Khan"
-                        className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none hover:border-cyan-400/60 transition ${
-                          errors.name ? 'border-red-500' : 'border-[var(--border)] focus:border-cyan-500'
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border text-xs text-white focus:outline-none transition font-sans ${
+                          errors.name ? 'border-red-500' : 'border-white/10 focus:border-cyan-400'
                         }`}
                       />
-                      {errors.name && <span className="text-[11px] text-red-400 mt-1 block">{errors.name}</span>}
+                      {errors.name && <span className="text-[10px] text-red-400 mt-1 block">{errors.name}</span>}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1 font-mono">
-                        {t('emailLabel')}
+                      <label className="block text-[11px] uppercase tracking-wider text-[#A1A1AA] mb-1.5">
+                        EMAIL // DESTINATION *
                       </label>
                       <input
                         type="email"
                         required
-                        value={formData.email ?? ''}
+                        value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="e.g. ali@example.com"
-                        className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none hover:border-cyan-400/60 transition ${
-                          errors.email ? 'border-red-500' : 'border-[var(--border)] focus:border-cyan-500'
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border text-xs text-white focus:outline-none transition font-sans ${
+                          errors.email ? 'border-red-500' : 'border-white/10 focus:border-cyan-400'
                         }`}
                       />
-                      {errors.email && <span className="text-[11px] text-red-400 mt-1 block">{errors.email}</span>}
+                      {errors.email && <span className="text-[10px] text-red-400 mt-1 block">{errors.email}</span>}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1 font-mono">
-                        {t('serviceLabel')}
+                      <label className="block text-[11px] uppercase tracking-wider text-[#A1A1AA] mb-1.5">
+                        DISPATCH CATEGORY
                       </label>
                       <select
-                        value={formData.service ?? ''}
+                        value={formData.service}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400/60 text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-cyan-500 cursor-pointer transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#0A0C12] border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-400 transition cursor-pointer font-sans"
                       >
                         <option value="Simple Website / Landing Page">Simple Website / Landing Page</option>
                         <option value="AI-Assisted Website Prototype">AI-Assisted Website Prototype</option>
@@ -393,42 +391,42 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1 font-mono">
-                        {t('budgetLabel')}
+                      <label className="block text-[11px] uppercase tracking-wider text-[#A1A1AA] mb-1.5">
+                        BUDGET BRACKET
                       </label>
                       <input
                         type="text"
-                        value={formData.budget ?? ''}
+                        value={formData.budget}
                         onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                         placeholder="e.g. Flexible / Open"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400/60 text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-cyan-500 transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-400 transition font-sans"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1 font-mono">
-                      {t('messageLabel')}
+                    <label className="block text-[11px] uppercase tracking-wider text-[#A1A1AA] mb-1.5">
+                      TRANSMISSION PAYLOAD (MESSAGE) *
                     </label>
                     <textarea
                       rows={4}
                       required
-                      value={formData.message ?? ''}
+                      value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder={
                         isRoman
-                          ? 'Apne project ka maqsad aur requirements yahan likhein...'
-                          : 'Describe your website idea, requirements, and any specific questions...'
+                          ? 'Apne project ki requirements aur idea yahan darj karein...'
+                          : 'Describe your website goals, requirements, or idea...'
                       }
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[var(--surface-2)] border text-xs sm:text-sm text-[var(--text)] focus:outline-none hover:border-cyan-400/60 transition leading-relaxed ${
-                        errors.message ? 'border-red-500' : 'border-[var(--border)] focus:border-cyan-500'
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border text-xs text-white focus:outline-none transition leading-relaxed font-sans ${
+                        errors.message ? 'border-red-500' : 'border-white/10 focus:border-cyan-400'
                       }`}
                     />
-                    {errors.message && <span className="text-[11px] text-red-400 mt-1 block">{errors.message}</span>}
+                    {errors.message && <span className="text-[10px] text-red-400 mt-1 block">{errors.message}</span>}
                   </div>
 
                   {submitError && (
-                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-mono">
+                    <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono">
                       {submitError}
                     </div>
                   )}
@@ -437,13 +435,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white font-semibold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="w-full py-3.5 rounded-xl bg-white text-black font-semibold text-xs uppercase tracking-widest hover:bg-cyan-300 active:scale-98 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md font-mono"
                     >
                       {submitting ? (
-                        <span>{t('contactSending')}</span>
+                        <span>TRANSMITTING SIGNAL...</span>
                       ) : (
                         <>
-                          <span>{t('contactSubmit')}</span>
+                          <span>DISPATCH TRANSMISSION</span>
                           <Send className="w-3.5 h-3.5" />
                         </>
                       )}
@@ -451,7 +449,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   </div>
                 </form>
               )}
-            </FuturisticSpotlightCard>
+            </div>
           </motion.div>
         </div>
       </div>

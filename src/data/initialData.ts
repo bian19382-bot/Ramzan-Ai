@@ -53,8 +53,8 @@ export const INITIAL_PROFILE: Profile = {
   value_proposition: "I'm learning and building modern web experiences with the help of AI tools. I enjoy turning ideas into practical website projects, exploring new workflows, and improving my skills through hands-on work.",
   bio_short: "I'm Ramzan, an AI Creator & Digital Professional with a current focus on web development. I'm building my skills by working on practical website projects and using AI-assisted tools to explore ideas, improve workflows, and learn how websites are planned, built, tested, and published.",
   bio_long: "My current toolkit includes Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel, and Netlify. I continue to learn through experimentation and hands-on projects, and I aim to communicate clearly about each project's scope and what I can deliver.\n\nI'm open to suitable opportunities with individuals and businesses where the project requirements fit my current abilities and allow me to keep learning through practical work.",
-  portrait_url: '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png',
-  welcome_banner_url: '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png',
+  portrait_url: '/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png',
+  welcome_banner_url: '/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png',
   roles_rotating: [
     'AI Creator & Digital Professional',
     'Web Development',

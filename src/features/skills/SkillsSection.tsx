@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Server, Code, Zap, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Terminal, Radio, Sparkles, CheckCircle2, Cpu } from 'lucide-react';
 import { Skill, SkillGroup } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
-import { FuturisticSpotlightCard } from '../../components/ui/FuturisticSpotlightCard';
-import { mosqueDoorVariants, squidInkVariants, spinInVariants, spinInFontVariants, safeViewport } from '../../lib/animations';
+import { cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 import {
   GoogleAiStudioLogo,
   OpenAiLogo,
   ClaudeLogo,
-  CursorLogo,
   SupabaseLogo,
   CloudflareLogo,
   GitHubLogo,
   VercelLogo,
   ReactTsLogo,
   TailwindLogo,
-  FigmaLogo,
-  DockerLogo,
 } from '../../components/icons/BrandIcons';
 
 interface SkillsSectionProps {
@@ -25,361 +21,266 @@ interface SkillsSectionProps {
   skills: Skill[];
 }
 
-interface ToolMeta {
+interface PowerTool {
+  id: string;
+  name: string;
+  category: string;
+  status: 'ACTIVE WORKFLOW' | 'LEARNING & PRACTICING' | 'EXPLORING';
+  statusColor: string;
   icon: React.ReactNode;
-  tier: string;
-  tierVariant: 'cyan' | 'purple' | 'emerald' | 'amber' | 'blue' | 'rose';
-  glowColor: 'cyan' | 'purple' | 'emerald';
-  specs: string[];
-  statusText: string;
-  metricLabel: string;
+  description: string;
+  coordinates: string;
 }
 
-export const SkillsSection: React.FC<SkillsSectionProps> = ({ skillGroups, skills }) => {
-  const [activeTab, setActiveTab] = useState(skillGroups[0]?.id || 'sg-1');
-  const { language, t } = useLanguage();
+const POWER_TOOLS: PowerTool[] = [
+  {
+    id: 'tool-ai-studio',
+    name: 'Google AI Studio',
+    category: 'AI WORKFLOW',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-cyan-400 border-cyan-400/40 bg-cyan-500/10',
+    icon: <GoogleAiStudioLogo size={22} />,
+    description: 'Prompt engineering, structured schemas, multi-modal context exploration, and server-side Gemini API integration.',
+    coordinates: 'GRID // 34.2°N - RADAR 01',
+  },
+  {
+    id: 'tool-supabase',
+    name: 'Supabase',
+    category: 'DATA & STORAGE',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-emerald-400 border-emerald-400/40 bg-emerald-500/10',
+    icon: <SupabaseLogo size={22} />,
+    description: 'PostgreSQL database persistence, Row Level Security (RLS) enforcement, client synchronization, and edge auth sessions.',
+    coordinates: 'GRID // 68.5°N - RADAR 02',
+  },
+  {
+    id: 'tool-github',
+    name: 'GitHub',
+    category: 'SOURCE CONTROL',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-white border-white/40 bg-white/10',
+    icon: <GitHubLogo size={22} />,
+    description: 'Git branch isolation, pull request tracking, modular repository structure, and automated deployment pipelines.',
+    coordinates: 'GRID // 112.0°E - RADAR 03',
+  },
+  {
+    id: 'tool-cloudflare',
+    name: 'Cloudflare',
+    category: 'EDGE DEPLOYMENT',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-amber-400 border-amber-400/40 bg-amber-500/10',
+    icon: <CloudflareLogo size={22} />,
+    description: 'Cloudflare Pages, Edge Functions routing, zero-bundle secrets, and custom domain SSL configurations.',
+    coordinates: 'GRID // 156.4°E - RADAR 04',
+  },
+  {
+    id: 'tool-chatgpt',
+    name: 'ChatGPT',
+    category: 'REASONING & LOGIC',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-emerald-400 border-emerald-400/40 bg-emerald-500/10',
+    icon: <OpenAiLogo size={22} />,
+    description: 'Logic verification, structural refactoring, technical documentation drafting, and problem decomposition.',
+    coordinates: 'GRID // 201.1°S - RADAR 05',
+  },
+  {
+    id: 'tool-claude',
+    name: 'Claude AI',
+    category: 'SYSTEM ANALYSIS',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-amber-400 border-amber-400/40 bg-amber-500/10',
+    icon: <ClaudeLogo size={22} />,
+    description: 'TypeScript algorithm auditing, design token alignment, architectural scoping, and code quality reviews.',
+    coordinates: 'GRID // 245.8°S - RADAR 06',
+  },
+  {
+    id: 'tool-vercel',
+    name: 'Vercel & Netlify',
+    category: 'SERVERLESS HOSTING',
+    status: 'LEARNING & PRACTICING',
+    statusColor: 'text-violet-400 border-violet-400/40 bg-violet-500/10',
+    icon: <VercelLogo size={22} />,
+    description: 'Edge preview environments, deployment rollbacks, static asset distribution, and continuous deployment.',
+    coordinates: 'GRID // 290.2°W - RADAR 07',
+  },
+  {
+    id: 'tool-web-dev',
+    name: 'Web Development',
+    category: 'CORE SPECIALIZATION',
+    status: 'ACTIVE WORKFLOW',
+    statusColor: 'text-cyan-400 border-cyan-400/40 bg-cyan-500/10',
+    icon: <ReactTsLogo size={22} />,
+    description: 'React 19 SPA, TypeScript, Tailwind CSS, semantic HTML5, WCAG 2.2 accessibility, and responsive layouts.',
+    coordinates: 'GRID // 335.7°W - RADAR 08',
+  },
+];
+
+export const SkillsSection: React.FC<SkillsSectionProps> = () => {
+  const { language } = useLanguage();
   const isRoman = language === 'ur-roman';
-
-  // Professional metadata resolver for tools and engineering workflows
-  const getToolMeta = (name: string): ToolMeta => {
-    const n = name.toLowerCase();
-
-    if (n.includes('google') || n.includes('studio') || n.includes('gemini')) {
-      return {
-        icon: <GoogleAiStudioLogo size={22} />,
-        tier: 'PRO TIER // 2.5 API',
-        tierVariant: 'cyan',
-        glowColor: 'cyan',
-        specs: ['2M Context Window', 'Multi-Modal Voice/Vision', 'Prompt Engineering'],
-        statusText: 'DAILY DRIVER',
-        metricLabel: 'API QUOTA: PAID TIER',
-      };
-    }
-    if (n.includes('chatgpt') || n.includes('openai') || n.includes('gpt')) {
-      return {
-        icon: <OpenAiLogo size={22} />,
-        tier: 'PLUS & TEAM PRO',
-        tierVariant: 'emerald',
-        glowColor: 'emerald',
-        specs: ['OpenAI o1 & GPT-4o', 'Deep Logic Reasoning', 'Schema Architecture'],
-        statusText: 'PRO SUITE',
-        metricLabel: 'ADVANCED REASONING',
-      };
-    }
-    if (n.includes('claude') || n.includes('anthropic') || n.includes('sonnet')) {
-      return {
-        icon: <ClaudeLogo size={22} />,
-        tier: 'SONNET 3.5 PRO',
-        tierVariant: 'amber',
-        glowColor: 'purple',
-        specs: ['Zero-Slop Refactor', 'Nuanced TS Algorithms', 'Comprehensive Docs'],
-        statusText: 'PRO WORKSPACE',
-        metricLabel: 'CODE QUALITY: STRICT',
-      };
-    }
-    if (n.includes('cursor')) {
-      return {
-        icon: <CursorLogo size={22} />,
-        tier: 'PRO AI EDITOR',
-        tierVariant: 'cyan',
-        glowColor: 'cyan',
-        specs: ['Full Repo Indexing', 'Agent Terminal Exec', 'Instant Multi-File Diffs'],
-        statusText: 'DEV WORKSPACE',
-        metricLabel: 'MULTI-FILE COPILOT',
-      };
-    }
-    if (n.includes('supabase')) {
-      return {
-        icon: <SupabaseLogo size={22} />,
-        tier: 'PRO CLOUD DB',
-        tierVariant: 'emerald',
-        glowColor: 'emerald',
-        specs: ['PostgreSQL 16 Engine', 'Row Level Security', 'Edge JWT Auth'],
-        statusText: 'PRODUCTION DB',
-        metricLabel: 'RLS ENFORCED',
-      };
-    }
-    if (n.includes('cloudflare')) {
-      return {
-        icon: <CloudflareLogo size={22} />,
-        tier: 'PRO GLOBAL CDN',
-        tierVariant: 'amber',
-        glowColor: 'cyan',
-        specs: ['330+ Global PoPs', '0ms Cold Starts', 'DDoS Armor & DNS'],
-        statusText: 'EDGE DEPLOYED',
-        metricLabel: 'LATENCY: <50MS',
-      };
-    }
-    if (n.includes('github')) {
-      return {
-        icon: <GitHubLogo size={22} />,
-        tier: 'TEAM & ACTIONS PRO',
-        tierVariant: 'purple',
-        glowColor: 'purple',
-        specs: ['Matrix CI/CD Runner', 'Lockfile Sanitizer', 'Branch Protection'],
-        statusText: 'AUTOMATED PIPELINE',
-        metricLabel: 'CI/CD: 100% PASS',
-      };
-    }
-    if (n.includes('vercel')) {
-      return {
-        icon: <VercelLogo size={22} />,
-        tier: 'PRO EDGE RUNTIME',
-        tierVariant: 'blue',
-        glowColor: 'cyan',
-        specs: ['Atomic Git Deploys', 'Instant Rollback', 'Edge Image Optimizer'],
-        statusText: 'STATIC CDN',
-        metricLabel: 'ZERO-DOWNTIME',
-      };
-    }
-    if (n.includes('react') || n.includes('typescript')) {
-      return {
-        icon: <ReactTsLogo size={22} />,
-        tier: 'STABLE CORE',
-        tierVariant: 'blue',
-        glowColor: 'cyan',
-        specs: ['React 19 Hooks', 'Strict TypeScript 5+', 'Zero-Crash Flow'],
-        statusText: 'CORE ENGINE',
-        metricLabel: 'STRICT TYPE SAFE',
-      };
-    }
-    if (n.includes('tailwind') || n.includes('motion') || n.includes('styling')) {
-      return {
-        icon: <TailwindLogo size={22} />,
-        tier: 'v4 DESIGN TOKENS',
-        tierVariant: 'cyan',
-        glowColor: 'cyan',
-        specs: ['Day/Night Calibrated', 'Hardware 60FPS', 'Zero-Pill Discipline'],
-        statusText: 'DESIGN SYSTEM',
-        metricLabel: 'ACCESSIBILITY: AAA',
-      };
-    }
-    if (n.includes('figma')) {
-      return {
-        icon: <FigmaLogo size={22} />,
-        tier: 'PRO WORKSPACE',
-        tierVariant: 'rose',
-        glowColor: 'purple',
-        specs: ['Auto-Layout Frames', 'Design Component Handoff', 'Scalable Vector SVG'],
-        statusText: 'UI PROTOTYPING',
-        metricLabel: 'VECTOR FIDELITY',
-      };
-    }
-    if (n.includes('docker') || n.includes('container')) {
-      return {
-        icon: <DockerLogo size={22} />,
-        tier: 'ENTERPRISE STACK',
-        tierVariant: 'blue',
-        glowColor: 'cyan',
-        specs: ['Isolated Multi-Stage', 'Reproducible Builds', 'Microservice Pods'],
-        statusText: 'CONTAINER READY',
-        metricLabel: 'DOCKER ENGINE',
-      };
-    }
-
-    // Default Fallback
-    return {
-      icon: <Zap className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />,
-      tier: 'VERIFIED PRACTICE',
-      tierVariant: 'cyan',
-      glowColor: 'cyan',
-      specs: ['Modern Best Practices', 'Production Architecture', 'Hands-On Tested'],
-      statusText: 'ACTIVE STACK',
-      metricLabel: 'VERIFIED',
-    };
-  };
-
-  const activeSkills = skills.filter((s) => s.group_id === activeTab && s.visible);
+  const [selectedTool, setSelectedTool] = useState<PowerTool>(POWER_TOOLS[0]);
 
   return (
-    <section id="skills" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative bg-[var(--surface)]/30">
-      <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title with Mosque Door Arched Reveal & Spin In Typography */}
+    <section id="skills" className="py-28 px-5 sm:px-8 lg:px-12 bg-[#0A0B10] border-t border-white/5 relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1320px] w-full mx-auto relative z-10">
+        {/* Section Header */}
         <motion.div
-          variants={mosqueDoorVariants}
+          variants={cinematicFadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={safeViewport}
-          className="mb-12"
+          className="mb-16 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
-          <motion.span
-            variants={spinInFontVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
-          >
-            {t('skillsEyebrow')}
-          </motion.span>
-          <motion.h2
-            variants={spinInFontVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
-          >
-            {t('skillsTitle')}
-          </motion.h2>
-          <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-2xl mt-2 leading-relaxed">
-            {t('skillsSub')}
-          </p>
+          <div>
+            <div className="flex items-center gap-2 font-mono text-[11px] text-cyan-400 uppercase tracking-widest mb-3">
+              <Terminal className="w-3.5 h-3.5" />
+              <span>CHAPTER 03 // TELEMETRY & CAPABILITIES</span>
+            </div>
+            <h2 className="font-cinematic text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase">
+              POWER PROFILE
+            </h2>
+            <p className="text-sm sm:text-base text-[#A1A1AA] font-sans mt-2 max-w-xl">
+              {isRoman
+                ? 'Tools, platforms aur technologies jinhe main real-world projects me use karta aur seekhta hoon.'
+                : 'Current technical ecosystem, verified developer tools, and workflow technologies.'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 font-mono text-xs text-[#71717A]">
+            <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+            <span>RADAR STATUS: ACTIVE SWEEP</span>
+          </div>
         </motion.div>
 
-        {/* Tabbed category selector with Squid Ink Blossom & Spin In Tabs */}
-        <motion.div
-          variants={squidInkVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={safeViewport}
-          role="tablist"
-          aria-label="Tool categories"
-          className="flex flex-wrap items-center gap-2 mb-10 p-1.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] max-w-3xl shadow-sm"
-        >
-          {skillGroups.map((group, gIdx) => {
-            const isActive = activeTab === group.id;
-            return (
-              <motion.button
-                key={group.id}
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                custom={gIdx}
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveTab(group.id)}
-                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2 cursor-pointer border ${
-                  isActive
-                    ? 'bg-gradient-to-r from-cyan-500/15 to-blue-500/15 dark:from-cyan-500/25 dark:to-blue-500/25 text-cyan-800 dark:text-cyan-200 shadow-sm border-cyan-400 dark:border-cyan-400'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-cyan-700 dark:hover:text-cyan-300 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:border-cyan-400/40'
-                }`}
-              >
-                {group.icon === 'Sparkles' && <Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />}
-                {group.icon === 'Server' && <Server className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
-                {group.icon === 'Code' && <Code className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
-                <span>{group.name}</span>
-              </motion.button>
-            );
-          })}
-        </motion.div>
-
-        {/* Skills & Tools Cards Grid */}
-        <AnimatePresence mode="wait">
+        {/* Main Interface: Left Radar Visual Scanner, Right Technical Tool Matrix */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          {/* Left Column (5 cols): Radar-Inspired Visual Design */}
           <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={cinematicFadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={safeViewport}
+            className="lg:col-span-5 flex flex-col items-center justify-center relative p-6 sm:p-8 rounded-3xl bg-[#0D0F14] border border-white/10"
           >
-            {activeSkills.map((sk, idx) => {
-              const meta = getToolMeta(sk.name);
-              const cleanName = sk.name.replace(/\(Exploring\)/i, '').trim();
+            {/* Concentric Radar Rings Stage */}
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border border-white/10 flex items-center justify-center overflow-hidden">
+              {/* Outer Ring */}
+              <div className="absolute inset-4 rounded-full border border-cyan-500/20" />
+              {/* Mid Ring */}
+              <div className="absolute inset-16 rounded-full border border-white/10" />
+              {/* Inner Ring */}
+              <div className="absolute inset-28 rounded-full border border-cyan-500/30" />
+              {/* Crosshair Axes */}
+              <div className="absolute inset-x-0 top-1/2 h-px bg-white/10" />
+              <div className="absolute inset-y-0 left-1/2 w-px bg-white/10" />
 
-              // Badge styling helper
-              const getBadgeClasses = (variant: ToolMeta['tierVariant']) => {
-                switch (variant) {
-                  case 'cyan':
-                    return 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/30';
-                  case 'emerald':
-                    return 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30';
-                  case 'purple':
-                    return 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30';
-                  case 'amber':
-                    return 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30';
-                  case 'blue':
-                    return 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30';
-                  case 'rose':
-                    return 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30';
-                  default:
-                    return 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/30';
-                }
-              };
+              {/* Animated Radar Sweep Beam */}
+              <div className="radar-sweep-beam" />
+
+              {/* Central Core */}
+              <div className="w-5 h-5 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.8)] z-10">
+                <div className="w-2 h-2 rounded-full bg-black animate-ping" />
+              </div>
+
+              {/* Dynamic Target Points on Radar */}
+              {POWER_TOOLS.map((t, idx) => {
+                const angle = (idx * 360) / POWER_TOOLS.length;
+                const rad = (angle * Math.PI) / 180;
+                const distance = 85 + (idx % 3) * 15; // Radius %
+                const x = 50 + (distance / 2.3) * Math.cos(rad);
+                const y = 50 + (distance / 2.3) * Math.sin(rad);
+
+                const isSelected = selectedTool.id === t.id;
+
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectedTool(t)}
+                    style={{ left: `${x}%`, top: `${y}%` }}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      isSelected
+                        ? 'bg-cyan-400 scale-150 shadow-[0_0_15px_rgba(56,189,248,1)] z-20'
+                        : 'bg-white/40 hover:bg-white hover:scale-125 z-10'
+                    }`}
+                    title={t.name}
+                    aria-label={`Select ${t.name}`}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Active Radar Target Telemetry Card */}
+            <div className="mt-6 w-full p-4 rounded-2xl bg-black/60 border border-white/10 space-y-2 font-mono">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-cyan-400 font-bold">{selectedTool.coordinates}</span>
+                <span className={`px-2 py-0.5 rounded text-[9px] uppercase border ${selectedTool.statusColor}`}>
+                  {selectedTool.status}
+                </span>
+              </div>
+              <h4 className="text-base font-bold font-display text-white">{selectedTool.name}</h4>
+              <p className="text-xs text-[#A1A1AA] font-sans leading-relaxed">
+                {selectedTool.description}
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Right Column (7 cols): Horizontal Skill Indicators & Grid */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {POWER_TOOLS.map((tool, idx) => {
+              const isSelected = selectedTool.id === tool.id;
 
               return (
-                <FuturisticSpotlightCard
-                  key={sk.id}
-                  glowColor={meta.glowColor}
-                  animationType="squid-ink"
-                  animationDelay={idx % 4}
-                  className="p-6 flex flex-col justify-between h-full"
+                <motion.div
+                  key={tool.id}
+                  variants={cinematicFadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={safeViewport}
+                  custom={idx * 0.05}
+                  onClick={() => setSelectedTool(tool)}
+                  className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-white/[0.05] border-cyan-400 shadow-[0_0_25px_rgba(56,189,248,0.15)]'
+                      : 'bg-[#0D0F14] border-white/10 hover:border-white/20'
+                  }`}
                 >
                   <div>
-                    {/* Top Header: Official Brand Logo & Paid Tier Tag */}
-                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[var(--border)]/70">
-                      <div className="flex items-center gap-3">
-                        <motion.div
-                          variants={spinInVariants}
-                          initial="hidden"
-                          whileInView="visible"
-                          viewport={{ once: true }}
-                          custom={idx * 0.1}
-                          className="w-11 h-11 rounded-xl bg-[var(--surface-2)] flex items-center justify-center border border-[var(--border)] group-hover:border-cyan-500/50 group-hover:shadow-[0_0_18px_rgba(6,182,212,0.25)] transition-all shrink-0"
-                        >
-                          {meta.icon}
-                        </motion.div>
-                        <div>
-                          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] block">
-                            ENTERPRISE STACK
-                          </span>
-                          <span className="text-xs font-mono font-bold text-[var(--text)] tracking-tight">
-                            {meta.statusText}
-                          </span>
-                        </div>
+                    {/* Top Status */}
+                    <div className="flex items-center justify-between mb-3 text-[10px] font-mono">
+                      <span className="text-[#71717A] tracking-wider">{tool.category}</span>
+                      <span className={`px-2 py-0.5 rounded text-[9px] uppercase border font-semibold ${tool.statusColor}`}>
+                        {tool.status}
+                      </span>
+                    </div>
+
+                    {/* Logo & Name */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
+                        {tool.icon}
                       </div>
-
-                      {/* Tier / Paid Version Badge */}
-                      <span
-                        className={`text-[10px] font-mono font-bold tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 shadow-xs ${getBadgeClasses(
-                          meta.tierVariant
-                        )}`}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                        <span>{meta.tier}</span>
-                      </span>
+                      <h4 className="text-sm sm:text-base font-bold text-white font-display">
+                        {tool.name}
+                      </h4>
                     </div>
 
-                    {/* Tool Name & Description */}
-                    <h3 className="text-base sm:text-lg font-bold font-display text-[var(--text)] mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                      {cleanName}
-                    </h3>
-
-                    <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-4 font-normal">
-                      {sk.context}
+                    <p className="text-xs text-[#A1A1AA] line-clamp-2 leading-relaxed font-sans">
+                      {tool.description}
                     </p>
-
-                    {/* Key Technical Capabilities (Micro-Pill Highlights) */}
-                    <div className="space-y-1.5 mb-5 p-3 rounded-xl bg-cyan-500/5 dark:bg-cyan-500/10 border border-cyan-500/25 group-hover:border-cyan-400/50 group-hover:bg-cyan-500/10 transition-all">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-300 font-bold block mb-1">
-                        {isRoman ? 'Production Khasiyat // Capabilities:' : 'Production Architecture // Capabilities:'}
-                      </span>
-                      <ul className="space-y-1">
-                        {meta.specs.map((spec, i) => (
-                          <li key={i} className="flex items-center gap-2 text-xs text-[var(--text)] font-semibold">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                            <span>{spec}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
 
-                  {/* Card Footer Metric Strip */}
-                  <div className="pt-3 border-t border-[var(--border)]/70 flex items-center justify-between text-[10px] font-mono">
-                    <span className="text-[var(--text-muted)] font-medium">
-                      SYS // {meta.metricLabel}
-                    </span>
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span>PRODUCTION READY</span>
-                    </span>
+                  {/* Horizontal Progress / Signal Bar */}
+                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-[#71717A]">
+                    <span>STATUS // VERIFIED</span>
+                    <span className="text-cyan-400">PRACTICE READY</span>
                   </div>
-                </FuturisticSpotlightCard>
+                </motion.div>
               );
             })}
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </div>
       </div>
     </section>
   );

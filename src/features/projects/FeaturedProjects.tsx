@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, X, FolderKanban, Plus, Sparkles } from 'lucide-react';
+import { Search, X, FolderKanban, Terminal, Box, Grid } from 'lucide-react';
 import { Project, Category } from '../../types/portfolio';
 import { ProjectCard } from './ProjectCard';
+import { MissionTunnel } from './MissionTunnel';
 import { CaseStudyModal } from './CaseStudyModal';
 import { useLanguage } from '../i18n/LanguageContext';
-import { mosqueDoorVariants, spinInVariants, spinInFontVariants, squidInkVariants, safeViewport } from '../../lib/animations';
+import { cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 
 interface FeaturedProjectsProps {
   projects: Project[];
@@ -18,14 +19,15 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
   categories,
   onOpenConsultantForProject,
 }) => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
+  const isRoman = language === 'ur-roman';
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'featured' | 'newest' | 'title'>('featured');
   const [activeCaseStudy, setActiveCaseStudy] = useState<Project | null>(null);
-  const [visibleCount, setVisibleCount] = useState<number>(24);
+  const [viewMode, setViewMode] = useState<'tunnel' | 'grid'>('tunnel');
 
-  // Filter and Sort logic
+  // Filter logic
   const filteredProjects = useMemo(() => {
     let result = projects.filter((p) => p.status === 'published');
 
@@ -44,245 +46,172 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
     }
 
     return result.sort((a, b) => {
-      if (sortBy === 'featured') {
-        if (a.featured && !b.featured) return -1;
-        if (!a.featured && b.featured) return 1;
-        return a.sort_order - b.sort_order;
-      }
-      if (sortBy === 'newest') {
-        return new Date(b.project_date).getTime() - new Date(a.project_date).getTime();
-      }
-      if (sortBy === 'title') {
-        return a.title.localeCompare(b.title);
-      }
-      return 0;
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return a.sort_order - b.sort_order;
     });
-  }, [projects, selectedCategory, searchQuery, sortBy]);
-
-  const displayedProjects = filteredProjects.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredProjects.length;
+  }, [projects, selectedCategory, searchQuery]);
 
   return (
-    <section id="projects" className="py-24 px-5 sm:px-8 lg:px-12 border-t border-[var(--border)] relative">
-      <div className="max-w-[1200px] w-full mx-auto">
-        {/* Eyebrow & Title with Mosque Door Arched Reveal */}
+    <section id="projects" className="py-28 px-5 sm:px-8 lg:px-12 bg-[#070709] border-t border-white/5 relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-cyan-500/5 via-violet-500/5 to-transparent blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1320px] w-full mx-auto relative z-10">
+        {/* Section Header */}
         <motion.div
-          variants={mosqueDoorVariants}
+          variants={cinematicFadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={safeViewport}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+          className="mb-12 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
-            <motion.span
-              variants={spinInFontVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={safeViewport}
-              className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2 block font-mono"
-            >
-              {t('projectsEyebrow')}
-            </motion.span>
-            <motion.h2
-              variants={spinInFontVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={safeViewport}
-              className="text-3xl sm:text-4xl font-bold font-display text-[var(--text)] tracking-tight"
-            >
-              {t('projectsTitle')}
-            </motion.h2>
-            <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-xl mt-2">
-              {t('projectsSub')}
+            <div className="flex items-center gap-2 font-mono text-[11px] text-cyan-400 uppercase tracking-widest mb-3">
+              <Terminal className="w-3.5 h-3.5" />
+              <span>CHAPTER 02 // REPOSITORIES & DEPLOYMENTS</span>
+            </div>
+            <h2 className="font-cinematic text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase">
+              MISSION FILES
+            </h2>
+            <p className="text-sm sm:text-base text-[#A1A1AA] font-sans mt-2 max-w-xl">
+              {isRoman
+                ? 'Selected digital projects, working web prototypes aur live case studies.'
+                : 'Selected digital projects, live web applications, and architectural case studies.'}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 self-start md:self-auto">
-            {projects.length > 0 && (
-              <motion.div
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                className="text-xs font-mono text-[var(--text-muted)] bg-[var(--surface-2)] px-3 py-1.5 rounded-full border border-[var(--border)]"
+          {/* View Mode Toggle: 3D Tunnel vs Grid Matrix */}
+          <div className="flex items-center gap-2 self-start md:self-auto p-1 rounded-xl bg-white/[0.04] border border-white/10 font-mono text-xs">
+            <button
+              onClick={() => setViewMode('tunnel')}
+              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'tunnel'
+                  ? 'bg-white text-black font-semibold shadow-sm'
+                  : 'text-[#A1A1AA] hover:text-white'
+              }`}
+            >
+              <Box className="w-3.5 h-3.5" />
+              <span>3D TUNNEL</span>
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-white text-black font-semibold shadow-sm'
+                  : 'text-[#A1A1AA] hover:text-white'
+              }`}
+            >
+              <Grid className="w-3.5 h-3.5" />
+              <span>GRID VIEW</span>
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Filter & Search Bar */}
+        <motion.div
+          variants={cinematicFadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={safeViewport}
+          className="mb-10 flex flex-wrap items-center justify-between gap-4 font-mono text-xs"
+        >
+          {/* Category Tabs */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer ${
+                selectedCategory === 'all'
+                  ? 'bg-cyan-500/10 border-cyan-400 text-cyan-300 font-semibold'
+                  : 'bg-white/[0.02] border-white/10 text-[#71717A] hover:text-white hover:border-white/20'
+              }`}
+            >
+              ALL MISSIONS ({projects.filter((p) => p.status === 'published').length})
+            </button>
+            {categories.map((cat) => {
+              const count = projects.filter(
+                (p) => p.status === 'published' && p.category_id === cat.id
+              ).length;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer ${
+                    selectedCategory === cat.id
+                      ? 'bg-cyan-500/10 border-cyan-400 text-cyan-300 font-semibold'
+                      : 'bg-white/[0.02] border-white/10 text-[#71717A] hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  {cat.name.toUpperCase()} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Search Box */}
+          <div className="relative w-full sm:w-64">
+            <Search className="w-3.5 h-3.5 text-[#71717A] absolute left-3 top-3 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Filter missions..."
+              className="w-full bg-white/[0.03] border border-white/10 rounded-xl pl-9 pr-8 py-2 text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-cyan-400 transition"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-2.5 text-[#71717A] hover:text-white cursor-pointer"
               >
-                Showing {displayedProjects.length} of {filteredProjects.length} projects
-              </motion.div>
+                <X className="w-3.5 h-3.5" />
+              </button>
             )}
           </div>
         </motion.div>
 
-        {/* Filter Bar & Controls with Squid Ink & Spin In */}
-        {projects.length > 0 && (
-          <motion.div
-            variants={squidInkVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={safeViewport}
-            className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8"
-          >
-            {/* Category Filter with Spin In Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0">
-              <motion.button
-                variants={spinInFontVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={safeViewport}
-                custom={0}
-                onClick={() => setSelectedCategory('all')}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                  selectedCategory === 'all'
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400/50'
-                    : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 shadow-xs'
-                }`}
-              >
-                All Projects
-              </motion.button>
-              {categories.map((cat, idx) => (
-                <motion.button
-                  key={cat.id}
-                  variants={spinInFontVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={safeViewport}
-                  custom={idx + 1}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                    selectedCategory === cat.id
-                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400/50'
-                      : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 shadow-xs'
-                  }`}
-                >
-                  {cat.name}
-                </motion.button>
-              ))}
-            </div>
-
-            {/* Search & Sort */}
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 sm:w-64">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  value={searchQuery ?? ''}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search projects..."
-                  className="w-full pl-9 pr-8 py-2 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] transition"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)] cursor-pointer"
-                    aria-label="Clear search"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
-              <select
-                value={sortBy ?? 'featured'}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-3 py-2 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)] cursor-pointer"
-                aria-label="Sort projects"
-              >
-                <option value="featured">Featured First</option>
-                <option value="newest">Newest First</option>
-                <option value="title">Alphabetical</option>
-              </select>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Projects Grid or Zero/Empty State */}
-        {displayedProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayedProjects.map((project, idx) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 32, scale: 0.97 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={safeViewport}
-                transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                className={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery ? 'lg:col-span-2' : ''}
-              >
-                <ProjectCard
-                  project={project}
-                  onOpenCaseStudy={(proj) => setActiveCaseStudy(proj)}
-                  isLargeFeatured={idx === 0 && project.featured && selectedCategory === 'all' && !searchQuery}
-                  index={idx}
-                />
-              </motion.div>
-            ))}
-          </div>
-        ) : projects.length === 0 ? (
-          /* Clean Initial State for Ramzan Ghafoor */
-          <div className="py-20 px-6 text-center rounded-3xl bg-[var(--surface-2)]/30 border border-[var(--border)] max-w-2xl mx-auto shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4 text-[var(--accent)] shadow-sm">
-              <FolderKanban className="w-8 h-8" />
-            </div>
-            <h3 className="text-xl font-bold font-display text-[var(--text)] mb-2">
-              Ready for Real Projects
-            </h3>
-            <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto mb-6 leading-relaxed">
-              All demo data has been cleared. You can now add your real web development projects with screenshots, descriptions, tools, and live demo links directly from the Admin panel.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="#contact"
-                className="px-6 py-2.5 rounded-full bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-semibold transition inline-flex items-center gap-2 shadow-md"
-              >
-                <span>Get in Touch for Projects</span>
-              </a>
-            </div>
-          </div>
-        ) : (
-          /* Filtered search empty state */
-          <div className="py-16 text-center rounded-3xl bg-[var(--surface-2)]/40 border border-[var(--border)] p-8">
-            <div className="w-14 h-14 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4 text-[var(--text-muted)]">
-              <FolderKanban className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold font-display text-[var(--text)] mb-1">
-              No matching projects found
-            </h3>
-            <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto mb-5">
-              Nothing matches '{searchQuery}'. Try another keyword or reset your filters.
-            </p>
+        {/* Main Display: 3D Tunnel Mode vs Matrix Grid Mode */}
+        {filteredProjects.length === 0 ? (
+          <div className="py-20 text-center border border-dashed border-white/10 rounded-3xl p-8">
+            <FolderKanban className="w-8 h-8 text-[#71717A] mx-auto mb-3" />
+            <p className="text-sm text-white font-medium">No missions match your query.</p>
             <button
               onClick={() => {
                 setSelectedCategory('all');
                 setSearchQuery('');
               }}
-              className="px-5 py-2.5 rounded-full bg-[var(--accent)] text-white text-xs font-semibold hover:brightness-110 transition cursor-pointer"
+              className="mt-3 text-xs font-mono text-cyan-400 underline cursor-pointer"
             >
-              Clear Filters
+              Reset filters
             </button>
           </div>
-        )}
-
-        {/* Load More Button */}
-        {hasMore && (
-          <div className="mt-12 text-center">
-            <button
-              onClick={() => setVisibleCount((prev) => prev + 6)}
-              className="px-8 py-3.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)] hover:border-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-700 dark:hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] text-sm font-semibold text-[var(--text)] transition-all cursor-pointer shadow-sm"
-            >
-              Load More Works
-            </button>
+        ) : viewMode === 'tunnel' ? (
+          <div>
+            <MissionTunnel
+              projects={filteredProjects}
+              onOpenCaseStudy={(proj) => setActiveCaseStudy(proj)}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProjects.map((project, idx) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                index={idx}
+                onOpenCaseStudy={(proj) => setActiveCaseStudy(proj)}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Case Study Modal with Colliding Sparks AnimatePresence */}
+      {/* Case Study Modal */}
       <AnimatePresence>
         {activeCaseStudy && (
           <CaseStudyModal
-            key={activeCaseStudy.id}
             project={activeCaseStudy}
             onClose={() => setActiveCaseStudy(null)}
-            onSelectProject={(proj) => setActiveCaseStudy(proj)}
-            allProjects={projects}
-            onOpenConsultantForProject={onOpenConsultantForProject}
+            onOpenConsultant={onOpenConsultantForProject}
           />
         )}
       </AnimatePresence>

@@ -186,6 +186,10 @@ class DataProviderService {
     } else {
       // Safely ensure nested objects and arrays exist
       stored.profile = { ...defaultDb.profile, ...(stored.profile || {}) };
+      if (!stored.profile.welcome_banner_url || stored.profile.welcome_banner_url.includes('Neon_Portfolio_Hero')) {
+        stored.profile.welcome_banner_url = '/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png';
+        stored.profile.portrait_url = '/assets/aistudio/Thoughtful_Developer_at_Workstation_c68f193a.png';
+      }
       stored.settings = {
         ...defaultDb.settings,
         ...(stored.settings || {}),

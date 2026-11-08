@@ -23,9 +23,8 @@ import {
 import { Project, ContentStatus } from '../../types/portfolio';
 import { dataProvider } from '../../data/dataProvider';
 import { motion, AnimatePresence } from 'motion/react';
-import { spinInFontVariants, collidingSparksVariants, collidingSparksBackdropVariants } from '../../lib/animations';
+import { cinematicFadeUp } from '../../lib/cinematicMotion';
 import { soundFx } from '../../lib/soundFx';
-import { CollidingSparksBurst } from '../../components/ui/CollidingSparksBurst';
 
 export const AdminProjects: React.FC = () => {
   const db = dataProvider.getDatabase();
@@ -346,7 +345,7 @@ export const AdminProjects: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
         <div>
           <motion.h1
-            variants={spinInFontVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             animate="visible"
             className="text-2xl font-bold font-display text-[var(--text)]"
@@ -354,7 +353,7 @@ export const AdminProjects: React.FC = () => {
             Projects & Works Manager
           </motion.h1>
           <motion.p
-            variants={spinInFontVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             animate="visible"
             custom={1}
@@ -366,7 +365,7 @@ export const AdminProjects: React.FC = () => {
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <motion.button
-            variants={spinInFontVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             animate="visible"
             custom={2}
@@ -388,7 +387,7 @@ export const AdminProjects: React.FC = () => {
           </motion.button>
 
           <motion.button
-            variants={spinInFontVariants}
+            variants={cinematicFadeUp}
             initial="hidden"
             animate="visible"
             custom={3}
@@ -594,36 +593,24 @@ export const AdminProjects: React.FC = () => {
       <AnimatePresence>
         {(isCreating || editingProject) && (
           <motion.div
-            variants={collidingSparksBackdropVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
           >
             <motion.div
-              variants={collidingSparksVariants}
+              variants={cinematicFadeUp}
               initial="hidden"
               animate="visible"
-              exit="exit"
-              className="relative w-full max-w-3xl rounded-[24px] bg-[var(--surface)] border border-amber-400/40 p-6 sm:p-8 shadow-[0_0_60px_rgba(245,158,11,0.25)] my-8 max-h-[90vh] overflow-y-auto group"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-3xl rounded-2xl bg-[#0A0B10] border border-white/10 p-6 sm:p-8 shadow-2xl my-8 max-h-[90vh] overflow-y-auto group"
             >
-              {/* Kinetic Spark Particles Collision Burst Effect */}
-              <CollidingSparksBurst count={32} />
-
-              {/* Colliding Sparks Plasma Glow Aura */}
-              <div className="absolute -inset-1 rounded-[26px] bg-gradient-to-r from-amber-500/25 via-cyan-400/25 to-violet-500/25 blur-xl opacity-80 pointer-events-none animate-pulse" />
-
-              <div className="relative flex items-center justify-between pb-4 border-b border-[var(--border)] mb-6 z-10">
+              <div className="relative flex items-center justify-between pb-4 border-b border-white/10 mb-6 z-10">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
-                  <motion.h2
-                    variants={spinInFontVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="text-xl font-bold font-display text-[var(--text)]"
-                  >
-                    {editingProject ? 'Edit Project // Colliding Sparks Editor' : 'Add New Project // Colliding Sparks Creator'}
-                  </motion.h2>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#38bdf8] animate-ping" />
+                  <h2 className="text-xl font-bold font-cinematic uppercase tracking-wide text-white">
+                    {editingProject ? 'Edit Mission File' : 'Create Mission File'}
+                  </h2>
                 </div>
                 <button
                   onClick={() => {

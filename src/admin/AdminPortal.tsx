@@ -19,9 +19,8 @@ import { AdminSeo } from './pages/AdminSeo';
 import { AdminCategories } from './pages/AdminCategories';
 import { useAuth } from '../features/auth/AuthProvider';
 import { motion } from 'motion/react';
-import { collidingSparksPanelVariants } from '../lib/animations';
+import { cinematicFadeUp } from '../lib/cinematicMotion';
 import { soundFx } from '../lib/soundFx';
-import { CollidingSparksBurst } from '../components/ui/CollidingSparksBurst';
 
 export const AdminPortal: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -85,24 +84,15 @@ export const AdminPortal: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      soundFx.playSparkCollision();
-    }
-  }, [isAuthenticated]);
-
   return (
     <motion.div
-      variants={collidingSparksPanelVariants}
+      variants={cinematicFadeUp}
       initial="hidden"
       animate="visible"
-      className="relative min-h-screen overflow-hidden"
+      className="relative min-h-screen overflow-hidden bg-[#070709]"
     >
-      {/* Colliding Sparks Energetic Atmosphere Glow */}
-      <div className="fixed -inset-10 bg-gradient-to-tr from-amber-500/15 via-cyan-400/15 to-violet-500/15 blur-3xl pointer-events-none -z-10 animate-pulse" />
-
-      {/* Kinetic Particle Collision Burst on Admin Open */}
-      <CollidingSparksBurst count={36} />
+      {/* Alter Ego Ambient telemetry background */}
+      <div className="fixed -inset-10 bg-[#38bdf8]/5 blur-3xl pointer-events-none -z-10" />
 
       <AdminLayout
         currentTab={tab}

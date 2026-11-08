@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { mosqueDoorVariants, squidInkVariants, spinInVariants } from '../../lib/animations';
+import { cinematicFadeUp } from '../../lib/cinematicMotion';
 
 interface FuturisticSpotlightCardProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface FuturisticSpotlightCardProps {
   cornerAccents?: boolean;
   glowColor?: 'cyan' | 'purple' | 'emerald';
   cursorType?: 'project' | 'card' | 'button' | 'nav';
-  animationType?: 'mosque-door' | 'squid-ink' | 'spin-in' | 'default';
+  animationType?: string;
   animationDelay?: number;
 }
 
@@ -20,7 +20,6 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
   cornerAccents = true,
   glowColor = 'cyan',
   cursorType,
-  animationType = 'default',
   animationDelay = 0,
 }) => {
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -36,7 +35,7 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
 
     setMousePos({ x, y });
 
-    // Subtle 3D perspective magnetic tilt
+    // Subtle 3D perspective magnetic tilt (Alter Ego style)
     const rotX = -((y - rect.height / 2) / (rect.height / 2)) * 3;
     const rotY = ((x - rect.width / 2) / (rect.width / 2)) * 3;
     setTilt({ rotateX: rotX, rotateY: rotY });
@@ -49,19 +48,10 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
 
   const glowGradient =
     glowColor === 'purple'
-      ? 'rgba(168, 85, 247, 0.22)'
+      ? 'rgba(129, 140, 248, 0.18)'
       : glowColor === 'emerald'
-      ? 'rgba(16, 185, 129, 0.22)'
-      : 'rgba(6, 182, 212, 0.24)';
-
-  const selectedVariants =
-    animationType === 'mosque-door'
-      ? mosqueDoorVariants
-      : animationType === 'squid-ink'
-      ? squidInkVariants
-      : animationType === 'spin-in'
-      ? spinInVariants
-      : undefined;
+      ? 'rgba(52, 211, 153, 0.18)'
+      : 'rgba(56, 189, 248, 0.18)';
 
   return (
     <motion.div
@@ -70,48 +60,44 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      variants={selectedVariants}
-      initial={selectedVariants ? 'hidden' : undefined}
-      whileInView={selectedVariants ? 'visible' : undefined}
-      viewport={{ once: false, amount: 0.15 }}
+      variants={cinematicFadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.15 }}
       custom={animationDelay}
-      animate={
-        !selectedVariants
-          ? {
-              rotateX: tilt.rotateX,
-              rotateY: tilt.rotateY,
-              y: isHovered ? -5 : 0,
-            }
-          : undefined
-      }
+      animate={{
+        rotateX: tilt.rotateX,
+        rotateY: tilt.rotateY,
+        y: isHovered ? -4 : 0,
+      }}
       transition={{
         type: 'spring',
-        damping: 20,
-        stiffness: 220,
+        damping: 24,
+        stiffness: 240,
         mass: 0.1,
       }}
       style={{
         transformStyle: 'preserve-3d',
-        transformPerspective: 1000,
+        transformPerspective: 1200,
       }}
       data-cursor={cursorType}
-      className={`relative rounded-2xl overflow-hidden bg-[var(--surface)]/98 dark:bg-[#0d1017]/95 backdrop-blur-xl border border-[var(--border)] transition-all duration-300 hover:border-cyan-500 dark:hover:border-cyan-400 hover:shadow-[0_4px_28px_rgba(2,132,199,0.2)] dark:hover:shadow-[0_0_35px_rgba(6,182,212,0.3)] group ${className}`}
+      className={`relative rounded-2xl overflow-hidden bg-[#0A0B10] backdrop-blur-xl border border-white/10 transition-all duration-300 hover:border-[#38bdf8]/50 group ${className}`}
     >
-      {/* Squid Ink In Liquid Aura on Hover */}
+      {/* Pointer-based color bloom */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out z-10 [clip-path:circle(0%_at_50%_50%)] group-hover:[clip-path:circle(140%_at_50%_50%)]"
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out z-10"
         style={{
-          background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${glowGradient}, transparent 70%)`,
+          background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, ${glowGradient}, transparent 70%)`,
         }}
       />
 
       {/* Cyber Corner HUD Brackets */}
       {cornerAccents && (
         <>
-          <span className="absolute top-1.5 left-1.5 w-2 h-2 border-t-2 border-l-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
-          <span className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
-          <span className="absolute bottom-1.5 right-1.5 w-2 h-2 border-b-2 border-r-2 border-indigo-400/50 dark:border-cyan-400/40 group-hover:border-indigo-600 dark:group-hover:border-cyan-300 transition-colors pointer-events-none z-20" />
+          <span className="absolute top-2 left-2 text-[10px] font-mono text-white/20 group-hover:text-[#38bdf8]/60 transition-colors pointer-events-none z-20">⌜</span>
+          <span className="absolute top-2 right-2 text-[10px] font-mono text-white/20 group-hover:text-[#38bdf8]/60 transition-colors pointer-events-none z-20">⌝</span>
+          <span className="absolute bottom-2 left-2 text-[10px] font-mono text-white/20 group-hover:text-[#38bdf8]/60 transition-colors pointer-events-none z-20">⌞</span>
+          <span className="absolute bottom-2 right-2 text-[10px] font-mono text-white/20 group-hover:text-[#38bdf8]/60 transition-colors pointer-events-none z-20">⌟</span>
         </>
       )}
 

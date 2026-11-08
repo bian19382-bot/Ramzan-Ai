@@ -104,47 +104,53 @@ export const Navbar: React.FC<NavbarProps> = ({
           </MagneticWrapper>
 
           {/* Center Navigation Links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1 text-xs lg:text-sm font-medium">
-            {items
-              .filter((item) => item.visible && !item.is_cta)
-              .map((item) => {
-                const targetKey = item.target.replace('#', '');
-                const isActive = activeSection === targetKey;
-                const label =
-                  item.target === '#home'
-                    ? t('navHome')
-                    : item.target === '#about'
-                    ? t('navAbout')
-                    : item.target === '#projects'
-                    ? t('navProjects')
-                    : item.target === '#skills'
-                    ? 'Tools'
-                    : item.target === '#services'
-                    ? t('navServices')
-                    : item.target === '#approach'
-                    ? language === 'ur-roman' ? 'Tareeqa' : 'Approach'
-                    : item.target === '#contact'
-                    ? t('navContact')
-                    : item.label;
-
-                return (
-                  <MagneticWrapper key={item.id} strength={0.28} cursorType="nav">
-                    <a
-                      href={item.target}
-                      className={`px-3 py-1.5 rounded-full transition-all duration-200 relative block border border-transparent ${
-                        isActive
-                          ? 'text-[var(--accent-text)] font-bold bg-cyan-500/10 dark:bg-cyan-500/15 border-cyan-500/30'
-                          : 'text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:border-cyan-500/30'
-                      }`}
-                    >
-                      {label}
-                      {isActive && (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-cyan-500 rounded-full shadow-[0_0_8px_#06b6d4]" />
-                      )}
-                    </a>
-                  </MagneticWrapper>
-                );
-              })}
+          <nav className="hidden md:flex items-center gap-1 text-xs font-mono">
+            <a
+              href="#projects"
+              className={`px-3 py-1.5 rounded-full transition-all duration-200 border border-transparent ${
+                activeSection === 'projects'
+                  ? 'text-cyan-300 font-bold bg-cyan-500/10 border-cyan-500/30'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              // 01 WORK
+            </a>
+            <a
+              href="#about"
+              className={`px-3 py-1.5 rounded-full transition-all duration-200 border border-transparent ${
+                activeSection === 'about'
+                  ? 'text-cyan-300 font-bold bg-cyan-500/10 border-cyan-500/30'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              // 02 ORIGIN
+            </a>
+            <a
+              href="#skills"
+              className={`px-3 py-1.5 rounded-full transition-all duration-200 border border-transparent ${
+                activeSection === 'skills'
+                  ? 'text-cyan-300 font-bold bg-cyan-500/10 border-cyan-500/30'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              // 03 POWER
+            </a>
+            <a
+              href="#contact"
+              className={`px-3 py-1.5 rounded-full transition-all duration-200 border border-transparent ${
+                activeSection === 'contact'
+                  ? 'text-cyan-300 font-bold bg-cyan-500/10 border-cyan-500/30'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              // 04 SIGNAL
+            </a>
+            <Link
+              to="/resume"
+              className="px-3 py-1.5 rounded-full transition-all duration-200 text-[#CBD5E1] hover:text-cyan-300 hover:bg-white/[0.04] border border-transparent"
+            >
+              RESUME
+            </Link>
           </nav>
 
           {/* Right Controls & CTAs */}

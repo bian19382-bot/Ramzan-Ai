@@ -46,7 +46,7 @@ import {
 } from './initialData';
 import { safeStorage, STORAGE_KEYS } from '../lib/storage';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { loadPortfolioContent, syncPortfolioContent } from './supabasePortfolioContent';
+import { deletePortfolioContentRow, loadPortfolioContent, syncPortfolioContent } from './supabasePortfolioContent';
 
 export interface PortfolioDatabase {
   profile: Profile;
@@ -652,6 +652,9 @@ class DataProviderService {
   public deleteCategory(id: string): void {
     const target = this.db.categories.find((category) => category.id === id);
     this.db.categories = this.db.categories.filter((category) => category.id !== id);
+    void deletePortfolioContentRow('portfolio_categories', id).catch((error) => {
+      console.error('[dataProvider] Category delete failed:', error);
+    });
     this.persist({
       table: 'categories',
       action: 'delete',
@@ -672,6 +675,9 @@ class DataProviderService {
   public deleteTag(id: string): void {
     const target = this.db.tags.find((tag) => tag.id === id);
     this.db.tags = this.db.tags.filter((tag) => tag.id !== id);
+    void deletePortfolioContentRow('portfolio_tags', id).catch((error) => {
+      console.error('[dataProvider] Tag delete failed:', error);
+    });
     this.persist({
       table: 'tags',
       action: 'delete',
@@ -701,6 +707,9 @@ class DataProviderService {
 
   public deleteSkill(id: string): void {
     this.db.skills = this.db.skills.filter((s) => s.id !== id);
+    void deletePortfolioContentRow('portfolio_skills', id).catch((error) => {
+      console.error('[dataProvider] Skill delete failed:', error);
+    });
     this.persist({
       table: 'skills',
       action: 'delete',
@@ -730,6 +739,9 @@ class DataProviderService {
 
   public deleteService(id: string): void {
     this.db.services = this.db.services.filter((s) => s.id !== id);
+    void deletePortfolioContentRow('portfolio_services', id).catch((error) => {
+      console.error('[dataProvider] Service delete failed:', error);
+    });
     this.persist({
       table: 'services',
       action: 'delete',

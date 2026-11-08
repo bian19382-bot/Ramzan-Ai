@@ -1,16 +1,6 @@
 import { supabase } from '../lib/supabase';
 import type { PortfolioDatabase } from './dataProvider';
 
-type PortfolioContentTable =
-  | 'profile'
-  | 'site_settings'
-  | 'intro_video'
-  | 'categories'
-  | 'tags'
-  | 'skills'
-  | 'services'
-  | 'all';
-
 type DbRow = Record<string, unknown>;
 
 const singleton = (value: object, id = 1): DbRow => ({ ...value, id });
@@ -53,31 +43,15 @@ export async function loadPortfolioContent(): Promise<Partial<PortfolioDatabase>
     ...(settings
       ? { settings: settings as unknown as PortfolioDatabase['settings'] }
       : {}),
-    ...(rows.portfolio_social_links.length
-      ? { social_links: rows.portfolio_social_links as unknown as PortfolioDatabase['social_links'] }
-      : {}),
-    ...(rows.portfolio_nav_items.length
-      ? { nav_items: rows.portfolio_nav_items as unknown as PortfolioDatabase['nav_items'] }
-      : {}),
-    ...(rows.portfolio_home_sections.length
-      ? { home_sections: rows.portfolio_home_sections as unknown as PortfolioDatabase['home_sections'] }
-      : {}),
+    social_links: rows.portfolio_social_links as unknown as PortfolioDatabase['social_links'],
+    nav_items: rows.portfolio_nav_items as unknown as PortfolioDatabase['nav_items'],
+    home_sections: rows.portfolio_home_sections as unknown as PortfolioDatabase['home_sections'],
     ...(intro ? { intro_video: intro as unknown as PortfolioDatabase['intro_video'] } : {}),
-    ...(rows.portfolio_categories.length
-      ? { categories: rows.portfolio_categories as unknown as PortfolioDatabase['categories'] }
-      : {}),
-    ...(rows.portfolio_tags.length
-      ? { tags: rows.portfolio_tags as unknown as PortfolioDatabase['tags'] }
-      : {}),
-    ...(rows.portfolio_skill_groups.length
-      ? { skill_groups: rows.portfolio_skill_groups as unknown as PortfolioDatabase['skill_groups'] }
-      : {}),
-    ...(rows.portfolio_skills.length
-      ? { skills: rows.portfolio_skills as unknown as PortfolioDatabase['skills'] }
-      : {}),
-    ...(rows.portfolio_services.length
-      ? { services: rows.portfolio_services as unknown as PortfolioDatabase['services'] }
-      : {}),
+    categories: rows.portfolio_categories as unknown as PortfolioDatabase['categories'],
+    tags: rows.portfolio_tags as unknown as PortfolioDatabase['tags'],
+    skill_groups: rows.portfolio_skill_groups as unknown as PortfolioDatabase['skill_groups'],
+    skills: rows.portfolio_skills as unknown as PortfolioDatabase['skills'],
+    services: rows.portfolio_services as unknown as PortfolioDatabase['services'],
   };
 }
 

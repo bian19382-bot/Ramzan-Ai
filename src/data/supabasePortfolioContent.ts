@@ -6,6 +6,7 @@ type PortfolioContentTable =
   | 'site_settings'
   | 'intro_video'
   | 'categories'
+  | 'tags'
   | 'skills'
   | 'services'
   | 'all';
@@ -28,6 +29,7 @@ export async function loadPortfolioContent(): Promise<Partial<PortfolioDatabase>
     'portfolio_home_sections',
     'portfolio_intro_video',
     'portfolio_categories',
+    'portfolio_tags',
     'portfolio_skill_groups',
     'portfolio_skills',
     'portfolio_services',
@@ -63,6 +65,9 @@ export async function loadPortfolioContent(): Promise<Partial<PortfolioDatabase>
     ...(intro ? { intro_video: intro as unknown as PortfolioDatabase['intro_video'] } : {}),
     ...(rows.portfolio_categories.length
       ? { categories: rows.portfolio_categories as unknown as PortfolioDatabase['categories'] }
+      : {}),
+    ...(rows.portfolio_tags.length
+      ? { tags: rows.portfolio_tags as unknown as PortfolioDatabase['tags'] }
       : {}),
     ...(rows.portfolio_skill_groups.length
       ? { skill_groups: rows.portfolio_skill_groups as unknown as PortfolioDatabase['skill_groups'] }
@@ -102,6 +107,9 @@ export async function syncPortfolioContent(
   }
   if (all || changedTable === 'categories') {
     writes.push(['portfolio_categories', db.categories as unknown as DbRow[]]);
+  }
+  if (all || changedTable === 'tags') {
+    writes.push(['portfolio_tags', db.tags as unknown as DbRow[]]);
   }
   if (all || changedTable === 'skills') {
     writes.push(['portfolio_skill_groups', db.skill_groups as unknown as DbRow[]]);

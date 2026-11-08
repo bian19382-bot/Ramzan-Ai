@@ -20,8 +20,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
       title: isRoman ? 'EXPLORE' : 'EXPLORE',
       sub: isRoman ? 'Tools, Workflows aur Ideas' : 'Discover tools, workflows and ideas',
       desc: isRoman
-        ? 'Google AI Studio, Claude AI, aur ChatGPT jaise cutting-edge models ki madad se creative system architecture aur UI/UX concepts ko explore karta hoon.'
-        : 'Exploring cutting-edge models like Google AI Studio, Claude AI, and ChatGPT to plan clean architectures and user experience concepts.',
+        ? 'Google AI Studio (Gemini 2.5 Pro API), Claude 3.5 Sonnet (Pro), aur ChatGPT Plus (o1 reasoning) jaise advanced models ki madad se high-performance system architecture aur UI/UX concepts ko explore karta hoon.'
+        : 'Leveraging advanced model tiers like Google AI Studio (Gemini 2.5 Pro API), Claude 3.5 Sonnet (Pro), and ChatGPT Plus (o1 reasoning) to plan clean architectures and user experience concepts.',
       icon: Compass,
       tag: 'RESEARCH & IDEATION',
     },
@@ -119,8 +119,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 text-sm text-[#A1A1AA] leading-relaxed space-y-4 font-sans">
                   <p>
                     {isRoman
-                      ? 'Mere daily practical toolkit mein Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel aur Netlify shamil hain. Main continuous experimentation aur hands-on testing ke zariye apni skills enhance kar raha hoon.'
-                      : 'My daily technical toolkit includes Google AI Studio, ChatGPT, Claude AI, GitHub, Supabase, Cloudflare, Vercel, and Netlify. I continue to sharpen my craft through hands-on testing, honest scoping, and modular component architecture.'}
+                      ? 'Mere daily practical toolkit mein Google AI Studio (Gemini 2.5 Pro API), ChatGPT Plus (o1 reasoning), Claude 3.5 Sonnet (Pro), GitHub Pro, Supabase Pro, Cloudflare Pages, Vercel Pro aur Netlify shamil hain. Main continuous experimentation aur hands-on testing ke zariye apni skills enhance kar raha hoon.'
+                      : 'My daily technical toolkit includes Google AI Studio (Gemini 2.5 Pro API), ChatGPT Plus (o1 reasoning), Claude 3.5 Sonnet (Pro), GitHub Pro, Supabase Pro, Cloudflare Pages, Vercel Pro, and Netlify. I continue to sharpen my craft through hands-on testing, honest scoping, and modular component architecture.'}
                   </p>
                   <p>
                     {isRoman

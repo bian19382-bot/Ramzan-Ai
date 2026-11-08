@@ -1,7 +1,9 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { ArrowUpRight, ExternalLink, Github, Terminal } from 'lucide-react';
 import { Project } from '../../types/portfolio';
 import { HoloScanImage } from '../../components/ui/HoloScanImage';
+import { cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 
 interface ProjectCardProps {
   project: Project;
@@ -22,7 +24,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   const fallbackUrl = '/assets/aistudio/Neon_Portfolio_Hero__Welcome__I_m_Ramzan_85351036.png';
 
   return (
-    <article
+    <motion.article
+      variants={cinematicFadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={safeViewport}
+      custom={index % 3}
       onClick={() => onOpenCaseStudy(project)}
       className={`group relative rounded-3xl bg-[#0D0F14] border border-white/10 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-[0_0_35px_rgba(56,189,248,0.14)] cursor-pointer flex flex-col justify-between overflow-hidden select-none ${
         isLargeFeatured ? 'lg:col-span-2' : ''
@@ -116,6 +123,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           )}
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 };

@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowDown, ArrowUpRight, Sparkles, Terminal, ShieldCheck } from 'lucide-react';
 import { Profile, SocialLink, SiteSettings } from '../../types/portfolio';
 import { useLanguage } from '../i18n/LanguageContext';
-import { letterContainer, letterVariant, cinematicFadeUp } from '../../lib/cinematicMotion';
+import { letterContainer, letterVariant, cinematicFadeUp, safeViewport } from '../../lib/cinematicMotion';
 import { HoloScanImage } from '../../components/ui/HoloScanImage';
 
 interface HeroSectionProps {
@@ -77,7 +77,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <motion.div
           variants={cinematicFadeUp}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={safeViewport}
           className="mb-8 pt-4 flex flex-wrap items-center justify-between gap-3 text-[10px] sm:text-[11px] font-mono tracking-widest text-[#71717A] border-b border-white/5 pb-4"
         >
           <div className="flex items-center gap-3">
@@ -107,7 +108,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <motion.div
                 variants={cinematicFadeUp}
                 initial="hidden"
-                animate="visible"
+                whileInView="visible"
+                viewport={safeViewport}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-xs font-mono text-cyan-300 tracking-wider"
               >
                 <Terminal className="w-3.5 h-3.5 text-cyan-400" />
@@ -118,7 +120,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <motion.h1
                 variants={letterContainer}
                 initial="hidden"
-                animate="visible"
+                whileInView="visible"
+                viewport={safeViewport}
                 className="font-cinematic text-7xl sm:text-8xl md:text-9xl xl:text-[10.5rem] font-black text-white tracking-tighter leading-[0.88] select-none uppercase overflow-hidden"
               >
                 {headlineLetters.map((char, index) => (
@@ -136,7 +139,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <motion.div
                 variants={cinematicFadeUp}
                 initial="hidden"
-                animate="visible"
+                whileInView="visible"
+                viewport={safeViewport}
                 custom={2}
                 className="pt-2"
               >
@@ -153,7 +157,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <motion.p
               variants={cinematicFadeUp}
               initial="hidden"
-              animate="visible"
+              whileInView="visible"
+              viewport={safeViewport}
               custom={3}
               className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed max-w-xl font-sans"
             >
@@ -166,7 +171,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <motion.div
               variants={cinematicFadeUp}
               initial="hidden"
-              animate="visible"
+              whileInView="visible"
+              viewport={safeViewport}
               custom={4}
               className="pt-4 flex flex-wrap items-center gap-4"
             >
@@ -200,13 +206,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </motion.div>
           </div>
 
-          {/* Right Column (5 cols): Existing Welcome Banner Photograph with Holographic Scan */}
+          {/* Right Column (5 cols): Developer Workstation Portrait Photo with Holographic Scan */}
           <div className="lg:col-span-5 relative">
             <motion.div
               style={{ y: photoY }}
               variants={cinematicFadeUp}
               initial="hidden"
-              animate="visible"
+              whileInView="visible"
+              viewport={safeViewport}
               custom={2}
               className="relative mx-auto max-w-md lg:max-w-none"
             >
@@ -239,7 +246,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <motion.div
         variants={cinematicFadeUp}
         initial="hidden"
-        animate="visible"
+        whileInView="visible"
+        viewport={safeViewport}
         custom={5}
         className="max-w-[1320px] w-full mx-auto relative z-10 pt-8 flex items-center justify-between border-t border-white/5 text-[10px] font-mono text-[#71717A]"
       >

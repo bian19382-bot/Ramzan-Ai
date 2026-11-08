@@ -201,8 +201,9 @@ class DataProviderService {
 
       const rawProjects = Array.isArray(stored.projects) && stored.projects.length > 0 ? stored.projects : INITIAL_PROJECTS;
       stored.projects = rawProjects.filter((p) => !this.isTombstoned(p));
-      stored.categories = Array.isArray(stored.categories) ? stored.categories : defaultDb.categories;
-      stored.skills = Array.isArray(stored.skills) ? stored.skills : defaultDb.skills;
+      // Ensure advanced and paid tool tiers are synced
+      const hasProAi = Array.isArray(stored.skills) && stored.skills.some((s) => s.name.includes('Gemini 2.5 Pro'));
+      stored.skills = hasProAi ? stored.skills : defaultDb.skills;
       stored.skill_groups = Array.isArray(stored.skill_groups) ? stored.skill_groups : defaultDb.skill_groups;
       stored.services = Array.isArray(stored.services) ? stored.services : defaultDb.services;
       stored.experiences = Array.isArray(stored.experiences) ? stored.experiences : [];

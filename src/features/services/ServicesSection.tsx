@@ -197,7 +197,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
               variants={cinematicFadeUp}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={safeViewport}
               custom={idx}
               className="group relative p-6 sm:p-7 rounded-2xl bg-[#0A0B10] border border-white/10 hover:border-[#38bdf8]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >

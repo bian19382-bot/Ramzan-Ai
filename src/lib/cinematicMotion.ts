@@ -11,13 +11,13 @@ import { Variants } from 'motion/react';
  */
 
 export const safeViewport = {
-  once: true,
-  amount: 0.15,
+  once: false,
+  amount: 0.12,
 };
 
 export const safeViewportRepeat = {
   once: false,
-  amount: 0.2,
+  amount: 0.12,
 };
 
 /**

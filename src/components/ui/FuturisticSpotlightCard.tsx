@@ -63,7 +63,7 @@ export const FuturisticSpotlightCard: React.FC<FuturisticSpotlightCardProps> = (
       variants={cinematicFadeUp}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: false, amount: 0.12 }}
       custom={animationDelay}
       animate={{
         rotateX: tilt.rotateX,

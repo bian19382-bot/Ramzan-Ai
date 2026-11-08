@@ -133,3 +133,15 @@ export async function syncPortfolioContent(
     if (error) throw new Error(`Unable to save ${table}: ${error.message}`);
   }
 }
+
+/** Delete one explicitly removed CMS record after verifying an admin session. */
+export async function deletePortfolioContentRow(
+  table: 'portfolio_categories' | 'portfolio_tags' | 'portfolio_skills' | 'portfolio_services',
+  id: string
+): Promise<void> {
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!session?.user) throw new Error('An authenticated admin session is required.');
+  const { error } = await supabase.from(table).delete().eq('id', id);
+  if (error) throw new Error(`Unable to delete from ${table}: ${error.message}`);
+}

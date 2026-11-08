@@ -46,6 +46,7 @@ import {
 } from './initialData';
 import { safeStorage, STORAGE_KEYS } from '../lib/storage';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { loadPortfolioContent, syncPortfolioContent } from './supabasePortfolioContent';
 
 export interface PortfolioDatabase {
   profile: Profile;
@@ -110,24 +111,10 @@ function getDefaultDatabase(): PortfolioDatabase {
 export async function ensureAdminSession(): Promise<boolean> {
   if (!isSupabaseConfigured) return false;
   try {
-    const { data } = await supabase.auth.getSession();
-    if (data.session && data.session.user) {
-      return true;
-    }
-    const cleanEmail = 'babajani543210@gmail.com';
-    let authRes = await supabase.auth.signInWithPassword({
-      email: cleanEmail,
-      password: 'office@12',
-    });
-    if (authRes.error) {
-      authRes = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
-        password: 'ofice@!2',
-      });
-    }
-    return Boolean(!authRes.error && authRes.data?.session);
+    const { data, error } = await supabase.auth.getSession();
+    return !error && Boolean(data.session?.user);
   } catch (err) {
-    console.warn('[ensureAdminSession] Warning:', err);
+    console.warn('[ensureAdminSession] Session check failed:', err);
     return false;
   }
 }
@@ -232,6 +219,28 @@ class DataProviderService {
   public async syncWithSupabase(): Promise<void> {
     if (!isSupabaseConfigured) return;
     try {
+      try {
+        const cloudContent = await loadPortfolioContent();
+        this.db = {
+          ...this.db,
+          ...cloudContent,
+          settings: cloudContent.settings
+            ? {
+                ...this.db.settings,
+                ...cloudContent.settings,
+                feature_flags: {
+                  ...this.db.settings.feature_flags,
+                  ...(cloudContent.settings.feature_flags || {}),
+                },
+              }
+            : this.db.settings,
+        };
+        safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
+        this.notify();
+      } catch (contentError) {
+        console.warn('[dataProvider] Shared portfolio content unavailable:', contentError);
+      }
+
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -316,6 +325,11 @@ class DataProviderService {
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
     }
     this.notify();
+    if (action) {
+      void syncPortfolioContent(this.db, action.table).catch((error) => {
+        console.error('[dataProvider] Portfolio content cloud sync failed:', error);
+      });
+    }
   }
 
   public subscribe(listener: () => void): () => void {

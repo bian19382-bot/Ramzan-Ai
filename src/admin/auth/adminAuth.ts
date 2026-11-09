@@ -74,23 +74,10 @@ export const adminAuth = {
     }
 
     try {
-      let { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: cleanEmail,
         password: cleanPass,
       });
-
-      // Try alternate casing/spelling if initial attempt fails
-      if (error && (cleanPass === 'ofice@!2' || cleanPass === 'office@12')) {
-        const alt = cleanPass === 'ofice@!2' ? 'office@12' : 'ofice@!2';
-        const retry = await supabase.auth.signInWithPassword({
-          email: cleanEmail,
-          password: alt,
-        });
-        if (!retry.error) {
-          data = retry.data;
-          error = null;
-        }
-      }
 
       if (error) {
         return {

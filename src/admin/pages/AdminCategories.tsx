@@ -20,24 +20,21 @@ export const AdminCategories: React.FC = () => {
     if (!newCatName.trim()) return;
 
     const slug = newCatName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const newCat: Category = {
-      id: 'cat-' + Date.now(),
+    const newCat: Omit<Category, 'id'> = {
       name: newCatName.trim(),
       slug,
       sort_order: categories.length + 1,
       is_sample: false,
     };
 
-    const currentDb = dataProvider.getDatabase();
-    currentDb.categories.push(newCat);
+    dataProvider.addCategory(newCat);
     setNewCatName('');
     refreshList();
   };
 
   const handleDeleteCategory = (id: string) => {
     if (confirm('Delete this category? Associated projects will be unassigned.')) {
-      const currentDb = dataProvider.getDatabase();
-      currentDb.categories = currentDb.categories.filter((c) => c.id !== id);
+      dataProvider.deleteCategory(id);
       refreshList();
     }
   };
@@ -47,22 +44,19 @@ export const AdminCategories: React.FC = () => {
     if (!newTagName.trim()) return;
 
     const slug = newTagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const newT: TagType = {
-      id: 'tag-' + Date.now(),
+    const newT: Omit<TagType, 'id'> = {
       name: newTagName.trim(),
       slug,
       is_sample: false,
     };
 
-    const currentDb = dataProvider.getDatabase();
-    currentDb.tags.push(newT);
+    dataProvider.addTag(newT);
     setNewTagName('');
     refreshList();
   };
 
   const handleDeleteTag = (id: string) => {
-    const currentDb = dataProvider.getDatabase();
-    currentDb.tags = currentDb.tags.filter((t) => t.id !== id);
+    dataProvider.deleteTag(id);
     refreshList();
   };
 

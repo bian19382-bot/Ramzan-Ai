@@ -97,23 +97,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const cleanEmail = email.trim();
     const cleanPass = password.trim();
 
-    let { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: cleanEmail,
       password: cleanPass,
     });
-
-    // If invalid credentials and password is 'ofice@!2', try 'office@12' or vice versa
-    if (error && (cleanPass === 'ofice@!2' || cleanPass === 'office@12')) {
-      const alternatePassword = cleanPass === 'ofice@!2' ? 'office@12' : 'ofice@!2';
-      const retryResult = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
-        password: alternatePassword,
-      });
-      if (!retryResult.error) {
-        data = retryResult.data;
-        error = null;
-      }
-    }
 
     if (error) throw error;
 

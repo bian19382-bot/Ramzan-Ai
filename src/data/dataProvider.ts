@@ -46,6 +46,7 @@ import {
 } from './initialData';
 import { safeStorage, STORAGE_KEYS } from '../lib/storage';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { deletePortfolioContentRow, loadPortfolioContent, syncPortfolioContent } from './supabasePortfolioContent';
 
 export interface PortfolioDatabase {
   profile: Profile;
@@ -110,24 +111,10 @@ function getDefaultDatabase(): PortfolioDatabase {
 export async function ensureAdminSession(): Promise<boolean> {
   if (!isSupabaseConfigured) return false;
   try {
-    const { data } = await supabase.auth.getSession();
-    if (data.session && data.session.user) {
-      return true;
-    }
-    const cleanEmail = 'babajani543210@gmail.com';
-    let authRes = await supabase.auth.signInWithPassword({
-      email: cleanEmail,
-      password: 'office@12',
-    });
-    if (authRes.error) {
-      authRes = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
-        password: 'ofice@!2',
-      });
-    }
-    return Boolean(!authRes.error && authRes.data?.session);
+    const { data, error } = await supabase.auth.getSession();
+    return !error && Boolean(data.session?.user);
   } catch (err) {
-    console.warn('[ensureAdminSession] Warning:', err);
+    console.warn('[ensureAdminSession] Session check failed:', err);
     return false;
   }
 }
@@ -233,6 +220,28 @@ class DataProviderService {
   public async syncWithSupabase(): Promise<void> {
     if (!isSupabaseConfigured) return;
     try {
+      try {
+        const cloudContent = await loadPortfolioContent();
+        this.db = {
+          ...this.db,
+          ...cloudContent,
+          settings: cloudContent.settings
+            ? {
+                ...this.db.settings,
+                ...cloudContent.settings,
+                feature_flags: {
+                  ...this.db.settings.feature_flags,
+                  ...(cloudContent.settings.feature_flags || {}),
+                },
+              }
+            : this.db.settings,
+        };
+        safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
+        this.notify();
+      } catch (contentError) {
+        console.warn('[dataProvider] Shared portfolio content unavailable:', contentError);
+      }
+
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -317,6 +326,11 @@ class DataProviderService {
       safeStorage.setJSON(STORAGE_KEYS.DEMO_DATA, this.db);
     }
     this.notify();
+    if (action) {
+      void syncPortfolioContent(this.db, action.table).catch((error) => {
+        console.error('[dataProvider] Portfolio content cloud sync failed:', error);
+      });
+    }
   }
 
   public subscribe(listener: () => void): () => void {
@@ -625,6 +639,53 @@ class DataProviderService {
     }
   }
 
+  // Categories & technology tags
+  public addCategory(category: Omit<Category, 'id'>): void {
+    const newCategory: Category = { ...category, id: 'cat-' + Date.now() };
+    this.db.categories.push(newCategory);
+    this.persist({
+      table: 'categories',
+      action: 'insert',
+      summary: `Added category: ${newCategory.name}`,
+    });
+  }
+
+  public deleteCategory(id: string): void {
+    const target = this.db.categories.find((category) => category.id === id);
+    this.db.categories = this.db.categories.filter((category) => category.id !== id);
+    void deletePortfolioContentRow('portfolio_categories', id).catch((error) => {
+      console.error('[dataProvider] Category delete failed:', error);
+    });
+    this.persist({
+      table: 'categories',
+      action: 'delete',
+      summary: `Deleted category: ${target?.name || id}`,
+    });
+  }
+
+  public addTag(tag: Omit<Tag, 'id'>): void {
+    const newTag: Tag = { ...tag, id: 'tag-' + Date.now() };
+    this.db.tags.push(newTag);
+    this.persist({
+      table: 'tags',
+      action: 'insert',
+      summary: `Added technology tag: ${newTag.name}`,
+    });
+  }
+
+  public deleteTag(id: string): void {
+    const target = this.db.tags.find((tag) => tag.id === id);
+    this.db.tags = this.db.tags.filter((tag) => tag.id !== id);
+    void deletePortfolioContentRow('portfolio_tags', id).catch((error) => {
+      console.error('[dataProvider] Tag delete failed:', error);
+    });
+    this.persist({
+      table: 'tags',
+      action: 'delete',
+      summary: `Deleted technology tag: ${target?.name || id}`,
+    });
+  }
+
   // Skills
   public addSkill(skill: Omit<Skill, 'id'>): void {
     const newSkill: Skill = { ...skill, id: 'sk-' + Date.now() };
@@ -647,6 +708,9 @@ class DataProviderService {
 
   public deleteSkill(id: string): void {
     this.db.skills = this.db.skills.filter((s) => s.id !== id);
+    void deletePortfolioContentRow('portfolio_skills', id).catch((error) => {
+      console.error('[dataProvider] Skill delete failed:', error);
+    });
     this.persist({
       table: 'skills',
       action: 'delete',
@@ -676,6 +740,9 @@ class DataProviderService {
 
   public deleteService(id: string): void {
     this.db.services = this.db.services.filter((s) => s.id !== id);
+    void deletePortfolioContentRow('portfolio_services', id).catch((error) => {
+      console.error('[dataProvider] Service delete failed:', error);
+    });
     this.persist({
       table: 'services',
       action: 'delete',
